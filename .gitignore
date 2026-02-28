@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+ByteHubEnv/
+venv/
+env/
+
+# Django
+*.log
+db.sqlite3
+ByteHub/db.sqlite3
+media/
+staticfiles/
+
+# i18n compiled files
+*.mo
+
+# IDE
+.vscode/

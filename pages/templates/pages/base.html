@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<html lang="es">
+{% load i18n %}
+{% get_current_language as LANGUAGE_CODE %}
+<html lang="{{ LANGUAGE_CODE }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -161,9 +163,19 @@
             </a>
             <nav>
                 <ul>
-                    <li><a class="nav-link active" href="{% url 'pages:home' %}">Inicio</a></li>
+                    <li><a class="nav-link active" href="{% url 'pages:home' %}">{% trans "Home" %}</a></li>
                 </ul>
             </nav>
+            <form action="{% url 'set_language' %}" method="post" style="display: flex; gap: 0.5rem;">
+                {% csrf_token %}
+                <input name="next" type="hidden" value="{{ request.get_full_path }}">
+                <button type="submit" name="language" value="en" style="padding: 0.35rem 0.6rem; border: 1px solid #00C2CB; background: transparent; color: #E2E8E9; border-radius: 4px; cursor: pointer;">
+                    EN
+                </button>
+                <button type="submit" name="language" value="es" style="padding: 0.35rem 0.6rem; border: 1px solid #00C2CB; background: transparent; color: #E2E8E9; border-radius: 4px; cursor: pointer;">
+                    ES
+                </button>
+            </form>
         </div>
     </header>
 
@@ -177,26 +189,26 @@
         <div class="footer-container">
             <div class="footer-section">
                 <h3>ByteHub</h3>
-                <p>Soluciones tecnológicas innovadoras para tu negocio.</p>
+                <p>{% trans "Innovative technology solutions for your business." %}</p>
             </div>
             <div class="footer-section">
-                <h3>Enlaces Rápidos</h3>
+                <h3>{% trans "Quick Links" %}</h3>
                 <ul>
-                    <li><a href="/">Inicio</a></li>
+                    <li><a href="/">{% trans "Home" %}</a></li>
 
                 </ul>
             </div>
             <div class="footer-section">
-                <h3>Soporte</h3>
+                <h3>{% trans "Support" %}</h3>
                 <ul>
-                    <li><a href="/contacto">Contacto</a></li>
+                    <li><a href="/contacto">{% trans "Contact" %}</a></li>
                     <li><a href="/faq">FAQ</a></li>
-                    <li><a href="/documentacion">Documentación</a></li>
-                    <li><a href="/politica-privacidad">Política de Privacidad</a></li>
+                    <li><a href="/documentacion">{% trans "Documentation" %}</a></li>
+                    <li><a href="/politica-privacidad">{% trans "Privacy Policy" %}</a></li>
                 </ul>
             </div>
             <div class="footer-section">
-                <h3>Categorías</h3>
+                <h3>{% trans "Categories" %}</h3>
                 <ul>
                     {% for category in categories %}
                     <li><a href="#">{{ category.name }}</a></li>
@@ -204,7 +216,7 @@
                 </ul>
             </div>
             <div class="footer-section">
-                <h3>Síguenos</h3>
+                <h3>{% trans "Follow Us" %}</h3>
                 <ul>
                     <li><a href="#">GitHub</a></li>
                     <li><a href="#">LinkedIn</a></li>
@@ -214,8 +226,8 @@
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2024 ByteHub. Todos los derechos reservados.</p>
-            <p>Desarrollado con tecnología Django + React</p>
+            <p>&copy; 2024 ByteHub. {% trans "All rights reserved." %}</p>
+            <p>{% trans "Built with Django + React technology" %}</p>
         </div>
     </footer>
 

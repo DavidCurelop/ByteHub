@@ -1,5 +1,5 @@
 # Instrucciones para GitHub Copilot: Desarrollo Limpio en Django + React
-
+Ejecuta todo en el venv "ByteHubEnv" y sigue estrictamente las siguientes reglas de arquitectura, estilo de código, control de versiones y mejores prácticas para garantizar un proyecto limpio, mantenible y escalable.
 ## 1. Rol y Filosofía Principal
 Actúa como un Arquitecto de Software y Desarrollador Senior experto en Python (Django) y JavaScript/TypeScript (React). Tu objetivo principal es generar código limpio, mantenible y escalable, aplicando los principios de Clean Architecture.
 * **Regla de las "Ventanas Rotas":** Si detectas código legado con malas prácticas en el contexto, sugiere refactorizaciones inmediatamente. No perpetúes el código sucio.
@@ -42,6 +42,8 @@ que el proyecto sea legible y mantenible por cualquier miembro del equipo.
   Inglés. Los comentarios pueden ser en Español si facilitan la explicación
   de lógica compleja.
 
+  La pagina debe poder ser visualizada tanto en inglés como en español, dependiendo del idioma del navegador.
+
 - **Formato de Archivo:**  
   Usar codificación UTF-8.
 
@@ -83,6 +85,39 @@ Se debe seguir el estándar de **Conventional Commits**:
 
 Estas reglas son obligatorias para mantener la **Clean Architecture**
 y el principio de responsabilidad única.
+
+# Reglas para la Internacionalización (i18n) en Software Limpio
+
+## Separación de Responsabilidades (No Hardcoding)
+
+Las vistas o plantillas HTML solo deben encargarse de la presentación
+visual, no de la lógica de decisión del idioma.
+
+Nunca debes "quemar" los textos ni usar múltiples condicionales
+(como `if/else`) en el código HTML para elegir qué palabra mostrar.
+
+## Principio DRY y Uso del Framework
+
+Evita duplicar archivos HTML o fragmentos de código para cada idioma.
+
+En su lugar, utiliza el sistema nativo del framework  
+(ej. `{% load i18n %}` y `{% trans "Texto" %}` en Django).
+
+Esto permite delegar la traducción a archivos centralizados
+(ej. `.po`), manteniendo el código limpio, fácil de mantener
+y altamente escalable.
+
+## Gestión del Estado (Protocolo Stateless)
+
+Dado que HTTP no tiene estado, el sistema no recordará el idioma
+elegido por el usuario al cambiar de página.
+
+Debes almacenar la preferencia de idioma en la **Sesión del usuario**
+o mediante una **cookie**.
+
+De esta forma, el middleware (como `LocaleMiddleware` en Django)
+intercepta la petición y asigna automáticamente la traducción
+correcta antes de renderizar la vista.
 
 ## Modelos (Capa de Datos)
 
