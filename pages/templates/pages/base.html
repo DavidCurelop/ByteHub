@@ -161,11 +161,7 @@
             </a>
             <nav>
                 <ul>
-                    <li><a href="/">Inicio</a></li>
-                    <li><a href="/productos">Productos</a></li>
-                    <li><a href="/servicios">Servicios</a></li>
-                    <li><a href="/acerca-de">Acerca de</a></li>
-                    <li><a href="/contacto">Contacto</a></li>
+                    <li><a class="nav-link active" href="{% url 'pages:home' %}">Inicio</a></li>
                 </ul>
             </nav>
         </div>
@@ -187,9 +183,7 @@
                 <h3>Enlaces Rápidos</h3>
                 <ul>
                     <li><a href="/">Inicio</a></li>
-                    <li><a href="/productos">Productos</a></li>
-                    <li><a href="/servicios">Servicios</a></li>
-                    <li><a href="/acerca-de">Acerca de</a></li>
+
                 </ul>
             </div>
             <div class="footer-section">
@@ -199,6 +193,14 @@
                     <li><a href="/faq">FAQ</a></li>
                     <li><a href="/documentacion">Documentación</a></li>
                     <li><a href="/politica-privacidad">Política de Privacidad</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Categorías</h3>
+                <ul>
+                    {% for category in categories %}
+                    <li><a href="#">{{ category.name }}</a></li>
+                    {% endfor %}
                 </ul>
             </div>
             <div class="footer-section">
