@@ -101,7 +101,7 @@ class UserLogoutTest(TestCase):
             first_name='Log',
             last_name='Out',
         )
-        self.client.login(username='logout@example.com', password='LogoutPass1')
+        self.client.force_login(self.user)
 
     def test_logout_via_post(self):
         response = self.client.post(reverse('accounts:logout'))
@@ -121,7 +121,7 @@ class UserProfileTest(TestCase):
         )
 
     def test_profile_authenticated(self):
-        self.client.login(username='profile@example.com', password='ProfilePass1')
+        self.client.force_login(self.user)
         response = self.client.get(reverse('accounts:profile'))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'profile@example.com')
