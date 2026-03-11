@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+{% load i18n %}
+{% get_current_language as LANGUAGE_CODE %}
+<html lang="{{ LANGUAGE_CODE }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}ByteHub{% endblock %}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: #E2E8E9;
+            color: #0A2A43;
+        }
+
+        /* Header */
+        header {
+            background-color: #0A2A43;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 8px rgba(0, 194, 203, 0.15);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #00C2CB;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo:hover {
+            color: #7DFF26;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 2rem;
+        }
+
+        nav a {
+            color: #E2E8E9;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            padding: 0.5rem 0;
+            border-bottom: 2px solid transparent;
+        }
+
+        nav a:hover {
+            color: #00C2CB;
+            border-bottom-color: #7DFF26;
+        }
+
+        nav a.active {
+            color: #7DFF26;
+            border-bottom-color: #00C2CB;
+        }
+
+        /* Auth styles */
+        .auth-card {
+            background: #fff;
+            max-width: 480px;
+            margin: 3rem auto;
+            padding: 2.5rem 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 16px rgba(10, 42, 67, 0.12);
+        }
+
+        .auth-title {
+            color: #0A2A43;
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .auth-subtitle {
+            color: #666;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.4rem;
+            color: #0A2A43;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.6rem 0.8rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1rem;
+            background: #f9f9f9;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #00C2CB;
+            background: #fff;
+        }
+
+        .field-errors {
+            list-style: none;
+            margin-top: 0.3rem;
+            color: #c0392b;
+            font-size: 0.875rem;
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 0.75rem;
+            background-color: #00C2CB;
+            color: #0A2A43;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 0.5rem;
+        }
+
+        .btn-primary:hover {
+            background-color: #7DFF26;
+        }
+
+        .btn-secondary {
+            padding: 0.5rem 1.2rem;
+            background-color: transparent;
+            color: #c0392b;
+            border: 1px solid #c0392b;
+            border-radius: 4px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-secondary:hover {
+            background-color: #c0392b;
+            color: #fff;
+        }
+
+        .auth-link {
+            margin-top: 1.2rem;
+            text-align: center;
+            font-size: 0.95rem;
+        }
+
+        .auth-link a {
+            color: #00C2CB;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .auth-link a:hover {
+            color: #7DFF26;
+        }
+
+        .profile-list {
+            margin: 1rem 0;
+        }
+
+        .profile-list dt {
+            font-weight: 700;
+            color: #0A2A43;
+            margin-top: 0.8rem;
+        }
+
+        .profile-list dd {
+            color: #444;
+            margin-left: 0;
+        }
+
+        .alert {
+            padding: 0.75rem 1rem;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error, .alert-warning {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        /* Logout button in nav */
+        .nav-logout-btn {
+            background: none;
+            border: none;
+            color: #E2E8E9;
+            font-weight: 500;
+            font-size: 1rem;
+            cursor: pointer;
+            padding: 0.5rem 0;
+            border-bottom: 2px solid transparent;
+            transition: color 0.3s ease;
+        }
+
+        .nav-logout-btn:hover {
+            color: #00C2CB;
+            border-bottom-color: #7DFF26;
+        }
+
+        /* Main Content */
+        main {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+            min-height: calc(100vh - 200px);
+        }
+
+        /* Footer */
+        footer {
+            background-color: #0A2A43;
+            color: #E2E8E9;
+            padding: 3rem 2rem 1rem;
+            margin-top: 4rem;
+            border-top: 3px solid #00C2CB;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h3 {
+            color: #00C2CB;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section a {
+            color: #E2E8E9;
+            text-decoration: none;
+            transition: color 0.3s ease;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-section a:hover {
+            color: #7DFF26;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(0, 194, 203, 0.2);
+            padding-top: 1.5rem;
+            text-align: center;
+            font-size: 0.9rem;
+            color: rgba(226, 232, 233, 0.7);
+        }
+
+        .footer-bottom p {
+            margin-bottom: 0.5rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            nav ul {
+                gap: 1rem;
+                font-size: 0.9rem;
+            }
+
+            .header-container {
+                flex-wrap: wrap;
+                gap: 1rem;
+            }
+
+            .logo {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <a href="/" class="logo">
+                <span>🔷</span>
+                ByteHub
+            </a>
+            <nav>
+                <ul>
+                    <li><a class="nav-link active" href="{% url 'pages:home' %}">{% trans "Home" %}</a></li>
+                    {% if user.is_authenticated %}
+                        <li><a href="{% url 'accounts:profile' %}">{% trans "Profile" %}</a></li>
+                        <li>
+                            <form method="post" action="{% url 'accounts:logout' %}" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="nav-logout-btn">{% trans "Logout" %}</button>
+                            </form>
+                        </li>
+                    {% else %}
+                        <li><a href="{% url 'accounts:register' %}">{% trans "Register" %}</a></li>
+                        <li><a href="{% url 'accounts:login' %}">{% trans "Login" %}</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+            <form action="{% url 'set_language' %}" method="post" style="display: flex; gap: 0.5rem;">
+                {% csrf_token %}
+                <input name="next" type="hidden" value="{{ request.get_full_path }}">
+                <button type="submit" name="language" value="en" style="padding: 0.35rem 0.6rem; border: 1px solid #00C2CB; background: transparent; color: #E2E8E9; border-radius: 4px; cursor: pointer;">
+                    EN
+                </button>
+                <button type="submit" name="language" value="es" style="padding: 0.35rem 0.6rem; border: 1px solid #00C2CB; background: transparent; color: #E2E8E9; border-radius: 4px; cursor: pointer;">
+                    ES
+                </button>
+            </form>
+        </div>
+    </header>
+
+    <main>
+        {% block content %}
+        <!-- El contenido específico de cada página va aquí -->
+        {% endblock %}
+    </main>
+
+    <footer>
+        <div class="footer-container">
+            <div class="footer-section">
+                <h3>ByteHub</h3>
+                <p>{% trans "Innovative technology solutions for your business." %}</p>
+            </div>
+            <div class="footer-section">
+                <h3>{% trans "Quick Links" %}</h3>
+                <ul>
+                    <li><a href="/">{% trans "Home" %}</a></li>
+
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>{% trans "Support" %}</h3>
+                <ul>
+                    <li><a href="/contacto">{% trans "Contact" %}</a></li>
+                    <li><a href="/faq">FAQ</a></li>
+                    <li><a href="/documentacion">{% trans "Documentation" %}</a></li>
+                    <li><a href="/politica-privacidad">{% trans "Privacy Policy" %}</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>{% trans "Categories" %}</h3>
+                <ul>
+                    {% for category in categories %}
+                    <li><a href="#">{{ category.name }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>{% trans "Follow Us" %}</h3>
+                <ul>
+                    <li><a href="#">GitHub</a></li>
+                    <li><a href="#">LinkedIn</a></li>
+                    <li><a href="#">Twitter</a></li>
+                    <li><a href="#">Email</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 ByteHub. {% trans "All rights reserved." %}</p>
+            <p>{% trans "Built with Django + React technology" %}</p>
+        </div>
+    </footer>
+
+    {% block scripts %}
+    <!-- Scripts específicos de la página van aquí -->
+    {% endblock %}
+</body>
+</html>

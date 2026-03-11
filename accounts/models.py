@@ -1,8 +1,12 @@
+import re
 from decimal import Decimal
 
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+
+
+PHONE_PATTERN = re.compile(r'^[0-9+()\-\s]{7,20}$')
 
 
 class UserManager(BaseUserManager):
@@ -75,4 +79,19 @@ class User(AbstractBaseUser):
 
     def clean(self):
         from django.core.exceptions import ValidationError
+
         self.email = self.__class__.objects.normalize_email(self.email)
+        self.first_name = (self.first_name or '').strip()
+        self.last_name = (self.last_name or '').strip()
+        self.phone = (self.phone or '').strip()
+
+        errors = {}
+
+        if self.phone and not PHONE_PATTERN.match(self.phone):
+            errors['phone'] = _('Enter a valid phone number.')
+
+        if self.is_admin and not self.is_active:
+            errors['is_active'] = _('Admin users must be active.')
+
+        if errors:
+            raise ValidationError(errors)
