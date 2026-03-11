@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
+from django.utils.translation import gettext as _
 
 User = get_user_model()
 
@@ -38,7 +39,7 @@ class UserRegistrationTest(TestCase):
         self.assertFormError(
             response.context['form'],
             'email',
-            'A user with this email already exists.',
+            _('A user with this email already exists.'),
         )
 
     def test_registration_password_mismatch(self):
