@@ -70,6 +70,9 @@ class UserLoginForm(forms.Form):
         cleaned_data = super().clean()
         email = cleaned_data.get('email')
         password = cleaned_data.get('password')
+        if email:
+            email = User.objects.normalize_email(email)
+            self.cleaned_data['email'] = email
         if email and password:
             self._user = authenticate(
                 self.request, username=email, password=password
