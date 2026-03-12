@@ -1,5 +1,7 @@
 from django import forms
 from django.contrib.auth import authenticate
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
 from .models import User
@@ -42,6 +44,11 @@ class UserRegistrationForm(forms.ModelForm):
         password_confirm = cleaned_data.get('password_confirm')
         if password and password_confirm and password != password_confirm:
             raise forms.ValidationError(_('Passwords do not match.'))
+        if password:
+            try:
+                validate_password(password, user=self.instance)
+            except ValidationError as e:
+                self.add_error('password', e)
         return cleaned_data
 
     def save(self, commit=True):

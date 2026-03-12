@@ -54,8 +54,9 @@ def login_view(request):
 @require_POST
 def logout_view(request):
     """Handle user logout via POST."""
-    logout(request)
-    messages.success(request, _('You have been logged out.'))
+    if request.user.is_authenticated:
+        logout(request)
+        messages.success(request, _('You have been logged out.'))
     return redirect('pages:home')
 
 
