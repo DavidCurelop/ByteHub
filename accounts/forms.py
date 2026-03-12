@@ -45,8 +45,13 @@ class UserRegistrationForm(forms.ModelForm):
         if password and password_confirm and password != password_confirm:
             raise forms.ValidationError(_('Passwords do not match.'))
         if password:
+            user_for_validation = User(
+                email=cleaned_data.get('email', ''),
+                first_name=cleaned_data.get('first_name', ''),
+                last_name=cleaned_data.get('last_name', ''),
+            )
             try:
-                validate_password(password, user=self.instance)
+                validate_password(password, user=user_for_validation)
             except ValidationError as e:
                 self.add_error('password', e)
         return cleaned_data
