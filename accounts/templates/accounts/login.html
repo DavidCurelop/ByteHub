@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Login" %} – ByteHub{% endblock %}
+
+{% block content %}
+<div class="auth-card">
+    <h1 class="auth-title">{% trans "Login" %}</h1>
+
+    <form method="post" novalidate>
+        {% csrf_token %}
+        {% for field in form %}
+            <div class="form-group">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                    <ul class="field-errors">
+                        {% for error in field.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+        {% endfor %}
+        {% if form.non_field_errors %}
+            <ul class="field-errors">
+                {% for error in form.non_field_errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+        <button type="submit" class="btn-primary">{% trans "Login" %}</button>
+    </form>
+
+    <p class="auth-link">
+        {% trans "Don't have an account?" %}
+        <a href="{% url 'accounts:register' %}">{% trans "Register" %}</a>
+    </p>
+</div>
+{% endblock %}

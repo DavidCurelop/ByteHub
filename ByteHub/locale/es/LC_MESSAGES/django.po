@@ -50,3 +50,60 @@ msgstr "Sin descripción disponible."
 
 msgid "There are no categories yet."
 msgstr "No hay categorías registradas todavía."
+
+msgid "Register"
+msgstr "Registrarse"
+
+msgid "Login"
+msgstr "Iniciar sesión"
+
+msgid "Logout"
+msgstr "Cerrar sesión"
+
+msgid "Profile"
+msgstr "Perfil"
+
+msgid "Email"
+msgstr "Correo electrónico"
+
+msgid "Password"
+msgstr "Contraseña"
+
+msgid "Confirm Password"
+msgstr "Confirmar contraseña"
+
+msgid "First Name"
+msgstr "Nombre"
+
+msgid "Last Name"
+msgstr "Apellido"
+
+msgid "Phone"
+msgstr "Teléfono"
+
+msgid "Welcome,"
+msgstr "Bienvenido/a,"
+
+msgid "Your account information"
+msgstr "Información de tu cuenta"
+
+msgid "Don't have an account?"
+msgstr "¿No tienes una cuenta?"
+
+msgid "Already have an account?"
+msgstr "¿Ya tienes una cuenta?"
+
+msgid "Invalid email or password."
+msgstr "Correo o contraseña incorrectos."
+
+msgid "Passwords do not match."
+msgstr "Las contraseñas no coinciden."
+
+msgid "A user with this email already exists."
+msgstr "Ya existe un usuario con este correo."
+
+msgid "Registration successful. Please log in."
+msgstr "Registro exitoso. Por favor, inicia sesión."
+
+msgid "You have been logged out."
+msgstr "Has cerrado sesión."
