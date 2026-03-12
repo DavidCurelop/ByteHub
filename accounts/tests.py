@@ -91,6 +91,26 @@ class UserLoginTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertFalse(response.wsgi_request.user.is_authenticated)
 
+    def test_login_next_safe_redirects(self):
+        """A same-host next URL is honoured after login."""
+        safe_next = reverse('pages:home')
+        login_url = f"{reverse('accounts:login')}?next={safe_next}"
+        response = self.client.post(login_url, {
+            'email': 'test@example.com',
+            'password': 'CorrectPass1',
+        })
+        self.assertRedirects(response, safe_next)
+
+    def test_login_next_unsafe_redirects_to_profile(self):
+        """An external next URL is rejected and falls back to the profile."""
+        unsafe_next = 'https://evil.com/steal'
+        login_url = f"{reverse('accounts:login')}?next={unsafe_next}"
+        response = self.client.post(login_url, {
+            'email': 'test@example.com',
+            'password': 'CorrectPass1',
+        })
+        self.assertRedirects(response, reverse('accounts:profile'))
+
 
 class UserLogoutTest(TestCase):
     """Tests for HU-03: User Logout."""
