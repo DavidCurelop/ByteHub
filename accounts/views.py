@@ -40,7 +40,7 @@ def login_view(request):
             next_url = request.GET.get('next', '')
             safe_next = url_has_allowed_host_and_scheme(
                 next_url,
-                allowed_hosts=request.get_host(),
+                allowed_hosts={request.get_host()},
                 require_https=request.is_secure(),
             )
             return redirect(next_url if safe_next else 'accounts:profile')
