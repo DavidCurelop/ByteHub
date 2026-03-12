@@ -24,6 +24,12 @@ class UserManager(BaseUserManager):
     def create_superuser(self, email, password=None, **extra_fields):
         extra_fields.setdefault('is_admin', True)
         extra_fields.setdefault('is_active', True)
+
+        if extra_fields.get('is_admin') is not True:
+            raise ValueError(_('Superuser must have is_admin=True.'))
+
+        if extra_fields.get('is_active') is not True:
+            raise ValueError(_('Superuser must have is_active=True.'))
         return self.create_user(email, password, **extra_fields)
 
     def get_all_admins(self):
