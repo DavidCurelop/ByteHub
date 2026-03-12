@@ -45,8 +45,7 @@ class UserManager(BaseUserManager):
     def get_all_admins(self):
         return self.filter(is_admin=True)
 
-    def get_active_clients_with_orders(self):
-        # Will be refined with order filtering once the Order model is available.
+    def get_active_clients(self):
         return self.filter(is_active=True, is_admin=False)
 
 
