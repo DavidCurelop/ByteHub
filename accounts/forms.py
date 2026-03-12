@@ -29,7 +29,8 @@ class UserRegistrationForm(forms.ModelForm):
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
-        if User.objects.filter(email=email).exists():
+        email = User.objects.normalize_email(email)
+        if User.objects.filter(email__iexact=email).exists():
             raise forms.ValidationError(
                 _('A user with this email already exists.')
             )

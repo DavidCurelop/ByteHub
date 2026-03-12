@@ -1,7 +1,11 @@
 import re
 from decimal import Decimal
 
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.contrib.auth.models import (
+    AbstractBaseUser,
+    BaseUserManager,
+    PermissionsMixin,
+)
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
@@ -24,12 +28,18 @@ class UserManager(BaseUserManager):
     def create_superuser(self, email, password=None, **extra_fields):
         extra_fields.setdefault('is_admin', True)
         extra_fields.setdefault('is_active', True)
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
 
         if extra_fields.get('is_admin') is not True:
             raise ValueError(_('Superuser must have is_admin=True.'))
-
+        if extra_fields.get('is_staff') is not True:
+            raise ValueError(_('Superuser must have is_staff=True.'))
+        if extra_fields.get('is_superuser') is not True:
+            raise ValueError(_('Superuser must have is_superuser=True.'))
         if extra_fields.get('is_active') is not True:
             raise ValueError(_('Superuser must have is_active=True.'))
+
         return self.create_user(email, password, **extra_fields)
 
     def get_all_admins(self):
@@ -40,7 +50,7 @@ class UserManager(BaseUserManager):
         return self.filter(is_active=True, is_admin=False)
 
 
-class User(AbstractBaseUser):
+class User(AbstractBaseUser, PermissionsMixin):
     """Custom user model using email as the unique identifier."""
 
     email = models.EmailField(_('email'), unique=True)
@@ -48,6 +58,7 @@ class User(AbstractBaseUser):
     last_name = models.CharField(_('last name'), max_length=150)
     phone = models.CharField(_('phone'), max_length=20, blank=True)
     is_admin = models.BooleanField(_('admin status'), default=False)
+    is_staff = models.BooleanField(_('staff status'), default=False)
     is_active = models.BooleanField(_('active'), default=True)
     created_at = models.DateTimeField(_('date joined'), auto_now_add=True)
 
@@ -71,17 +82,6 @@ class User(AbstractBaseUser):
 
     def get_client_lifetime_value(self):
         return Decimal('0.00')
-
-    # Required by Django admin
-    def has_perm(self, perm, obj=None):
-        return self.is_admin
-
-    def has_module_perms(self, app_label):
-        return self.is_admin
-
-    @property
-    def is_staff(self):
-        return self.is_admin
 
     def clean(self):
         from django.core.exceptions import ValidationError

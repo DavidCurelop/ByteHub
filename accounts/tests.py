@@ -42,6 +42,27 @@ class UserRegistrationTest(TestCase):
             _('A user with this email already exists.'),
         )
 
+    def test_registration_duplicate_email_case_insensitive(self):
+        User.objects.create_user(
+            email='existing@example.com',
+            password='pass',
+            first_name='A',
+            last_name='B',
+        )
+        response = self.client.post(reverse('accounts:register'), {
+            'email': 'EXISTING@EXAMPLE.COM',
+            'first_name': 'C',
+            'last_name': 'D',
+            'password': 'StrongPass123',
+            'password_confirm': 'StrongPass123',
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertFormError(
+            response.context['form'],
+            'email',
+            _('A user with this email already exists.'),
+        )
+
     def test_registration_password_mismatch(self):
         response = self.client.post(reverse('accounts:register'), {
             'email': 'mismatch@example.com',
@@ -128,6 +149,11 @@ class UserLogoutTest(TestCase):
         response = self.client.post(reverse('accounts:logout'))
         self.assertRedirects(response, reverse('pages:home'))
         self.assertFalse(response.wsgi_request.user.is_authenticated)
+
+    def test_logout_get_returns_405(self):
+        """GET request to logout_view must be rejected (require_POST)."""
+        response = self.client.get(reverse('accounts:logout'))
+        self.assertEqual(response.status_code, 405)
 
 
 class UserProfileTest(TestCase):

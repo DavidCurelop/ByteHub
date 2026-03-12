@@ -2,6 +2,7 @@ from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
+from django.views.decorators.http import require_POST
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.utils.translation import gettext_lazy as _
 
@@ -50,11 +51,11 @@ def login_view(request):
     return render(request, 'accounts/login.html', {'form': form})
 
 
+@require_POST
 def logout_view(request):
     """Handle user logout via POST."""
-    if request.method == 'POST':
-        logout(request)
-        messages.success(request, _('You have been logged out.'))
+    logout(request)
+    messages.success(request, _('You have been logged out.'))
     return redirect('pages:home')
 
 
