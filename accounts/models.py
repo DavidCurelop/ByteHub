@@ -7,6 +7,8 @@ from django.contrib.auth.models import (
     PermissionsMixin,
 )
 from django.db import models
+from django.db.models import UniqueConstraint
+from django.db.models.functions import Lower
 from django.utils.translation import gettext_lazy as _
 
 
@@ -69,6 +71,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     class Meta:
         verbose_name = _('user')
         verbose_name_plural = _('users')
+        constraints = [
+            UniqueConstraint(Lower('email'), name='accounts_user_email_ci_uniq'),
+        ]
 
     def __str__(self):
         return self.email
