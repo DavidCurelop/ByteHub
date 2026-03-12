@@ -11,12 +11,21 @@ class UserAdmin(BaseUserAdmin):
     list_filter = ['is_admin', 'is_active']
     search_fields = ['email', 'first_name', 'last_name']
     ordering = ['email']
-    filter_horizontal = ()
+    filter_horizontal = ('groups', 'user_permissions')
 
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
         (_('Personal info'), {'fields': ('first_name', 'last_name', 'phone')}),
-        (_('Permissions'), {'fields': ('is_admin', 'is_active')}),
+        (_('Permissions'), {
+            'fields': (
+                'is_admin',
+                'is_active',
+                'is_staff',
+                'is_superuser',
+                'groups',
+                'user_permissions',
+            ),
+        }),
         (_('Important dates'), {'fields': ('created_at',)}),
     )
     add_fieldsets = (
