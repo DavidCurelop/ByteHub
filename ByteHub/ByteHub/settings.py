@@ -137,3 +137,10 @@ AUTH_USER_MODEL = 'accounts.User'
 LOGIN_URL = '/accounts/login/'
 LOGIN_REDIRECT_URL = '/accounts/profile/'
 LOGOUT_REDIRECT_URL = '/'
+
+# Email settings (development)
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+DEFAULT_FROM_EMAIL = 'noreply@bytehub.local'
+
+# Password reset token lifetime (24 hours)
+PASSWORD_RESET_TIMEOUT = 60 * 60 * 24
