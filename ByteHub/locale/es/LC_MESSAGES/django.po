@@ -107,3 +107,54 @@ msgstr "Registro exitoso. Por favor, inicia sesión."
 
 msgid "You have been logged out."
 msgstr "Has cerrado sesión."
+
+msgid "Forgot your password?"
+msgstr "¿Olvidaste tu contraseña?"
+
+msgid "Reset Password"
+msgstr "Restablecer contraseña"
+
+msgid "Reset your password"
+msgstr "Restablece tu contraseña"
+
+msgid "Enter your email address and we will send you a reset link."
+msgstr "Ingresa tu correo y te enviaremos un enlace para restablecerla."
+
+msgid "Send reset link"
+msgstr "Enviar enlace de restablecimiento"
+
+msgid "Back to login"
+msgstr "Volver a iniciar sesión"
+
+msgid "Set New Password"
+msgstr "Definir nueva contraseña"
+
+msgid "Set a new password"
+msgstr "Define una nueva contraseña"
+
+msgid "Update password"
+msgstr "Actualizar contraseña"
+
+msgid "This reset link is invalid or has expired. Please request a new one."
+msgstr "Este enlace es inválido o expiró. Solicita uno nuevo."
+
+msgid "Request a new reset link"
+msgstr "Solicitar un nuevo enlace"
+
+msgid "You requested a password reset for your ByteHub account."
+msgstr "Solicitaste restablecer la contraseña de tu cuenta de ByteHub."
+
+msgid "Use the following link to set a new password:"
+msgstr "Usa el siguiente enlace para definir una nueva contraseña:"
+
+msgid "If you did not request this, you can safely ignore this email."
+msgstr "Si no solicitaste esto, puedes ignorar este correo de forma segura."
+
+msgid "ByteHub password reset"
+msgstr "Restablecimiento de contraseña de ByteHub"
+
+msgid "If an account exists for that email, we sent a password reset link."
+msgstr "Si existe una cuenta con ese correo, enviamos un enlace para restablecer la contraseña."
+
+msgid "Your password has been updated. Please log in."
+msgstr "Tu contraseña fue actualizada. Inicia sesión."
