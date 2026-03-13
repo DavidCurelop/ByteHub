@@ -8,13 +8,14 @@ from django.urls import reverse_lazy
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.utils.translation import gettext_lazy as _
 
-from .forms import UserLoginForm, UserRegistrationForm
+from .forms import SafePasswordResetForm, UserLoginForm, UserRegistrationForm
 
 
 class UserPasswordResetView(PasswordResetView):
     """Send reset link and always show a neutral message."""
 
     template_name = 'auth/password_reset.html'
+    form_class = SafePasswordResetForm
     email_template_name = 'auth/password_reset_email.html'
     subject_template_name = 'auth/password_reset_subject.txt'
     success_url = reverse_lazy('accounts:login')
@@ -36,6 +37,8 @@ class UserPasswordResetConfirmView(PasswordResetConfirmView):
 
     template_name = 'auth/password_reset_confirm.html'
     success_url = reverse_lazy('accounts:login')
+    post_reset_login = False
+    reset_url_token = 'set-password'
 
     def form_valid(self, form):
         response = super().form_valid(form)
