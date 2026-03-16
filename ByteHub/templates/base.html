@@ -319,6 +319,7 @@
             <nav>
                 <ul>
                     <li><a class="nav-link active" href="{% url 'pages:home' %}">{% trans "Home" %}</a></li>
+                    <li><a href="{% url 'store:product-list' %}">{% trans "Products" %}</a></li>
                     {% if user.is_authenticated %}
                     <li><a href="{% url 'accounts:profile' %}">{% trans "Profile" %}</a></li>
                     <li>

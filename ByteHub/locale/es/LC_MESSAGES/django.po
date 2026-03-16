@@ -107,3 +107,18 @@ msgstr "Registro exitoso. Por favor, inicia sesión."
 
 msgid "You have been logged out."
 msgstr "Has cerrado sesión."
+
+msgid "Products"
+msgstr "Productos"
+
+msgid "No image"
+msgstr "Sin imagen"
+
+msgid "There are no products available at the moment."
+msgstr "No hay productos disponibles en este momento."
+
+msgid "Price must be greater than zero."
+msgstr "El precio debe ser mayor que cero."
+
+msgid "Stock cannot be negative."
+msgstr "El stock no puede ser negativo."
