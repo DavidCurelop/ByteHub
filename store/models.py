@@ -9,7 +9,7 @@ from pages.models import Category
 class ProductManager(models.Manager):
     """Custom manager with reusable product queries."""
 
-    def get_active_products_with_reviews(self):
+    def get_active_products(self):
         return (
             self.filter(is_available=True)
             .select_related('category')
