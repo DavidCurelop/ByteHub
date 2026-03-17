@@ -1,6 +1,7 @@
 from decimal import Decimal
 
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
@@ -71,6 +72,13 @@ class Product(models.Model):
         ordering = ['-created_at']
         verbose_name = _('product')
         verbose_name_plural = _('products')
+
+    def clean(self):
+        super().clean()
+        if self.price is not None and self.price <= 0:
+            raise ValidationError(
+                {'price': _("Price must be greater than zero.")}
+            )
 
     def __str__(self):
         return self.name
