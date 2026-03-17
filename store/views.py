@@ -1,6 +1,7 @@
 from django.shortcuts import render
 
-from .models import Product, Category
+from .models import Product
+from pages.models import Category
 
 
 def product_list(request):
