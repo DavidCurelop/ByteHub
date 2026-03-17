@@ -13,28 +13,9 @@ jobs:
     if: github.event.review.user.login == 'Copilot'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.pull_request.head.ref }}
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: Install dependencies
-        run: npm install @octokit/rest
-
-      - name: Apply all suggestions
-        id: apply
-        run: node .github/workflows/scripts/apply-suggestions.js
+      - name: Ask Copilot to apply its own review
+        run: |
+          gh pr comment ${{ github.event.pull_request.number }} \
+            --body "@copilot open a new pull request to apply changes based on the comments in this review"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-          REPO: ${{ github.repository }}
-
-      - name: Commit applied suggestions
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: "fix: apply Copilot review suggestions"
-          commit_author: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
