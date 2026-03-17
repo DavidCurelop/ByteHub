@@ -318,8 +318,8 @@
             </a>
             <nav>
                 <ul>
-                    <li><a class="nav-link active" href="{% url 'pages:home' %}">{% trans "Home" %}</a></li>
-                    <li><a href="{% url 'store:product-list' %}">{% trans "Products" %}</a></li>
+                    <li><a class="nav-link {% if request.resolver_match.view_name == 'pages:home' %}active{% endif %}" href="{% url 'pages:home' %}">{% trans "Home" %}</a></li>
+                    <li><a class="nav-link {% if request.resolver_match.view_name == 'store:product-list' %}active{% endif %}" href="{% url 'store:product-list' %}">{% trans "Products" %}</a></li>
                     {% if user.is_authenticated %}
                     <li><a href="{% url 'accounts:profile' %}">{% trans "Profile" %}</a></li>
                     <li>
