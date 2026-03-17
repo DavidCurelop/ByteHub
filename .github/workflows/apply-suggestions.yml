@@ -16,6 +16,7 @@ jobs:
       - name: Ask Copilot to apply its own review
         run: |
           gh pr comment ${{ github.event.pull_request.number }} \
+            --repo ${{ github.repository }}
             --body "@copilot open a new pull request to apply changes based on the comments in this review"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
