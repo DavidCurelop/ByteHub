@@ -27,7 +27,7 @@ class ProductManager(models.Manager):
     def get_products_managed_by(self, admin_id):
         return (
             self.filter(created_by_id=admin_id)
-            .select_related('category')
+            .select_related('category', 'created_by')
         )
 
 
@@ -73,6 +73,7 @@ class Product(models.Model):
         return self.name
 
     def clean(self):
+        super().clean()
         errors = {}
 
         if self.price is not None and self.price <= 0:

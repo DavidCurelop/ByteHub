@@ -11,3 +11,4 @@ class ProductAdmin(admin.ModelAdmin):
     list_filter = ('is_available', 'category')
     search_fields = ('name', 'brand')
     prepopulated_fields = {'slug': ('name',)}
+    readonly_fields = ['created_at']
