@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'pages.apps.PagesConfig',
     'accounts.apps.AccountsConfig',
+    'store.apps.StoreConfig',
 ]
 
 MIDDLEWARE = [
@@ -66,6 +67,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'pages.context_processors.active_categories',
             ],
         },
     },
@@ -132,6 +134,8 @@ STATIC_URL = 'static/'
 
 # Custom user model
 AUTH_USER_MODEL = 'accounts.User'
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Auth redirects
 LOGIN_URL = '/accounts/login/'

@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% load i18n l10n %}
+
+{% block title %}{% trans "Products" %} | ByteHub{% endblock %}
+
+{% block content %}
+<section>
+    <h1 style="margin-bottom: 1.5rem;">{% trans "Products" %}</h1>
+
+    {% if products %}
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1.5rem;">
+        {% for product in products %}
+        <article style="background: #fff; border: 1px solid #cfd8dc; border-radius: 8px; overflow: hidden; display: flex; flex-direction: column;">
+            {% if product.image %}
+            <img src="{{ product.image }}" alt="{{ product.name }}"
+                 style="width: 100%; height: 200px; object-fit: cover;">
+            {% else %}
+            <div style="width: 100%; height: 200px; background: #cfd8dc; display: flex; align-items: center; justify-content: center; color: #4a5a66;">
+                {% trans "No image" %}
+            </div>
+            {% endif %}
+            <div style="padding: 1rem; flex: 1; display: flex; flex-direction: column;">
+                <h2 style="font-size: 1.1rem; margin-bottom: 0.4rem;">{{ product.name }}</h2>
+                <span style="display: inline-block; background: #0A2A43; color: #00C2CB; padding: 0.2rem 0.6rem; border-radius: 4px; font-size: 0.8rem; margin-bottom: 0.6rem; width: fit-content;">
+                    {{ product.category.name }}
+                </span>
+                <p style="font-size: 1.25rem; font-weight: 700; color: #0A2A43; margin-top: auto;">
+                    ${{ product.price|localize }}
+                </p>
+            </div>
+        </article>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p>{% trans "There are no products available at the moment." %}</p>
+    {% endif %}
+</section>
+{% endblock %}
