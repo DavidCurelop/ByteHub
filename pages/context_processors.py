@@ -7,7 +7,12 @@ def active_categories(request):
     categories = cache.get_or_set(
         "active_categories",
         lambda: list(
-            Category.objects.filter(is_active=True).only("id", "name", "slug")
+            Category.objects.filter(is_active=True).only(
+                "id",
+                "name",
+                "slug",
+                "description",
+            )
         ),
         60,
     )
