@@ -58,8 +58,11 @@ class ProductListViewTest(TestCase):
         self.assertNotIn(self.unavailable_product, products)
 
     def test_product_list_category_is_select_related(self):
-        with self.assertNumQueries(2):
-            response = self.client.get(reverse('store:product-list'))
-            products = response.context['products']
+        response = self.client.get(reverse('store:product-list'))
+        products = list(response.context['products'])
+
+        # Assert that accessing the related category does not trigger
+        # additional queries, meaning the relation is select_related.
+        with self.assertNumQueries(0):
             for product in products:
                 _ = product.category.name
