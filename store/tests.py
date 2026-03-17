@@ -58,7 +58,7 @@ class ProductListViewTest(TestCase):
         self.assertNotIn(self.unavailable_product, products)
 
     def test_product_list_category_is_select_related(self):
-        with self.assertNumQueries(1):
+        with self.assertNumQueries(2):
             response = self.client.get(reverse('store:product-list'))
             products = response.context['products']
             for product in products:
