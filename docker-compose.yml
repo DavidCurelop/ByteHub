@@ -1,4 +1,4 @@
-services:
+﻿services:
   postgres:
     image: postgres:16-alpine
     container_name: bytehub_postgres
@@ -12,10 +12,34 @@ services:
     volumes:
       - bytehub_postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-bytehub_user}"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-bytehub_user} -d ${POSTGRES_DB:-bytehub}"]
       interval: 10s
       timeout: 5s
       retries: 5
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: bytehub_web
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      USE_POSTGRES: "true"
+      POSTGRES_DB: ${POSTGRES_DB:-bytehub}
+      POSTGRES_USER: ${POSTGRES_USER:-bytehub_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-bytehub_password}
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: "5432"
+      POSTGRES_CONN_MAX_AGE: "60"
+    ports:
+      - "8000:8000"
+    working_dir: /app/ByteHub
+    command: >
+      sh -c "python manage.py migrate &&
+      python manage.py runserver 0.0.0.0:8000"
 
 volumes:
   bytehub_postgres_data:

@@ -96,7 +96,7 @@ if USE_POSTGRES:
             'USER': os.getenv('POSTGRES_USER', 'bytehub_user'),
             'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'bytehub_password'),
             'HOST': os.getenv('POSTGRES_HOST', '127.0.0.1'),
-            'PORT': os.getenv('POSTGRES_PORT', '5432'),
+            'PORT': os.getenv('POSTGRES_PORT', '5433'),
             'CONN_MAX_AGE': int(os.getenv('POSTGRES_CONN_MAX_AGE', '60')),
         }
     }
