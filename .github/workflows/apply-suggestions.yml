@@ -27,7 +27,7 @@ jobs:
 
       - name: Apply all suggestions
         id: apply
-        run: node .github/scripts/apply-suggestions.js
+        run: node .github/workflows/scripts/apply-suggestions.js
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
