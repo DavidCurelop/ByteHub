@@ -39,7 +39,7 @@ py -m venv ByteHubEnv
 ## 3. Install Python Dependencies
 
 ```powershell
-pip install django psycopg[binary] python-dotenv
+pip install -r requirements.txt
 ```
 
 ## 4. Configure Environment Variables
@@ -47,10 +47,12 @@ pip install django psycopg[binary] python-dotenv
 Create `.env` at repository root using `.env.example` as base:
 
 ```dotenv
+DJANGO_SECRET_KEY=change_me_to_a_long_random_secret
+DEBUG=true
 USE_POSTGRES=true
 POSTGRES_DB=bytehub
 POSTGRES_USER=bytehub_user
-POSTGRES_PASSWORD=bytehub_password
+POSTGRES_PASSWORD=change_me
 POSTGRES_HOST=127.0.0.1
 POSTGRES_PORT=5433
 POSTGRES_CONN_MAX_AGE=60
@@ -80,7 +82,10 @@ py manage.py migrate
 
 ## 7. (Optional) Load Seeded Data
 
-A fixture file is included at `ByteHub/data_migration.json`.
+A fixture file is included at `ByteHub/data_migration.json` for **development only**.
+It seeds categories, sample users (all `@example.com`), and products.
+The admin seed account (`admin@bytehub.com`) is a superuser — **do not load this
+fixture in production or shared environments**.
 
 From Django root (`ByteHub/`):
 
