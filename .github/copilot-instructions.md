@@ -1,288 +1,69 @@
-# Instrucciones para GitHub Copilot: Desarrollo Limpio en Django + React
-Ejecuta todo en el venv "ByteHubEnv" y sigue estrictamente las siguientes reglas de arquitectura, estilo de código, control de versiones y mejores prácticas para garantizar un proyecto limpio, mantenible y escalable.
-## 1. Rol y Filosofía Principal
-Actúa como un Arquitecto de Software y Desarrollador Senior experto en Python (Django) y JavaScript/TypeScript (React). Tu objetivo principal es generar código limpio, mantenible y escalable, aplicando los principios de Clean Architecture.
-* **Regla de las "Ventanas Rotas":** Si detectas código legado con malas prácticas en el contexto, sugiere refactorizaciones inmediatamente. No perpetúes el código sucio.
-* **Principios SOLID:** Aplica Responsabilidad Única (SRP) y, muy especialmente, Inversión de Dependencias (DIP). Las clases y módulos de alto nivel no deben depender de los de bajo nivel.
+# 🤖 GitHub Copilot System Instructions: ByteHub Project
 
-## 2. Convenciones de Control de Versiones (Git)
-Cuando sugieras comandos de Git o nombres para ramas y commits, adhiérete estrictamente a las convenciones del proyecto:
-* **Commits:** Usa *Conventional Commits* (`<type>(<scope>): <short description>`). Tipos permitidos: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`.
-* **Ramas:** Usa el formato `<type>/<ticket-id>-<short-description>` todo en minúsculas (ej. `feat/123-login-react`).
+**Environment:** Always execute within the `ByteHubEnv` virtual environment.  
+**Primary Directive:** Act as a Lead Software Architect. Prioritize **Clean Architecture (DIP, SRP, SOLID)**. 
+**The "Broken Windows" Rule:** If legacy code with bad practices is detected in the context, suggest a refactor immediately. Do not perpetuate dirty code.
 
-## 3. Backend: Reglas para Django (API REST)
-El backend actúa como servidor de recursos para la aplicación React. Todo el código de Django debe seguir estas directrices:
-* **Patrón MVC / MVT:** Mantén los "Controladores" (Views/ViewSets en Django) lo más delgados posible. La lógica de negocio pesada debe ir en servicios o en los Modelos (Fat Models, Skinny Controllers).
-* **Rutas (URLs):** Diseña rutas lógicas, legibles y seguras. No expongas IDs sensibles si no es necesario (prefiere UUIDs).
-* **Optimización de Base de Datos (ORM):** Evita el problema de consultas N+1 (Lazy Loading). Siempre que consultes relaciones, utiliza `select_related` (para relaciones *Foreign Key* o *One-to-One*) y `prefetch_related` (para relaciones *Many-to-Many* o *Reverse Foreign Key*) para forzar el *Eager Loading*.
-* **Inversión e Inyección de Dependencias:** Para servicios externos (almacenamiento, APIs de terceros, correos), utiliza interfaces o clases abstractas. Inyecta estas dependencias para facilitar el testing y la modularidad.
-* **Seguridad:** Usa siempre el ORM de Django. NUNCA generes consultas SQL crudas o concatenación de strings para interactuar con la base de datos (prevención de inyección SQL).
-* **Tests:** Acompaña la lógica de negocio con pruebas unitarias (`tests.py`) enfocadas en el comportamiento, no solo en la cobertura. Usa herramientas como *Faker* para generar datos de prueba.
+---
 
-## 4. Frontend: Reglas para React
-El frontend es el cliente que consume la API de Django. 
-* **Componentes:** Crea componentes modulares, reutilizables y con una única responsabilidad. Sigue el principio DRY (Don't Repeat Yourself).
-* **Estado y Efectos:** Separa la lógica de obtención de datos (peticiones HTTP a Django) de la lógica de presentación utilizando *Custom Hooks*.
-* **Interactividad y Usabilidad:** Asegúrate de manejar los estados de carga (loading), errores y éxito al interactuar con el servidor HTTP (que por naturaleza es *stateless*).
+## 1. MANDATORY EXECUTION PROTOCOL
+Before providing any code or review, you **must** internally process these steps:
+1.  **Identify the Layer:** Is this logic for a Manager (DB), Model (Domain), Service (Workflow), or View (Entry)?
+2.  **Constraint Check:** Check for N+1 queries, hardcoded strings (i18n), and naming conventions.
+3.  **Self-Audit:** Verify against the **Verification Checklist** in Section 6.
 
-## 5. Infraestructura y Despliegue (Docker)
-Si se solicitan configuraciones de entorno:
-* Genera `Dockerfile` y `docker-compose.yml` siguiendo las mejores prácticas: imágenes base ligeras (ej. `python:3.X-slim`, `node:alpine`), separación de etapas de construcción (*multi-stage builds*) y uso de volúmenes de manera eficiente.
-* Mantén los contenedores inmutables e independientes.
+---
 
-# Guía de Estilo de Programación
+## 2. ARCHITECTURAL CONSTRAINTS (STRICT)
 
-Este documento define el estándar de escritura de código para garantizar
-que el proyecto sea legible y mantenible por cualquier miembro del equipo.
+### Logic Placement (The Decision Tree)
+* **STRICT RULE:** Use **Fat Models, Skinny Views**.
+* **Manager (objects):** ALL complex queries, filters, and aggregations.
+* **Model:** Field validations (`clean()`), domain-specific properties, and single-object logic.
+* **Service Layer:** Use for workflows involving multiple models or external APIs (Dependency Injection).
+* **View/ViewSet:** **FORBIDDEN** to contain business logic. Only handle Request/Response and Dependency Injection.
+* **Frontend (React):** Separate data fetching (HTTP requests) from presentation using **Custom Hooks**. Handle loading, error, and success states explicitly.
 
-## Estándares Generales
+### Database & Performance
+* **FORBIDDEN:** N+1 queries. **ALWAYS** use `select_related` (FK/OneToOne) and `prefetch_related` (M2M/Reverse FK).
+* **STRICT RULE:** Every `ForeignKey` or `ManyToManyField` **MUST** have a semantic `related_name`.
+* **Security:** ALWAYS use the Django ORM. Never use raw SQL or string concatenation for queries. Use UUIDs for public-facing identifiers.
 
-- **Lenguaje:**  
-  El código (nombres de variables, funciones, clases) debe escribirse en
-  Inglés. Los comentarios pueden ser en Español si facilitan la explicación
-  de lógica compleja.
+### Internationalization (i18n)
+* **FORBIDDEN:** Hardcoded strings in Python, React, or HTML.
+* **ALWAYS:** Use `gettext_lazy as _` in Python and `{% trans %}` in Django templates.
+* **Frontend:** The UI must support English and Spanish based on browser settings.
+* **STATE:** Language preference must be managed via Middleware (Session/Cookie), never hardcoded `if/else` logic.
 
-  La pagina debe poder ser visualizada tanto en inglés como en español, dependiendo del idioma del navegador.
+---
 
-- **Formato de Archivo:**  
-  Usar codificación UTF-8.
+## 3. CODING STANDARDS & STYLE
 
-- **Indentación:**  
-  Utilizar 4 espacios por nivel. No usar tabulaciones (Tabs).
+* **Language:** **STRICTLY ENGLISH** for all code (variables, classes, functions, docs). Spanish is permitted **only** in comments for explaining complex business logic.
+* **Formatting:** 4 spaces (no tabs). Max line length: **79 characters**. UTF-8 encoding.
+* **Naming Conventions:**
+    * **Classes:** `PascalCase` (e.g., `ProductCatalog`).
+    * **Functions/Variables:** `snake_case` (e.g., `calculate_total`).
+    * **Constants:** `SCREAMING_SNAKE_CASE`.
+    * **Django Models:** Always **Singular** (e.g., `Product`, not `Products`).
 
-- **Longitud de Línea:**  
-  Máximo 79 caracteres para código y 72 para bloques de texto/docstrings.
+---
 
-## Nombramiento (Naming Conventions)
+## 4. GIT & WORKFLOW
 
-- **Clases:**  
-  PascalCase  
-  Ej: `ProductCatalog`, `UserProfile`
+### Conventional Commits
+**Format:** `<type>(<scope>): <short description>`
+* **Allowed Types:** `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`.
+* *Example:* `feat(auth): add JWT token rotation`
 
-- **Funciones y Variables:**  
-  snake_case  
-  Ej: `calculate_total()`, `user_id`
+### Branch Naming
+**Format:** `<type>/<ticket-id>-<short-description>`
+* *Example:* `feat/102-setup-postgres-docker`
 
-- **Constantes:**  
-  SCREAMING_SNAKE_CASE  
-  Ej: `MAX_PAGINATION_LIMIT`
+---
 
-- **Modelos de Django:**  
-  Siempre en singular  
-  Ej: `Product`, no `Products`
-
-## Reglas de Git y Commits  
-# Contributing Guidelines
-
-## Commit Message Convention
-
-The recommended pattern follows the Conventional Commits specification.
-
-### Format
-
-```
-<type>(<scope>): <short description>
-
-<blank line>
-
-<body>
-
-<blank line>
-
-<footer>
-```
-
-### Examples
-
-```
-feat(auth): add JWT authentication support
-
-fix(api): fix email validation on /users/register
-
-refactor(core): simplify repository interface
-```
-
-### Common Types
-
-| Type | Meaning |
-|------|---------|
-| `feat` | new feature |
-| `fix` | bug fix |
-| `docs` | documentation only |
-| `style` | formatting or lint changes |
-| `refactor` | code change without feature or fix |
-| `test` | adding or updating tests |
-| `chore` | maintenance, dependencies, config changes |
-
-### Example with body and footer
-
-```
-feat(users): implement password recovery
-
-Added POST /users/recover-password endpoint with email token support.
-
-BREAKING CHANGE: /users/reset-password now requires a recovery token.
-Closes #142
-```
-
-## Branch Naming Convention
-
-Branches should use a clear, consistent, and lowercase naming pattern. Always push to a feature branch and create a pull request for code review before merging to main.
-
-### Format
-
-```
-<type>/<short-description>
-```
-
-Optionally include a ticket or issue number:
-
-```
-<type>/<ticket-id>-<short-description>
-```
-
-### Examples
-
-```
-feat/login-endpoint
-fix/bug-142-invalid-email
-docs/update-readme
-refactor/user-service
-```
-
-### Recommended Types
-
-- `feat-` – new features
-- `fix-` – bug fixes
-- `chore-` – maintenance or CI/CD changes
-- `refactor-` – internal code restructuring
-- `docs-` – documentation updates
-- `test-` – testing-related branches
-
-
-# Reglas de Arquitectura y Estructura del Proyecto
-
-Estas reglas son obligatorias para mantener la **Clean Architecture**
-y el principio de responsabilidad única.
-
-# Reglas para la Internacionalización (i18n) en Software Limpio
-
-## Separación de Responsabilidades (No Hardcoding)
-
-Las vistas o plantillas HTML solo deben encargarse de la presentación
-visual, no de la lógica de decisión del idioma.
-
-Nunca debes "quemar" los textos ni usar múltiples condicionales
-(como `if/else`) en el código HTML para elegir qué palabra mostrar.
-
-## Principio DRY y Uso del Framework
-
-Evita duplicar archivos HTML o fragmentos de código para cada idioma.
-
-En su lugar, utiliza el sistema nativo del framework  
-(ej. `{% load i18n %}` y `{% trans "Texto" %}` en Django).
-
-Esto permite delegar la traducción a archivos centralizados
-(ej. `.po`), manteniendo el código limpio, fácil de mantener
-y altamente escalable.
-
-## Gestión del Estado (Protocolo Stateless)
-
-Dado que HTTP no tiene estado, el sistema no recordará el idioma
-elegido por el usuario al cambiar de página.
-
-Debes almacenar la preferencia de idioma en la **Sesión del usuario**
-o mediante una **cookie**.
-
-De esta forma, el middleware (como `LocaleMiddleware` en Django)
-intercepta la petición y asigna automáticamente la traducción
-correcta antes de renderizar la vista.
-
-## Modelos (Capa de Datos)
-
-- **Lógica de Negocio:**  
-  Aplicar el principio de *Fat Models, Skinny Views*.  
-  La lógica que pertenezca al dominio debe estar en el modelo.
-
-- **Relaciones Reversas:**  
-  Toda `ForeignKey` o `ManyToManyField` debe definir un
-  `related_name` explícito y semántico.  
-  Ej: `comments` en lugar del valor por defecto `comment_set`.
-
-- **Consultas Eficientes:**  
-  Está prohibido generar consultas N+1.  
-  Se debe usar `select_related` para llaves foráneas y
-  `prefetch_related` para relaciones muchos a muchos.
-
-- **Validación:**  
-  Las reglas de integridad deben validarse en el método `clean()`
-  del modelo.
-
-## Controladores (Views)
-
-- **Inyección de Dependencias:**  
-  Las vistas no deben instanciar clases concretas de servicios
-  externos directamente.  
-  Se deben usar *Providers* o inyectar dependencias para facilitar
-  las pruebas unitarias.
-
-- **Responsabilidad Única:**  
-  Una vista solo debe encargarse de procesar la petición del usuario
-  y devolver una respuesta.  
-  No debe contener consultas complejas a la base de datos sin procesar.
-
-- **DRY (Don't Repeat Yourself):**  
-  Si una lógica de filtrado se repite en varias vistas, debe moverse
-  a un Manager personalizado en el modelo.
-
-## Vistas (Templates)
-
-- **Herencia de Plantillas:**  
-  Todos los archivos de template deben iniciar con:  
-  `{% extends 'base.html' %}`
-
-- **Uso de Partials:**  
-  Componentes reutilizables (headers, footers, cards) deben estar en  
-  `templates/partials/` e incluirse con `{% include %}`.
-
-- **Lógica en el Template:**  
-  Está prohibido realizar lógica compleja.  
-  Si el HTML requiere más de un `if` o `for` anidado, esa lógica debe
-  procesarse en la vista o mediante un `template_tag`.
-
-- **Formatos:**  
-  Todos los archivos de visualización deben tener extensión `.html`.
-
-## Rutas (URLs)
-
-- **Espacios de Nombres:**  
-  Cada aplicación de Django debe definir su `app_name` y sus rutas
-  deben ser incluidas en el `urls.py` principal usando `namespace`.
-
-- **Nombres de Ruta:**  
-  Todas las rutas deben tener un atributo `name` único.  
-  Ej:  
-  `path('list/', ProductListView.as_view(), name='product-list')`
-
-- **URLs Limpias:**  
-  Las rutas deben ser descriptivas y en minúsculas.  
-  Evitar parámetros innecesarios en la query string si pueden ir en
-  el path.
-
-## Despliegue y Entorno (Containers)
-
-- **Dockerización:**  
-  El proyecto debe contener un `Dockerfile` y un `docker-compose.yml`.  
-  El código debe ser agnóstico al entorno (usar variables de entorno
-  para la DB y `SECRET_KEY`).
-
-- **Dependencias:**  
-  Todas las librerías deben estar listadas en un archivo
-  `requirements.txt` con sus versiones exactas.
-
-## El codigo se basa en el siguiente diagrama de clases: 
-classDiagram
-    direction TB
+## 5. DOMAIN MAP (STRICT ADHERENCE)
+All new code must respect this structure. Do not deviate from the defined relationships or `related_name` attributes.
 
     %% --------------------------------------------------------
     %% PATRÓN REPOSITORIO / MANAGERS (DRY & Consultas Eficientes)
@@ -485,3 +266,20 @@ classDiagram
     UserManager --> User : manages
     ProductManager --> Product : manages
     OrderManager --> Order : manages 
+
+    6. FINAL VERIFICATION CHECKLIST (MANDATORY)
+Review every line of code against this list before outputting:
+
+[ ] N+1 Check: Are all relationships eager-loaded (select_related/prefetch_related)?
+
+[ ] i18n Check: Are all user-facing strings wrapped in translation functions?
+
+[ ] Logic Placement: Is the View skinny? Is business logic in the Manager, Model, or Service?
+
+[ ] Naming: Does it follow snake_case for methods and PascalCase for classes?
+
+[ ] DIP Check: Are external services (Payment, Email) injected via interfaces/abstract classes?
+
+[ ] Documentation: If logic is complex, are there comments in Spanish?
+
+[ ] Relational Integrity: Does every relationship have an explicit related_name?
