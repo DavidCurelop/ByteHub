@@ -1,0 +1,388 @@
+[
+{
+  "model": "pages.category",
+  "pk": 1,
+  "fields": {
+    "name": "Electronics",
+    "slug": "electronics",
+    "description": "Consumer electronics",
+    "is_active": true
+  }
+},
+{
+  "model": "pages.category",
+  "pk": 2,
+  "fields": {
+    "name": "Laptops",
+    "slug": "laptops",
+    "description": "Notebooks and ultrabooks",
+    "is_active": true
+  }
+},
+{
+  "model": "pages.category",
+  "pk": 3,
+  "fields": {
+    "name": "Smartphones",
+    "slug": "smartphones",
+    "description": "Mobile phones",
+    "is_active": true
+  }
+},
+{
+  "model": "pages.category",
+  "pk": 4,
+  "fields": {
+    "name": "Accessories",
+    "slug": "accessories",
+    "description": "Cables, cases and peripherals",
+    "is_active": true
+  }
+},
+{
+  "model": "pages.category",
+  "pk": 5,
+  "fields": {
+    "name": "Gaming",
+    "slug": "gaming",
+    "description": "Consoles and gaming gear",
+    "is_active": true
+  }
+},
+{
+  "model": "accounts.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$f3CHlmnUoU5zpIQZDITBfz$7fu3tPdd/tb4zdKPtx4yIYU9kiInBNeQ1/HRMgWVCpg=",
+    "last_login": "2026-03-13T04:17:00.817Z",
+    "is_superuser": false,
+    "email": "davidcurelop7@gmail.com",
+    "first_name": "David",
+    "last_name": "Curelop",
+    "phone": "3143404847",
+    "is_admin": false,
+    "is_staff": false,
+    "is_active": true,
+    "created_at": "2026-03-11T20:12:31.071Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "accounts.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$fiUQr8NAAefH0i9WDAMSdw$2wKg01mlpUGgKdVA6R0kzSFJ0OEFT4U3+muMgzTAECw=",
+    "last_login": null,
+    "is_superuser": false,
+    "email": "reset-check@example.com",
+    "first_name": "Reset",
+    "last_name": "Check",
+    "phone": "",
+    "is_admin": false,
+    "is_staff": false,
+    "is_active": true,
+    "created_at": "2026-03-13T00:23:52.069Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "accounts.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$y7wiObSqeVvYbmOMbVPf0p$uZMsdOsme5YRsCDQpF1zw4ZG0iQf4PsGfnqlWBbcVy0=",
+    "last_login": null,
+    "is_superuser": false,
+    "email": "davidcurelop8@gmail.com",
+    "first_name": "David",
+    "last_name": "Curelop",
+    "phone": "3143404847",
+    "is_admin": false,
+    "is_staff": false,
+    "is_active": true,
+    "created_at": "2026-03-13T04:17:45.283Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "accounts.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$2LOY2ahiD6eCm1OjHv7trP$SvITsd/JrAHQ3QJY54tVny7XYSJjtcgjZ68KizRcKno=",
+    "last_login": null,
+    "is_superuser": true,
+    "email": "admin@bytehub.com",
+    "first_name": "Admin",
+    "last_name": "ByteHub",
+    "phone": "+57 300 0000000",
+    "is_admin": true,
+    "is_staff": true,
+    "is_active": true,
+    "created_at": "2026-03-17T02:53:28.498Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "accounts.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$TWJbRQnLULc7wqTNgaOfIM$r3cNvtFv6gYwp0tlYQtE5fM60JRKbHi6isijur6lVNU=",
+    "last_login": null,
+    "is_superuser": false,
+    "email": "john.doe@example.com",
+    "first_name": "John",
+    "last_name": "Doe",
+    "phone": "+57 311 1111111",
+    "is_admin": false,
+    "is_staff": false,
+    "is_active": true,
+    "created_at": "2026-03-17T02:53:29.005Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "accounts.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$q95pXwpmsvNXVX8BiIhI8o$hebz9w7kjVyrdw8GuNLeQO8JGT8bc0tuUxivBvwjqoQ=",
+    "last_login": null,
+    "is_superuser": false,
+    "email": "jane.smith@example.com",
+    "first_name": "Jane",
+    "last_name": "Smith",
+    "phone": "+57 322 2222222",
+    "is_admin": false,
+    "is_staff": false,
+    "is_active": true,
+    "created_at": "2026-03-17T02:53:29.481Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "store.product",
+  "pk": 1,
+  "fields": {
+    "name": "MacBook Pro 14\"",
+    "slug": "macbook-pro-14",
+    "description": "M3 chip, 16 GB RAM, 512 GB SSD",
+    "brand": "Apple",
+    "price": "2499.99",
+    "stock": 12,
+    "image": "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=600",
+    "is_available": true,
+    "category": 2,
+    "created_by": [
+      "admin@bytehub.com"
+    ],
+    "created_at": "2026-03-17T02:53:30.286Z"
+  }
+},
+{
+  "model": "store.product",
+  "pk": 2,
+  "fields": {
+    "name": "Dell XPS 15",
+    "slug": "dell-xps-15",
+    "description": "Intel Core i7, 16 GB RAM, 1 TB SSD",
+    "brand": "Dell",
+    "price": "1799.00",
+    "stock": 8,
+    "image": "https://images.unsplash.com/photo-1593642632559-0c6d3fc62b89?w=600",
+    "is_available": true,
+    "category": 2,
+    "created_by": [
+      "admin@bytehub.com"
+    ],
+    "created_at": "2026-03-17T02:53:30.336Z"
+  }
+},
+{
+  "model": "store.product",
+  "pk": 3,
+  "fields": {
+    "name": "iPhone 16 Pro",
+    "slug": "iphone-16-pro",
+    "description": "256 GB, Titanium, Triple camera system",
+    "brand": "Apple",
+    "price": "1199.00",
+    "stock": 25,
+    "image": "https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?w=600",
+    "is_available": true,
+    "category": 3,
+    "created_by": [
+      "admin@bytehub.com"
+    ],
+    "created_at": "2026-03-17T02:53:30.374Z"
+  }
+},
+{
+  "model": "store.product",
+  "pk": 4,
+  "fields": {
+    "name": "Samsung Galaxy S25",
+    "slug": "samsung-galaxy-s25",
+    "description": "12 GB RAM, 256 GB, Snapdragon 8 Elite",
+    "brand": "Samsung",
+    "price": "999.00",
+    "stock": 30,
+    "image": "https://images.unsplash.com/photo-1610945264803-c22b62831e6b?w=600",
+    "is_available": true,
+    "category": 3,
+    "created_by": [
+      "admin@bytehub.com"
+    ],
+    "created_at": "2026-03-17T02:53:30.404Z"
+  }
+},
+{
+  "model": "store.product",
+  "pk": 5,
+  "fields": {
+    "name": "Sony WH-1000XM5",
+    "slug": "sony-wh-1000xm5",
+    "description": "Wireless noise-cancelling headphones",
+    "brand": "Sony",
+    "price": "349.99",
+    "stock": 50,
+    "image": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600",
+    "is_available": true,
+    "category": 4,
+    "created_by": [
+      "admin@bytehub.com"
+    ],
+    "created_at": "2026-03-17T02:53:30.435Z"
+  }
+},
+{
+  "model": "store.product",
+  "pk": 6,
+  "fields": {
+    "name": "Logitech MX Master 3S",
+    "slug": "logitech-mx-master-3s",
+    "description": "Wireless ergonomic mouse, 8K DPI",
+    "brand": "Logitech",
+    "price": "99.99",
+    "stock": 40,
+    "image": "https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=600",
+    "is_available": true,
+    "category": 4,
+    "created_by": [
+      "admin@bytehub.com"
+    ],
+    "created_at": "2026-03-17T02:53:30.475Z"
+  }
+},
+{
+  "model": "store.product",
+  "pk": 7,
+  "fields": {
+    "name": "PlayStation 5",
+    "slug": "playstation-5",
+    "description": "Disc edition, 825 GB SSD, DualSense controller",
+    "brand": "Sony",
+    "price": "499.99",
+    "stock": 15,
+    "image": "https://images.unsplash.com/photo-1607853202273-797f1c22a38e?w=600",
+    "is_available": true,
+    "category": 5,
+    "created_by": [
+      "admin@bytehub.com"
+    ],
+    "created_at": "2026-03-17T02:53:30.537Z"
+  }
+},
+{
+  "model": "store.product",
+  "pk": 8,
+  "fields": {
+    "name": "Xbox Series X",
+    "slug": "xbox-series-x",
+    "description": "1 TB SSD, 4K gaming, Game Pass ready",
+    "brand": "Microsoft",
+    "price": "499.99",
+    "stock": 18,
+    "image": "https://images.unsplash.com/photo-1621259182978-fbf93132d53d?w=600",
+    "is_available": true,
+    "category": 5,
+    "created_by": [
+      "admin@bytehub.com"
+    ],
+    "created_at": "2026-03-17T02:53:30.595Z"
+  }
+},
+{
+  "model": "store.product",
+  "pk": 9,
+  "fields": {
+    "name": "Samsung 4K Monitor 27\"",
+    "slug": "samsung-4k-monitor-27",
+    "description": "4K UHD, 144 Hz, IPS panel",
+    "brand": "Samsung",
+    "price": "599.00",
+    "stock": 20,
+    "image": "https://images.unsplash.com/photo-1527443224154-c4a573d63b48?w=600",
+    "is_available": true,
+    "category": 1,
+    "created_by": [
+      "admin@bytehub.com"
+    ],
+    "created_at": "2026-03-17T02:53:30.637Z"
+  }
+},
+{
+  "model": "store.product",
+  "pk": 10,
+  "fields": {
+    "name": "Anker USB-C Hub 10-in-1",
+    "slug": "anker-usb-c-hub-10in1",
+    "description": "10-port USB-C hub with HDMI, PD 100W",
+    "brand": "Anker",
+    "price": "59.99",
+    "stock": 75,
+    "image": "https://images.unsplash.com/photo-1625242661855-32b4b8c6f3e5?w=600",
+    "is_available": true,
+    "category": 4,
+    "created_by": [
+      "admin@bytehub.com"
+    ],
+    "created_at": "2026-03-17T02:53:30.678Z"
+  }
+},
+{
+  "model": "store.product",
+  "pk": 11,
+  "fields": {
+    "name": "ASUS ROG Strix G16",
+    "slug": "asus-rog-strix-g16",
+    "description": "RTX 4070, Intel i9, 32 GB RAM, 1 TB SSD",
+    "brand": "ASUS",
+    "price": "1549.00",
+    "stock": 10,
+    "image": "https://images.unsplash.com/photo-1603302576837-37561b2e2302?w=600",
+    "is_available": true,
+    "category": 5,
+    "created_by": [
+      "admin@bytehub.com"
+    ],
+    "created_at": "2026-03-17T02:53:30.720Z"
+  }
+},
+{
+  "model": "store.product",
+  "pk": 12,
+  "fields": {
+    "name": "Apple AirPods Pro 2",
+    "slug": "apple-airpods-pro-2",
+    "description": "Active noise cancellation, MagSafe charging",
+    "brand": "Apple",
+    "price": "249.00",
+    "stock": 60,
+    "image": "https://images.unsplash.com/photo-1585386959984-a4155224a1ad?w=600",
+    "is_available": true,
+    "category": 4,
+    "created_by": [
+      "admin@bytehub.com"
+    ],
+    "created_at": "2026-03-17T02:53:30.762Z"
+  }
+}
+]
