@@ -11,15 +11,8 @@ class Migration(migrations.Migration):
         ('store', '0001_initial'),
     ]
 
-    operations = [
-        migrations.AlterField(
-            model_name='product',
-            name='price',
-            field=models.DecimalField(decimal_places=2, max_digits=10, validators=[django.core.validators.MinValueValidator(Decimal('0.01'))], verbose_name='price'),
-        ),
-        migrations.AlterField(
-            model_name='product',
-            name='stock',
-            field=models.PositiveIntegerField(default=0, verbose_name='stock'),
-        ),
-    ]
+    # This migration is intentionally left empty.
+    # The final definitions of Product.price and Product.stock are already
+    # represented in the initial migration for the store app. Keeping this
+    # as a no-op avoids redundant migration churn for a brand-new app.
+    operations = []
