@@ -9,17 +9,8 @@ permissions:
   pull-requests: write
 
 jobs:
-  debug:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Dump event info
-        run: |
-          echo "Reviewer login: ${{ github.event.review.user.login }}"
-          echo "Review state: ${{ github.event.review.state }}"
-          echo "PR number: ${{ github.event.pull_request.number }}"
-
   apply-suggestions:
-    needs: debug
+    if: github.event.review.user.login == 'Copilot'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
