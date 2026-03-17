@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   apply-suggestions:
-    if: contains(github.event.review.user.login, 'copilot')
+    if: github.event.review.user.login == 'Copilot'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
