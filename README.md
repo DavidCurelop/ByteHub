@@ -82,15 +82,14 @@ py manage.py migrate
 
 ## 7. (Optional) Load Seeded Data
 
-A fixture file is included at `ByteHub/data_migration.json` for **development only**.
+A fixture file is included at `ByteHub/dev_seed.json` for **development only**.
 It seeds categories, sample users (all `@example.com`), and products.
-The admin seed account (`admin@bytehub.com`) is a superuser — **do not load this
-fixture in production or shared environments**.
+No superuser is included — run `py manage.py createsuperuser` to create one.
 
 From Django root (`ByteHub/`):
 
 ```powershell
-py manage.py loaddata data_migration.json
+py manage.py loaddata dev_seed.json
 ```
 
 ## 8. Run Development Server
