@@ -25,7 +25,7 @@
                     {{ product.category.name }}
                 </span>
                 <p style="font-size: 1.25rem; font-weight: 700; color: #0A2A43; margin-top: auto;">
-                    ${{ product.price }}
+                    {% blocktrans with price=product.price %}${{ price }}{% endblocktrans %}
                 </p>
             </div>
         </article>

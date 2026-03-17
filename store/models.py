@@ -1,5 +1,7 @@
+from decimal import Decimal
+
 from django.conf import settings
-from django.core.exceptions import ValidationError
+from django.core.validators import MinValueValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
@@ -40,8 +42,9 @@ class Product(models.Model):
     brand = models.CharField(_('brand'), max_length=100, blank=True)
     price = models.DecimalField(
         _('price'), max_digits=10, decimal_places=2,
+        validators=[MinValueValidator(Decimal('0.01'))],
     )
-    stock = models.IntegerField(_('stock'), default=0)
+    stock = models.PositiveIntegerField(_('stock'), default=0)
     image = models.URLField(
         _('image'), max_length=500, blank=True,
     )
@@ -71,20 +74,3 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
-
-    def clean(self):
-        super().clean()
-        errors = {}
-
-        if self.price is not None and self.price <= 0:
-            errors['price'] = _(
-                'Price must be greater than zero.'
-            )
-
-        if self.stock is not None and self.stock < 0:
-            errors['stock'] = _(
-                'Stock cannot be negative.'
-            )
-
-        if errors:
-            raise ValidationError(errors)

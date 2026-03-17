@@ -9,7 +9,7 @@ from .models import Product
 User = get_user_model()
 
 
-class ProductListViewTest(TestCase):
+class ProductListTests(TestCase):
     """Tests for the public product listing page."""
 
     def setUp(self):
@@ -18,6 +18,7 @@ class ProductListViewTest(TestCase):
             password='StrongPass123',
             first_name='Admin',
             last_name='User',
+            is_admin=True,
         )
         self.category = Category.objects.create(
             name='Electronics',
