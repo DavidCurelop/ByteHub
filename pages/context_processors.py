@@ -1,6 +1,14 @@
+from django.core.cache import cache
 from .models import Category
 
 
 def active_categories(request):
     """Provide active categories to all templates."""
-    return {'categories': Category.objects.filter(is_active=True)}
+    categories = cache.get_or_set(
+        "active_categories",
+        lambda: list(
+            Category.objects.filter(is_active=True).only("id", "name", "slug")
+        ),
+        60,
+    )
+    return {"categories": categories}
