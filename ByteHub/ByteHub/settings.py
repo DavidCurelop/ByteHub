@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 import os
 import sys
 from pathlib import Path
+from django.core.exceptions import ImproperlyConfigured
 from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -26,11 +27,21 @@ load_dotenv(BASE_DIR / '.env')
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-89b7(ju90dygjvpzg!k%z^%xcd$f$(%ybq)m#wt*ht=)kj$-0o'
-
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 'true').lower() in {'1', 'true', 'yes'}
+
+# SECURITY WARNING: keep the secret key used in production secret!
+_secret_key = os.getenv('DJANGO_SECRET_KEY')
+if not _secret_key:
+    if not DEBUG:
+        raise ImproperlyConfigured(
+            'DJANGO_SECRET_KEY environment variable must be set '
+            'when DEBUG is false.'
+        )
+    _secret_key = (
+        'django-insecure-89b7(ju90dygjvpzg!k%z^%xcd$f$(%ybq)m#wt*ht=)kj$-0o'
+    )
+SECRET_KEY = _secret_key
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
@@ -89,12 +100,18 @@ USE_POSTGRES = os.getenv('USE_POSTGRES', 'false').lower() in {
 }
 
 if USE_POSTGRES:
+    _postgres_password = os.getenv('POSTGRES_PASSWORD')
+    if not _postgres_password:
+        raise ImproperlyConfigured(
+            'POSTGRES_PASSWORD environment variable must be set '
+            'when USE_POSTGRES is enabled.'
+        )
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
             'NAME': os.getenv('POSTGRES_DB', 'bytehub'),
             'USER': os.getenv('POSTGRES_USER', 'bytehub_user'),
-            'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'bytehub_password'),
+            'PASSWORD': _postgres_password,
             'HOST': os.getenv('POSTGRES_HOST', '127.0.0.1'),
             'PORT': os.getenv('POSTGRES_PORT', '5433'),
             'CONN_MAX_AGE': int(os.getenv('POSTGRES_CONN_MAX_AGE', '60')),
