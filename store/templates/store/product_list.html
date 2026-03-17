@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load i18n %}
+{% load i18n l10n %}
 
 {% block title %}{% trans "Products" %} | ByteHub{% endblock %}
 
@@ -25,7 +25,7 @@
                     {{ product.category.name }}
                 </span>
                 <p style="font-size: 1.25rem; font-weight: 700; color: #0A2A43; margin-top: auto;">
-                    {% blocktrans with price=product.price %}${{ price }}{% endblocktrans %}
+                    ${{ product.price|localize }}
                 </p>
             </div>
         </article>
