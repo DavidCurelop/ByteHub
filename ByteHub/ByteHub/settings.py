@@ -134,6 +134,8 @@ STATIC_URL = 'static/'
 # Custom user model
 AUTH_USER_MODEL = 'accounts.User'
 
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
 # Auth redirects
 LOGIN_URL = '/accounts/login/'
 LOGIN_REDIRECT_URL = '/accounts/profile/'
