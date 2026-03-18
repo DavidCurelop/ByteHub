@@ -154,14 +154,5 @@ class Review(models.Model):
             )
         ]
 
-    def clean(self):
-        super().clean()
-        if self.rating is not None and (
-            self.rating < 1 or self.rating > 5
-        ):
-            raise ValidationError(
-                {'rating': _('Rating must be between 1 and 5.')}
-            )
-
     def __str__(self):
         return f'{self.product} - {self.rating}'
