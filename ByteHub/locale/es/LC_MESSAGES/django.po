@@ -173,3 +173,6 @@ msgstr "reseñas"
 
 msgid "Rating must be between 1 and 5."
 msgstr "La calificación debe estar entre 1 y 5."
+
+msgid "Anonymous"
+msgstr "Anónimo"

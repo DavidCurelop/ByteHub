@@ -17,13 +17,10 @@ def product_detail(request, slug):
         slug=slug,
     )
     verified_reviews = product.verified_reviews
-    average_rating = (
-        sum(r.rating for r in verified_reviews) / len(verified_reviews)
-        if len(verified_reviews) > 0 else 0.0
-    )
+    average_rating = product.avg_rating()
     context = {
         'product': product,
         'verified_reviews': verified_reviews,
         'average_rating': average_rating,
     }
-    return render(request, 'products/detail.html', context)
+    return render(request, 'store/product_detail.html', context)

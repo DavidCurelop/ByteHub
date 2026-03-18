@@ -52,7 +52,7 @@
             {% for review in verified_reviews %}
             <section style="border: 1px solid #e1e7ea; border-radius: 6px; padding: 0.8rem;">
                 <p style="margin: 0 0 0.4rem; font-weight: 600;">
-                    {{ review.user.get_full_name|default:review.user.email }}
+                    {{ review.user.get_full_name|default:_('Anonymous') }}
                 </p>
                 <p style="margin: 0 0 0.4rem; color: #31424d;">
                     <strong>{% trans "Rating" %}:</strong> {{ review.rating }} / 5
