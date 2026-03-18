@@ -1,0 +1,49 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-bytehub}
+      POSTGRES_USER: ${POSTGRES_USER:-bytehub_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set in .env}
+    ports:
+      - "${POSTGRES_PORT:-5433}:5432"
+    volumes:
+      - bytehub_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-bytehub_user} -d ${POSTGRES_DB:-bytehub}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    env_file: .env
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      # Override Postgres connection to use Docker internal hostname
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: "5432"
+      POSTGRES_CONN_MAX_AGE: "60"
+      # Force Postgres; the web service always runs alongside the postgres
+      # service so SQLite would be inconsistent with the Compose setup.
+      USE_POSTGRES: "true"
+    ports:
+      - "8000:8000"
+    working_dir: /app/ByteHub
+    # NOTE: migrations run on every start (dev convenience).
+    # For production or multi-replica setups, run migrations first as a
+    # one-off step before starting the service:
+    #   docker compose run --rm web python manage.py migrate
+    #   docker compose up web
+    command: >
+      sh -c "python manage.py migrate --noinput &&
+      python manage.py runserver 0.0.0.0:8000"
+
+volumes:
+  bytehub_postgres_data:

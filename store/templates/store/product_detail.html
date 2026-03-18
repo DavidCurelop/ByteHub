@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% load i18n l10n %}
+
+{% block title %}{{ product.name }} | ByteHub{% endblock %}
+
+{% block content %}
+{% trans "Not specified" as not_specified %}
+{% trans "No description available." as no_desc %}
+{% trans "Anonymous" as anonymous %}
+<section style="display: grid; gap: 1.5rem;">
+    <article style="background: #fff; border: 1px solid #cfd8dc; border-radius: 8px; padding: 1.2rem; display: grid; gap: 1.2rem;">
+        <div style="display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); align-items: start;">
+            <div>
+                {% if product.image %}
+                <img src="{{ product.image }}" alt="{{ product.name }}"
+                     style="width: 100%; border-radius: 8px; border: 1px solid #cfd8dc; object-fit: cover; max-height: 380px;">
+                {% else %}
+                <div style="width: 100%; min-height: 260px; background: #cfd8dc; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #4a5a66;">
+                    {% trans "No image" %}
+                </div>
+                {% endif %}
+            </div>
+            <div style="display: grid; gap: 0.8rem;">
+                <h1 style="margin: 0;">{{ product.name }}</h1>
+                <p style="margin: 0; color: #31424d;">
+                    <strong>{% trans "Brand" %}:</strong> {{ product.brand|default:not_specified }}
+                </p>
+                <p style="margin: 0; color: #31424d;">
+                    <strong>{% trans "Category" %}:</strong> {{ product.category.name }}
+                </p>
+                <p style="margin: 0; color: #31424d;">
+                    <strong>{% trans "Price" %}:</strong> ${{ product.price|localize }}
+                </p>
+                <p style="margin: 0; color: #31424d;">
+                    <strong>{% trans "Stock" %}:</strong> {{ product.stock }}
+                </p>
+                <p style="margin: 0; color: #31424d;">
+                    <strong>{% trans "Average rating" %}:</strong>
+                    {% blocktrans with rating=average_rating|floatformat:1 %}{{ rating }} / 5{% endblocktrans %}
+                </p>
+                <div>
+                    <h2 style="font-size: 1.1rem; margin-bottom: 0.5rem;">{% trans "Description" %}</h2>
+                    <p style="margin: 0; color: #31424d;">
+                        {{ product.description|default:no_desc }}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </article>
+
+    <article style="background: #fff; border: 1px solid #cfd8dc; border-radius: 8px; padding: 1.2rem;">
+        <h2 style="margin-top: 0; margin-bottom: 1rem;">{% trans "Verified reviews" %}</h2>
+
+        {% if verified_reviews %}
+        <div style="display: grid; gap: 0.8rem;">
+            {% for review in verified_reviews %}
+            <section style="border: 1px solid #e1e7ea; border-radius: 6px; padding: 0.8rem;">
+                <p style="margin: 0 0 0.4rem; font-weight: 600;">
+                    {{ review.user.get_full_name|default:anonymous }}
+                </p>
+                <p style="margin: 0 0 0.4rem; color: #31424d;">
+                    <strong>{% trans "Rating" %}:</strong>
+                    {% blocktrans with rating=review.rating %}{{ rating }} / 5{% endblocktrans %}
+                </p>
+                {% if review.title %}
+                <p style="margin: 0 0 0.4rem; color: #31424d;">
+                    <strong>{{ review.title }}</strong>
+                </p>
+                {% endif %}
+                {% if review.body %}
+                <p style="margin: 0; color: #31424d;">{{ review.body }}</p>
+                {% endif %}
+            </section>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p style="margin: 0; color: #31424d;">
+            {% trans "There are no verified reviews for this product yet." %}
+        </p>
+        {% endif %}
+    </article>
+
+    <p style="margin: 0;">
+        <a href="{% url 'store:product-list' %}" style="color: #0A2A43; font-weight: 600; text-decoration: none;">
+            {% trans "Back to products" %}
+        </a>
+    </p>
+</section>
+{% endblock %}

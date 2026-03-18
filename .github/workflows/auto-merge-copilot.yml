@@ -1,0 +1,31 @@
+name: Auto-merge Copilot sub-PRs
+
+on:
+  pull_request_target:
+    types: [review_requested]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  auto-merge:
+    if: github.event.pull_request.user.login == 'Copilot' && github.event.requested_reviewer.login == 'DavidCurelop'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Mark as ready for review
+        run: gh pr ready ${{ github.event.pull_request.number }} --repo ${{ github.repository }}
+        env:
+          GH_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+
+      - name: Auto-merge Copilot sub-PR
+        run: gh pr merge ${{ github.event.pull_request.number }} --repo ${{ github.repository }} --squash --auto
+        env:
+          GH_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+
+      - name: Re-request Copilot review on original PR
+        run: |
+          ORIGINAL_PR=$(gh pr list --repo ${{ github.repository }} --head ${{ github.event.pull_request.base.ref }} --json number --jq '.[0].number')
+          gh api --method POST repos/${{ github.repository }}/pulls/$ORIGINAL_PR/requested_reviewers --field 'reviewers[]=copilot-pull-request-reviewer[bot]'
+        env:
+          GH_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}

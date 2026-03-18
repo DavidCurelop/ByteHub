@@ -1,0 +1,12 @@
+ByteHubEnv/
+.git/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.sqlite3
+*.sqlite3*
+.env
+.env.*
+!.env.example
+node_modules/
