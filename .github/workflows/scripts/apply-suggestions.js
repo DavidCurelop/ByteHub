@@ -105,11 +105,12 @@ async function run() {
       const startLine = comment.start_line ?? comment.line;
       const endLine = comment.line;
 
-      // Remove a single trailing newline if present (GitHub suggestions always
-      // end with one), but preserve any intentional blank lines within the block.
-      const trimmedContent = suggestedContent.endsWith("\n")
-        ? suggestedContent.slice(0, -1)
-        : suggestedContent;
+      // Remove a single trailing newline (CRLF or LF) if present (GitHub
+      // suggestions always end with one), then normalize CRLF → LF throughout
+      // the block to avoid stray \r characters in the output file.
+      const trimmedContent = suggestedContent
+        .replace(/\r?\n$/, "")
+        .replace(/\r\n/g, "\n");
 
       // Replace the lines the comment targets (1-indexed)
       fileLines = [
