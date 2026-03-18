@@ -27,5 +27,7 @@ staticfiles/
 # IDE
 .vscode/
 
+# Environment variables
+.env
 # Node
 node_modules/
