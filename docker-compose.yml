@@ -30,6 +30,9 @@ services:
       POSTGRES_HOST: postgres
       POSTGRES_PORT: "5432"
       POSTGRES_CONN_MAX_AGE: "60"
+      # Force Postgres; the web service always runs alongside the postgres
+      # service so SQLite would be inconsistent with the Compose setup.
+      USE_POSTGRES: "true"
     ports:
       - "8000:8000"
     working_dir: /app/ByteHub
