@@ -101,7 +101,7 @@ py manage.py loaddata dev_seed.json
 | Email | Password | Role |
 |---|---|---|
 | `user1@example.com` | `pass1234!` | Regular user |
-| `store.manager@example.com` | `manager123!` | Admin (`is_admin=true`) |
+| `store.manager@example.com` | `manager123!` | Admin (`is_admin=true`, `is_staff=true` — can access `/admin/`) |
 
 > **Note:** These accounts are for **development only**. Never load this fixture in production.
 

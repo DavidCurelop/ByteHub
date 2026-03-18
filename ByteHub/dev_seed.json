@@ -118,7 +118,7 @@
       "last_name": "Manager",
       "phone": "5550000004",
       "is_admin": true,
-      "is_staff": false,
+      "is_staff": true,
       "is_active": true,
       "created_at": "2026-03-17T02:53:28.498Z",
       "groups": [],
