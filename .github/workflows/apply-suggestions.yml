@@ -9,17 +9,26 @@ permissions:
   pull-requests: write
 
 jobs:
-  apply-suggestions:
-    if: |
-      github.event.review.user.login == 'copilot-pull-request-reviewer[bot]' ||
-      github.event.review.user.login == 'Copilot' ||
-      github.event.review.user.type == 'Bot'
+  handle-copilot-review:
+    if: github.event.review.user.login == 'Copilot'
     runs-on: ubuntu-latest
     steps:
-      - name: Ask Copilot to apply its own review
-        run: >
-          gh pr comment ${{ github.event.pull_request.number }}
-          --repo ${{ github.repository }}
-          --body "@copilot open a new pull request to apply changes based on the comments in [this thread](https://github.com/${{ github.repository }}/pull/${{ github.event.pull_request.number }}#pullrequestreview-${{ github.event.review.id }})"
+      - name: Check if review has comments
+        id: check-comments
+        run: |
+          COUNT=$(gh api repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/reviews/${{ github.event.review.id }}/comments --jq 'length')
+          echo "comment_count=$COUNT" >> $GITHUB_OUTPUT
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Ask Copilot to fix issues
+        if: steps.check-comments.outputs.comment_count != '0'
+        run: gh pr comment ${{ github.event.pull_request.number }} --repo ${{ github.repository }} --body "@copilot open a new pull request to apply changes based on the comments in [this thread](https://github.com/${{ github.repository }}/pull/${{ github.event.pull_request.number }}#pullrequestreview-${{ github.event.review.id }})"
+        env:
+          GH_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+
+      - name: Request human review if no comments
+        if: steps.check-comments.outputs.comment_count == '0'
+        run: gh pr edit ${{ github.event.pull_request.number }} --repo ${{ github.repository }} --add-reviewer ${{ vars.REVIEWER_USERNAME }}
+        env:
+          GH_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
