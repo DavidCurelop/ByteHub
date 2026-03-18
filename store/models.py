@@ -107,11 +107,19 @@ class Product(models.Model):
         return self.name
 
     def avg_rating(self):
-        """Return average rating from verified reviews as a float."""
-        result = self.reviews.filter(
-            is_verified_purchase=True,
-        ).aggregate(average=Avg('rating'))
-        value = result['average']
+        """Return average rating from verified reviews as a float.
+
+        Uses the pre-annotated ``verified_avg_rating`` value when the
+        object was fetched via ``get_public_detail()`` to avoid an
+        extra aggregate query.
+        """
+        if hasattr(self, 'verified_avg_rating'):
+            value = self.verified_avg_rating
+        else:
+            result = self.reviews.filter(
+                is_verified_purchase=True,
+            ).aggregate(average=Avg('rating'))
+            value = result['average']
         return float(value) if value is not None else 0.0
 
 
