@@ -144,6 +144,9 @@ msgstr "Stock"
 msgid "Average rating"
 msgstr "Calificación promedio"
 
+msgid "%(rating)s / 5"
+msgstr "%(rating)s / 5"
+
 msgid "Description"
 msgstr "Descripción"
 
