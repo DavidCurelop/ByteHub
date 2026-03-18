@@ -1,4 +1,11 @@
 {
+  "name": "bytehub-workflow-scripts",
+  "version": "1.0.0",
+  "description": "GitHub Actions workflow helper scripts for ByteHub",
+  "type": "module",
+  "scripts": {
+    "apply-suggestions": "node .github/workflows/scripts/apply-suggestions.js"
+  },
   "dependencies": {
     "@octokit/rest": "^22.0.1"
   }

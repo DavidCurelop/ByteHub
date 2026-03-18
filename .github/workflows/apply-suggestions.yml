@@ -10,10 +10,16 @@ permissions:
 
 jobs:
   apply-suggestions:
-    if: github.event.review.user.login == 'Copilot'
+    if: |
+      github.event.review.user.login == 'copilot-pull-request-reviewer[bot]' ||
+      github.event.review.user.login == 'Copilot' ||
+      github.event.review.user.type == 'Bot'
     runs-on: ubuntu-latest
     steps:
       - name: Ask Copilot to apply its own review
-        run: gh pr comment ${{ github.event.pull_request.number }} --repo ${{ github.repository }} --body "@copilot open a new pull request to apply changes based on the comments in [this thread](https://github.com/${{ github.repository }}/pull/${{ github.event.pull_request.number }}#pullrequestreview-${{ github.event.review.id }})"
+        run: >
+          gh pr comment ${{ github.event.pull_request.number }}
+          --repo ${{ github.repository }}
+          --body "@copilot open a new pull request to apply changes based on the comments in [this thread](https://github.com/${{ github.repository }}/pull/${{ github.event.pull_request.number }}#pullrequestreview-${{ github.event.review.id }})"
         env:
-          GH_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,19 +1,21 @@
-const { Octokit } = require("@octokit/rest");
-const fs = require("fs");
-const path = require("path");
+import { Octokit } from "@octokit/rest";
+import fs from "fs";
 
 const octokit = new Octokit({ auth: process.env.GH_TOKEN });
 const [owner, repo] = process.env.REPO.split("/");
 const pull_number = parseInt(process.env.PR_NUMBER);
 
 async function run() {
-  // Fetch all review comments on the PR
-  const { data: comments } = await octokit.pulls.listReviewComments({
-    owner,
-    repo,
-    pull_number,
-    per_page: 100,
-  });
+  // Fetch all review comments on the PR using pagination
+  const comments = await octokit.paginate(
+    octokit.pulls.listReviewComments,
+    {
+      owner,
+      repo,
+      pull_number,
+      per_page: 100,
+    }
+  );
 
   let applied = 0;
 
@@ -33,10 +35,16 @@ async function run() {
 
     const fileLines = fs.readFileSync(filePath, "utf8").split("\n");
 
+    // Remove a single trailing newline if present (GitHub suggestions always
+    // end with one), but preserve any intentional blank lines within the block.
+    const trimmedContent = suggestedContent.endsWith("\n")
+      ? suggestedContent.slice(0, -1)
+      : suggestedContent;
+
     // Replace the lines the comment targets (1-indexed)
     const newLines = [
       ...fileLines.slice(0, startLine - 1),
-      ...suggestedContent.split("\n").slice(0, -1), // trim trailing newline
+      ...trimmedContent.split("\n"),
       ...fileLines.slice(endLine),
     ];
 
@@ -44,11 +52,14 @@ async function run() {
     console.log(`Applied suggestion on ${filePath} lines ${startLine}-${endLine}`);
     applied++;
 
-    // Resolve the comment thread after applying
-    await octokit.pulls.deleteReviewComment({
+    // Post a reply to the review comment instead of deleting it,
+    // to preserve review history and auditability.
+    await octokit.pulls.createReplyForReviewComment({
       owner,
       repo,
+      pull_number,
       comment_id: comment.id,
+      body: "✅ Suggestion applied automatically.",
     });
   }
 

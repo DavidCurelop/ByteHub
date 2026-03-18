@@ -26,3 +26,6 @@ staticfiles/
 
 # IDE
 .vscode/
+
+# Node
+node_modules/
