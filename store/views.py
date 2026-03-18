@@ -1,7 +1,6 @@
-from django.db.models import Prefetch
 from django.shortcuts import get_object_or_404, render
 
-from .models import Product, Review
+from .models import Product
 
 
 def product_list(request):
@@ -13,24 +12,18 @@ def product_list(request):
 
 
 def product_detail(request, slug):
-    product_queryset = Product.objects.select_related('category').prefetch_related(
-        Prefetch(
-            'reviews',
-            queryset=Review.objects.filter(
-                is_verified_purchase=True,
-            ).select_related('user'),
-            to_attr='verified_reviews',
-        )
-    )
     product = get_object_or_404(
-        product_queryset,
+        Product.objects.get_public_detail(),
         slug=slug,
-        is_available=True,
     )
-
+    verified_reviews = product.verified_reviews
+    average_rating = (
+        sum(r.rating for r in verified_reviews) / len(verified_reviews)
+        if len(verified_reviews) > 0 else 0.0
+    )
     context = {
         'product': product,
-        'verified_reviews': product.verified_reviews,
-        'average_rating': product.avg_rating(),
+        'verified_reviews': verified_reviews,
+        'average_rating': average_rating,
     }
     return render(request, 'products/detail.html', context)

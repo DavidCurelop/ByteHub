@@ -167,4 +167,38 @@ class ProductDetailTests(TestCase):
         response = self.client.get(
             reverse('store:product-detail', kwargs={'slug': self.product.slug})
         )
-        self.assertEqual(response.context['average_rating'], 5)
+        self.assertEqual(response.context['average_rating'], 5.0)
+        self.assertIsInstance(response.context['average_rating'], float)
+
+    def test_product_avg_rating_returns_float_when_no_reviews(self):
+        product = Product.objects.create(
+            name='Empty Product',
+            slug='empty-product',
+            price='9.99',
+            stock=1,
+            is_available=True,
+            category=self.category,
+            created_by=self.admin_user,
+        )
+        self.assertIsInstance(product.avg_rating(), float)
+        self.assertEqual(product.avg_rating(), 0.0)
+
+    def test_product_detail_average_rating_is_zero_with_no_verified_reviews(
+        self,
+    ):
+        product = Product.objects.create(
+            name='Unreviewed Product',
+            slug='unreviewed-product',
+            price='29.99',
+            stock=3,
+            is_available=True,
+            category=self.category,
+            created_by=self.admin_user,
+        )
+        response = self.client.get(
+            reverse(
+                'store:product-detail', kwargs={'slug': product.slug}
+            )
+        )
+        self.assertEqual(response.context['average_rating'], 0.0)
+        self.assertIsInstance(response.context['average_rating'], float)
