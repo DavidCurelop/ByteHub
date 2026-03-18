@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   auto-merge:
-    if: github.event.pull_request.user.login == 'Copilot'
+    if: github.event.pull_request.user.login == 'Copilot' && github.event.requested_reviewer.login == 'DavidCurelop'
     runs-on: ubuntu-latest
     steps:
       - name: Mark as ready for review
