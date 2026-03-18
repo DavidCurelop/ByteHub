@@ -16,11 +16,9 @@ def product_detail(request, slug):
         Product.objects.get_public_detail(),
         slug=slug,
     )
-    avg_rating_value = product.verified_avg_rating
-    average_rating = float(avg_rating_value) if avg_rating_value is not None else 0.0
     context = {
         'product': product,
         'verified_reviews': product.verified_reviews,
-        'average_rating': average_rating,
+        'average_rating': product.avg_rating(),
     }
     return render(request, 'store/product_detail.html', context)
