@@ -35,7 +35,8 @@
                     <strong>{% trans "Stock" %}:</strong> {{ product.stock }}
                 </p>
                 <p style="margin: 0; color: #31424d;">
-                    <strong>{% trans "Average rating" %}:</strong> {{ average_rating|floatformat:1 }} / 5
+                    <strong>{% trans "Average rating" %}:</strong>
+                    {% blocktrans with rating=average_rating|floatformat:1 %}{{ rating }} / 5{% endblocktrans %}
                 </p>
                 <div>
                     <h2 style="font-size: 1.1rem; margin-bottom: 0.5rem;">{% trans "Description" %}</h2>
@@ -58,7 +59,8 @@
                     {{ review.user.get_full_name|default:anonymous }}
                 </p>
                 <p style="margin: 0 0 0.4rem; color: #31424d;">
-                    <strong>{% trans "Rating" %}:</strong> {{ review.rating }} / 5
+                    <strong>{% trans "Rating" %}:</strong>
+                    {% blocktrans with rating=review.rating %}{{ rating }} / 5{% endblocktrans %}
                 </p>
                 {% if review.title %}
                 <p style="margin: 0 0 0.4rem; color: #31424d;">
