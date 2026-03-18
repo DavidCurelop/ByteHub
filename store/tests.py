@@ -202,3 +202,19 @@ class ProductDetailTests(TestCase):
         )
         self.assertEqual(response.context['average_rating'], 0.0)
         self.assertIsInstance(response.context['average_rating'], float)
+
+    def test_product_detail_no_extra_queries_on_related_access(self):
+        """get_public_detail() prefetches category and review users; accessing
+        them after the view resolves must not trigger additional DB queries."""
+        response = self.client.get(
+            reverse(
+                'store:product-detail', kwargs={'slug': self.product.slug}
+            )
+        )
+        product = response.context['product']
+        verified_reviews = response.context['verified_reviews']
+
+        with self.assertNumQueries(0):
+            _ = product.category.name
+            for review in verified_reviews:
+                _ = review.user.get_full_name()
