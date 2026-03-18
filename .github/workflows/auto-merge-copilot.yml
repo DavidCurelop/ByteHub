@@ -10,9 +10,7 @@ permissions:
 
 jobs:
   auto-merge:
-    if: |
-      github.event.pull_request.user.login == 'copilot-swe-agent[bot]' &&
-      github.event.pull_request.head.repo.full_name == github.repository
+    if: github.event.pull_request.user.login == 'Copilot'
     runs-on: ubuntu-latest
     steps:
       - name: Mark as ready for review
