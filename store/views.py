@@ -4,8 +4,11 @@ from .models import Product
 
 
 def product_list(request):
-    search_query = request.GET.get('q', '').strip()
-    products = Product.objects.search_active_products_by_name(search_query)
+    raw_search_query = request.GET.get('q', '')
+    products = Product.objects.search_active_products_by_name(
+        raw_search_query,
+    )
+    search_query = raw_search_query.strip()
     return render(
         request, 'store/product_list.html',
         {
