@@ -132,7 +132,14 @@ class Review(models.Model):
     )
     rating = models.PositiveSmallIntegerField(
         _('rating'),
-        validators=[MinValueValidator(1), MaxValueValidator(5)],
+        validators=[
+            MinValueValidator(
+                1, message=_("Rating must be between 1 and 5."),
+            ),
+            MaxValueValidator(
+                5, message=_("Rating must be between 1 and 5."),
+            ),
+        ],
     )
     title = models.CharField(_('title'), max_length=120, blank=True)
     body = models.TextField(_('review body'), blank=True)
