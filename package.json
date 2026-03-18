@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "GitHub Actions workflow helper scripts for ByteHub",
   "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "apply-suggestions": "node .github/workflows/scripts/apply-suggestions.js"
   },
