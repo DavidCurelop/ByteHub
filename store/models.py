@@ -4,7 +4,7 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-from django.db.models import Avg, Prefetch
+from django.db.models import Avg, Prefetch, Q
 from django.utils.translation import gettext_lazy as _
 
 from pages.models import Category
@@ -46,6 +46,12 @@ class ProductManager(models.Manager):
                         is_verified_purchase=True,
                     ).select_related('user'),
                     to_attr='verified_reviews',
+                )
+            )
+            .annotate(
+                verified_avg_rating=Avg(
+                    'reviews__rating',
+                    filter=Q(reviews__is_verified_purchase=True),
                 )
             )
         )

@@ -16,11 +16,10 @@ def product_detail(request, slug):
         Product.objects.get_public_detail(),
         slug=slug,
     )
-    verified_reviews = product.verified_reviews
-    average_rating = product.avg_rating()
+    average_rating = product.verified_avg_rating or 0.0
     context = {
         'product': product,
-        'verified_reviews': verified_reviews,
+        'verified_reviews': product.verified_reviews,
         'average_rating': average_rating,
     }
     return render(request, 'store/product_detail.html', context)
