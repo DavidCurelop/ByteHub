@@ -2,8 +2,9 @@ from decimal import Decimal
 
 from django.conf import settings
 from django.core.exceptions import ValidationError
-from django.core.validators import MinValueValidator
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+from django.db.models import Avg
 from django.utils.translation import gettext_lazy as _
 
 from pages.models import Category
@@ -82,3 +83,60 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
+
+    def avg_rating(self):
+        """Return average rating from verified reviews."""
+        result = self.reviews.filter(
+            is_verified_purchase=True,
+        ).aggregate(average=Avg('rating'))
+        return result['average'] or 0
+
+
+class Review(models.Model):
+    """Verified or unverified customer review for a product."""
+
+    product = models.ForeignKey(
+        Product,
+        on_delete=models.CASCADE,
+        related_name='reviews',
+        verbose_name=_('product'),
+    )
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='reviews',
+        verbose_name=_('user'),
+    )
+    rating = models.PositiveSmallIntegerField(
+        _('rating'),
+        validators=[MinValueValidator(1), MaxValueValidator(5)],
+    )
+    title = models.CharField(_('title'), max_length=120, blank=True)
+    body = models.TextField(_('review body'), blank=True)
+    is_verified_purchase = models.BooleanField(
+        _('verified purchase'), default=False,
+    )
+    created_at = models.DateTimeField(
+        _('created at'), auto_now_add=True,
+    )
+
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name = _('review')
+        verbose_name_plural = _('reviews')
+        constraints = [
+            models.UniqueConstraint(
+                fields=['product', 'user'],
+                name='store_review_unique_product_user',
+            )
+        ]
+
+    def clean(self):
+        super().clean()
+        if self.rating < 1 or self.rating > 5:
+            raise ValidationError(
+                {'rating': _('Rating must be between 1 and 5.')}
+            )
+
+    def __str__(self):
+        return f'{self.product} - {self.rating}'

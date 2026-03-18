@@ -122,3 +122,54 @@ msgstr "El precio debe ser mayor que cero."
 
 msgid "Stock cannot be negative."
 msgstr "El stock no puede ser negativo."
+
+msgid "View details"
+msgstr "Ver detalle"
+
+msgid "Brand"
+msgstr "Marca"
+
+msgid "Not specified"
+msgstr "No especificada"
+
+msgid "Category"
+msgstr "Categoría"
+
+msgid "Price"
+msgstr "Precio"
+
+msgid "Stock"
+msgstr "Stock"
+
+msgid "Average rating"
+msgstr "Calificación promedio"
+
+msgid "Description"
+msgstr "Descripción"
+
+msgid "Verified reviews"
+msgstr "Reseñas verificadas"
+
+msgid "Rating"
+msgstr "Calificación"
+
+msgid "There are no verified reviews for this product yet."
+msgstr "Todavía no hay reseñas verificadas para este producto."
+
+msgid "Back to products"
+msgstr "Volver a productos"
+
+msgid "review body"
+msgstr "contenido de la reseña"
+
+msgid "verified purchase"
+msgstr "compra verificada"
+
+msgid "review"
+msgstr "reseña"
+
+msgid "reviews"
+msgstr "reseñas"
+
+msgid "Rating must be between 1 and 5."
+msgstr "La calificación debe estar entre 1 y 5."

@@ -1,10 +1,12 @@
+from decimal import Decimal
+
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
 
 from pages.models import Category
 
-from .models import Product
+from .models import Product, Review
 
 User = get_user_model()
 
@@ -67,3 +69,102 @@ class ProductListTests(TestCase):
         with self.assertNumQueries(0):
             for product in products:
                 _ = product.category.name
+
+
+class ProductDetailTests(TestCase):
+    """Tests for public product detail page."""
+
+    def setUp(self):
+        self.admin_user = User.objects.create_user(
+            email='admin2@example.com',
+            password='StrongPass123',
+            first_name='Admin',
+            last_name='User',
+            is_admin=True,
+        )
+        self.customer = User.objects.create_user(
+            email='customer@example.com',
+            password='StrongPass123',
+            first_name='Customer',
+            last_name='One',
+        )
+        self.customer_two = User.objects.create_user(
+            email='customer2@example.com',
+            password='StrongPass123',
+            first_name='Customer',
+            last_name='Two',
+        )
+        self.category = Category.objects.create(
+            name='Audio',
+            slug='audio',
+        )
+        self.product = Product.objects.create(
+            name='Studio Headphones',
+            slug='studio-headphones',
+            description='Closed-back reference headphones.',
+            brand='ByteSound',
+            price='199.99',
+            stock=7,
+            is_available=True,
+            image='https://example.com/headphones.jpg',
+            category=self.category,
+            created_by=self.admin_user,
+        )
+        Review.objects.create(
+            product=self.product,
+            user=self.customer,
+            rating=5,
+            title='Excellent',
+            body='Great sound quality.',
+            is_verified_purchase=True,
+        )
+        Review.objects.create(
+            product=self.product,
+            user=self.customer_two,
+            rating=1,
+            title='Bad',
+            body='Not for me.',
+            is_verified_purchase=False,
+        )
+
+    def test_product_detail_returns_200(self):
+        response = self.client.get(
+            reverse('store:product-detail', kwargs={'slug': self.product.slug})
+        )
+        self.assertEqual(response.status_code, 200)
+
+    def test_product_detail_uses_slug_url(self):
+        url = reverse('store:product-detail', kwargs={'slug': self.product.slug})
+        self.assertEqual(url, f'/products/{self.product.slug}/')
+
+    def test_product_detail_returns_404_for_missing_product(self):
+        response = self.client.get(
+            reverse('store:product-detail', kwargs={'slug': 'missing-product'})
+        )
+        self.assertEqual(response.status_code, 404)
+
+    def test_product_detail_context_contains_required_fields(self):
+        response = self.client.get(
+            reverse('store:product-detail', kwargs={'slug': self.product.slug})
+        )
+        product = response.context['product']
+        self.assertEqual(product.description, 'Closed-back reference headphones.')
+        self.assertEqual(product.price, Decimal('199.99'))
+        self.assertEqual(product.stock, 7)
+        self.assertEqual(product.brand, 'ByteSound')
+        self.assertEqual(product.category.name, 'Audio')
+        self.assertEqual(product.image, 'https://example.com/headphones.jpg')
+
+    def test_product_detail_shows_only_verified_reviews(self):
+        response = self.client.get(
+            reverse('store:product-detail', kwargs={'slug': self.product.slug})
+        )
+        verified_reviews = response.context['verified_reviews']
+        self.assertEqual(len(verified_reviews), 1)
+        self.assertEqual(verified_reviews[0].title, 'Excellent')
+
+    def test_product_avg_rating_uses_verified_reviews_only(self):
+        response = self.client.get(
+            reverse('store:product-detail', kwargs={'slug': self.product.slug})
+        )
+        self.assertEqual(response.context['average_rating'], 5)
