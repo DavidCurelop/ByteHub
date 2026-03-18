@@ -9,6 +9,11 @@ ByteHubEnv/
 venv/
 env/
 
+# Environment variables
+.env
+.env.*
+!.env.example
+
 # Django
 *.log
 db.sqlite3
@@ -21,3 +26,6 @@ staticfiles/
 
 # IDE
 .vscode/
+
+# Node
+node_modules/
