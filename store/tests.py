@@ -1,6 +1,7 @@
 from decimal import Decimal
 
 from django.contrib.auth import get_user_model
+from django.db import IntegrityError, transaction
 from django.test import TestCase
 from django.urls import reverse
 
@@ -218,3 +219,16 @@ class ProductDetailTests(TestCase):
             _ = product.category.name
             for review in verified_reviews:
                 _ = review.user.get_full_name()
+
+    def test_duplicate_review_raises_integrity_error(self):
+        """A second Review for the same (product, user) must be rejected."""
+        with self.assertRaises(IntegrityError):
+            with transaction.atomic():
+                Review.objects.create(
+                    product=self.product,
+                    user=self.customer,
+                    rating=3,
+                    title='Second review',
+                    body='Duplicate attempt.',
+                    is_verified_purchase=True,
+                )
