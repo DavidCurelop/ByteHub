@@ -4,10 +4,15 @@ from .models import Product
 
 
 def product_list(request):
-    products = Product.objects.get_active_products()
+    search_query = request.GET.get('q', '').strip()
+    products = Product.objects.search_active_products_by_name(search_query)
     return render(
         request, 'store/product_list.html',
-        {'products': products},
+        {
+            'products': products,
+            'search_query': search_query,
+            'is_searching': bool(search_query),
+        },
     )
 
 

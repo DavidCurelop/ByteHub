@@ -71,6 +71,35 @@ class ProductListTests(TestCase):
             for product in products:
                 _ = product.category.name
 
+    def test_product_list_filters_by_name_case_insensitive(self):
+        Product.objects.create(
+            name='Gaming Mouse',
+            slug='gaming-mouse',
+            price='79.99',
+            stock=5,
+            is_available=True,
+            category=self.category,
+            created_by=self.admin_user,
+        )
+        response = self.client.get(
+            reverse('store:product-list'),
+            {'q': 'gAmInG'},
+        )
+        products = list(response.context['products'])
+        self.assertEqual(len(products), 1)
+        self.assertEqual(products[0].name, 'Gaming Mouse')
+
+    def test_product_list_shows_empty_results_message_on_search(self):
+        response = self.client.get(
+            reverse('store:product-list'),
+            {'q': 'no-match-value'},
+        )
+        self.assertContains(
+            response,
+            'No products found for "no-match-value".',
+        )
+        self.assertEqual(len(response.context['products']), 0)
+
 
 class ProductDetailTests(TestCase):
     """Tests for public product detail page."""

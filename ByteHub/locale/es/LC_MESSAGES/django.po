@@ -111,6 +111,18 @@ msgstr "Has cerrado sesión."
 msgid "Products"
 msgstr "Productos"
 
+msgid "Search products"
+msgstr "Buscar productos"
+
+msgid "Search by product name"
+msgstr "Buscar por nombre del producto"
+
+msgid "Search"
+msgstr "Buscar"
+
+msgid "No products found for \"%(query)s\"."
+msgstr "No se encontraron productos para \"%(query)s\"."
+
 msgid "No image"
 msgstr "Sin imagen"
 

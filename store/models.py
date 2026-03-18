@@ -19,6 +19,13 @@ class ProductManager(models.Manager):
             .select_related('category')
         )
 
+    def search_active_products_by_name(self, query):
+        """Return active products filtered by a case-insensitive name."""
+        cleaned_query = query.strip()
+        if not cleaned_query:
+            return self.get_active_products()
+        return self.get_active_products().filter(name__icontains=cleaned_query)
+
     def get_products_by_category(self, category_slug):
         return (
             self.filter(
