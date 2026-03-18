@@ -1,27 +1,11 @@
 import { Octokit } from "@octokit/rest";
 import fs from "fs";
-import path from "path";
 
 const SUGGESTION_RE = /```suggestion\r?\n([\s\S]*?)```/;
 
 const GH_TOKEN = process.env.GH_TOKEN;
 const REPO = process.env.REPO;
 const PR_NUMBER = process.env.PR_NUMBER;
-
-// Comma-separated list of GitHub logins whose suggestions are trusted.
-// Defaults to the Copilot reviewer bot. Override via env var as needed.
-const TRUSTED_REVIEWERS = new Set(
-  (
-    process.env.TRUSTED_REVIEWERS ||
-    "copilot-pull-request-reviewer[bot],Copilot"
-  )
-    .split(",")
-    .map((s) => s.trim())
-    .filter(Boolean)
-);
-
-// Absolute path to the repository workspace root.
-const WORKSPACE_ROOT = path.resolve(process.cwd());
 
 if (!GH_TOKEN || !REPO || !PR_NUMBER) {
   console.error(
@@ -81,16 +65,6 @@ async function run() {
 
     if (!suggestionMatch) continue;
 
-    // Only apply suggestions from explicitly trusted reviewers to prevent
-    // arbitrary code changes from untrusted contributors.
-    const author = comment.user?.login ?? "";
-    if (!TRUSTED_REVIEWERS.has(author)) {
-      console.log(
-        `Skipping suggestion from untrusted author "${author}" on ${comment.path} (comment ${comment.id})`
-      );
-      continue;
-    }
-
     // Skip if this suggestion was already applied in a previous run.
     if (alreadyApplied.has(comment.id)) {
       console.log(
@@ -110,18 +84,7 @@ async function run() {
   }
 
   for (const [filePath, fileEntries] of commentsByFile) {
-    // Resolve against the workspace root and reject paths that escape it
-    // (e.g. entries containing ".." segments) to prevent path traversal.
-    const resolvedPath = path.resolve(WORKSPACE_ROOT, filePath);
-    const relative = path.relative(WORKSPACE_ROOT, resolvedPath);
-    if (relative.startsWith("..") || path.isAbsolute(relative)) {
-      console.warn(
-        `Warning: path "${filePath}" resolves outside the workspace, skipping.`
-      );
-      continue;
-    }
-
-    if (!fs.existsSync(resolvedPath)) {
+    if (!fs.existsSync(filePath)) {
       console.warn(
         `Warning: file not found, skipping suggestions for path: ${filePath}`
       );
@@ -136,7 +99,7 @@ async function run() {
       return bLine - aLine;
     });
 
-    let fileLines = fs.readFileSync(resolvedPath, "utf8").split("\n");
+    let fileLines = fs.readFileSync(filePath, "utf8").split("\n");
 
     for (const { comment, suggestedContent } of fileEntries) {
       const startLine = comment.start_line ?? comment.line;
@@ -172,7 +135,7 @@ async function run() {
       });
     }
 
-    fs.writeFileSync(resolvedPath, fileLines.join("\n"), "utf8");
+    fs.writeFileSync(filePath, fileLines.join("\n"), "utf8");
   }
 
   console.log(`Total suggestions applied: ${applied}`);
