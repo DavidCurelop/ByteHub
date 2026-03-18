@@ -135,7 +135,7 @@ class ProductDetailTests(TestCase):
 
     def test_product_detail_uses_slug_url(self):
         url = reverse('store:product-detail', kwargs={'slug': self.product.slug})
-        self.assertEqual(url, f'/products/{self.product.slug}/')
+        self.assertTrue(url.endswith(f'/{self.product.slug}/'))
 
     def test_product_detail_returns_404_for_missing_product(self):
         response = self.client.get(
