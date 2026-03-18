@@ -4,6 +4,9 @@
 {% block title %}{{ product.name }} | ByteHub{% endblock %}
 
 {% block content %}
+{% trans "Not specified" as not_specified %}
+{% trans "No description available." as no_desc %}
+{% trans "Anonymous" as anonymous %}
 <section style="display: grid; gap: 1.5rem;">
     <article style="background: #fff; border: 1px solid #cfd8dc; border-radius: 8px; padding: 1.2rem; display: grid; gap: 1.2rem;">
         <div style="display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); align-items: start;">
@@ -20,7 +23,7 @@
             <div style="display: grid; gap: 0.8rem;">
                 <h1 style="margin: 0;">{{ product.name }}</h1>
                 <p style="margin: 0; color: #31424d;">
-                    <strong>{% trans "Brand" %}:</strong> {{ product.brand|default:_('Not specified') }}
+                    <strong>{% trans "Brand" %}:</strong> {{ product.brand|default:not_specified }}
                 </p>
                 <p style="margin: 0; color: #31424d;">
                     <strong>{% trans "Category" %}:</strong> {{ product.category.name }}
@@ -37,7 +40,7 @@
                 <div>
                     <h2 style="font-size: 1.1rem; margin-bottom: 0.5rem;">{% trans "Description" %}</h2>
                     <p style="margin: 0; color: #31424d;">
-                        {{ product.description|default:_('No description available.') }}
+                        {{ product.description|default:no_desc }}
                     </p>
                 </div>
             </div>
@@ -52,7 +55,7 @@
             {% for review in verified_reviews %}
             <section style="border: 1px solid #e1e7ea; border-radius: 6px; padding: 0.8rem;">
                 <p style="margin: 0 0 0.4rem; font-weight: 600;">
-                    {{ review.user.get_full_name|default:_('Anonymous') }}
+                    {{ review.user.get_full_name|default:anonymous }}
                 </p>
                 <p style="margin: 0 0 0.4rem; color: #31424d;">
                     <strong>{% trans "Rating" %}:</strong> {{ review.rating }} / 5
