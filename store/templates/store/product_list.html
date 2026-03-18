@@ -27,6 +27,12 @@
                 <p style="font-size: 1.25rem; font-weight: 700; color: #0A2A43; margin-top: auto;">
                     ${{ product.price|localize }}
                 </p>
+                <p style="margin: 0.8rem 0 0;">
+                    <a href="{% url 'store:product-detail' slug=product.slug %}"
+                       style="color: #0A2A43; font-weight: 600; text-decoration: none;">
+                        {% trans "View details" %}
+                    </a>
+                </p>
             </div>
         </article>
         {% endfor %}

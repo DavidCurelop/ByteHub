@@ -2,8 +2,9 @@ from decimal import Decimal
 
 from django.conf import settings
 from django.core.exceptions import ValidationError
-from django.core.validators import MinValueValidator
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+from django.db.models import Avg, Prefetch, Q
 from django.utils.translation import gettext_lazy as _
 
 from pages.models import Category
@@ -31,6 +32,28 @@ class ProductManager(models.Manager):
         return (
             self.filter(created_by_id=admin_id)
             .select_related('category', 'created_by')
+        )
+
+    def get_public_detail(self):
+        """Return optimized queryset for public product detail pages."""
+        return (
+            self.filter(is_available=True)
+            .select_related('category')
+            .prefetch_related(
+                Prefetch(
+                    'reviews',
+                    queryset=Review.objects.filter(
+                        is_verified_purchase=True,
+                    ).select_related('user'),
+                    to_attr='verified_reviews',
+                )
+            )
+            .annotate(
+                verified_avg_rating=Avg(
+                    'reviews__rating',
+                    filter=Q(reviews__is_verified_purchase=True),
+                )
+            )
         )
 
 
@@ -82,3 +105,69 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
+
+    def avg_rating(self):
+        """Return average rating from verified reviews as a float.
+
+        Uses the pre-annotated ``verified_avg_rating`` value when the
+        object was fetched via ``get_public_detail()`` to avoid an
+        extra aggregate query.
+        """
+        if hasattr(self, 'verified_avg_rating'):
+            value = self.verified_avg_rating
+        else:
+            result = self.reviews.filter(
+                is_verified_purchase=True,
+            ).aggregate(average=Avg('rating'))
+            value = result['average']
+        return float(value) if value is not None else 0.0
+
+
+class Review(models.Model):
+    """Verified or unverified customer review for a product."""
+
+    product = models.ForeignKey(
+        Product,
+        on_delete=models.CASCADE,
+        related_name='reviews',
+        verbose_name=_('product'),
+    )
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='reviews',
+        verbose_name=_('user'),
+    )
+    rating = models.PositiveSmallIntegerField(
+        _('rating'),
+        validators=[
+            MinValueValidator(
+                1, message=_("Rating must be between 1 and 5."),
+            ),
+            MaxValueValidator(
+                5, message=_("Rating must be between 1 and 5."),
+            ),
+        ],
+    )
+    title = models.CharField(_('title'), max_length=120, blank=True)
+    body = models.TextField(_('review body'), blank=True)
+    is_verified_purchase = models.BooleanField(
+        _('verified purchase'), default=False,
+    )
+    created_at = models.DateTimeField(
+        _('created at'), auto_now_add=True,
+    )
+
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name = _('review')
+        verbose_name_plural = _('reviews')
+        constraints = [
+            models.UniqueConstraint(
+                fields=['product', 'user'],
+                name='store_review_unique_product_user',
+            )
+        ]
+
+    def __str__(self):
+        return f'Product #{self.product_id} - {self.rating}'
