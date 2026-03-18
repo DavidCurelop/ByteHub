@@ -22,3 +22,10 @@ jobs:
         run: gh pr merge ${{ github.event.pull_request.number }} --repo ${{ github.repository }} --squash --auto
         env:
           GH_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+
+      - name: Re-request Copilot review on original PR
+        run: |
+          ORIGINAL_PR=$(gh pr list --repo ${{ github.repository }} --head ${{ github.event.pull_request.base.ref }} --json number --jq '.[0].number')
+          gh api --method POST repos/${{ github.repository }}/pulls/$ORIGINAL_PR/requested_reviewers --field 'reviewers[]=copilot-pull-request-reviewer[bot]'
+        env:
+          GH_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
