@@ -4,7 +4,7 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-from django.db.models import Avg
+from django.db.models import Avg, Prefetch
 from django.utils.translation import gettext_lazy as _
 
 from pages.models import Category
@@ -32,6 +32,22 @@ class ProductManager(models.Manager):
         return (
             self.filter(created_by_id=admin_id)
             .select_related('category', 'created_by')
+        )
+
+    def get_public_detail(self):
+        """Return optimized queryset for public product detail pages."""
+        return (
+            self.filter(is_available=True)
+            .select_related('category')
+            .prefetch_related(
+                Prefetch(
+                    'reviews',
+                    queryset=Review.objects.filter(
+                        is_verified_purchase=True,
+                    ).select_related('user'),
+                    to_attr='verified_reviews',
+                )
+            )
         )
 
 
@@ -85,11 +101,12 @@ class Product(models.Model):
         return self.name
 
     def avg_rating(self):
-        """Return average rating from verified reviews."""
+        """Return average rating from verified reviews as a float."""
         result = self.reviews.filter(
             is_verified_purchase=True,
         ).aggregate(average=Avg('rating'))
-        return result['average'] or 0
+        value = result['average']
+        return float(value) if value is not None else 0.0
 
 
 class Review(models.Model):
