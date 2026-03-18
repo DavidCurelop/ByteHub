@@ -110,7 +110,7 @@
     "model": "accounts.user",
     "pk": 4,
     "fields": {
-      "password": "!unusable-password",
+      "password": "pbkdf2_sha256$1200000$u/8gq2UGa+bihr8eSk8mqw==$QrgeTsDKlyuepDwqaHHlanRptSmSBmzGxliB0y8lcYg=",
       "last_login": null,
       "is_superuser": false,
       "email": "store.manager@example.com",
