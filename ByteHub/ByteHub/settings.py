@@ -95,6 +95,16 @@ USE_POSTGRES = os.getenv('USE_POSTGRES', 'false').lower() in {
     '1', 'true', 'yes'
 }
 
+
+def _parse_conn_max_age(value):
+    """Parse POSTGRES_CONN_MAX_AGE; raise ImproperlyConfigured on bad input."""
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        raise ImproperlyConfigured(
+            f"POSTGRES_CONN_MAX_AGE must be an integer number of seconds, got: {value!r}"
+        )
+
 if USE_POSTGRES:
     _postgres_password = os.getenv('POSTGRES_PASSWORD')
     if not _postgres_password:
@@ -110,7 +120,9 @@ if USE_POSTGRES:
             'PASSWORD': _postgres_password,
             'HOST': os.getenv('POSTGRES_HOST', '127.0.0.1'),
             'PORT': os.getenv('POSTGRES_PORT', '5433'),
-            'CONN_MAX_AGE': int(os.getenv('POSTGRES_CONN_MAX_AGE', '60')),
+            'CONN_MAX_AGE': _parse_conn_max_age(
+                os.getenv('POSTGRES_CONN_MAX_AGE', '60')
+            ),
         }
     }
 else:
