@@ -1,6 +1,8 @@
 import { Octokit } from "@octokit/rest";
 import fs from "fs";
 
+const SUGGESTION_RE = /```suggestion\r?\n([\s\S]*?)```/;
+
 const GH_TOKEN = process.env.GH_TOKEN;
 const REPO = process.env.REPO;
 const PR_NUMBER = process.env.PR_NUMBER;
@@ -53,10 +55,13 @@ async function run() {
 
   let applied = 0;
 
+  // Group actionable suggestions by file path so we can apply them in
+  // descending line order per file. This prevents earlier edits from
+  // invalidating the line numbers of later edits in the same file.
+  const commentsByFile = new Map();
+
   for (const comment of comments) {
-    const suggestionMatch = comment.body.match(
-      /```suggestion\r?\n([\s\S]*?)```/
-    );
+    const suggestionMatch = comment.body.match(SUGGESTION_RE);
 
     if (!suggestionMatch) continue;
 
@@ -68,44 +73,68 @@ async function run() {
       continue;
     }
 
-    const suggestedContent = suggestionMatch[1];
-    const filePath = comment.path;
-    const startLine = comment.start_line ?? comment.line;
-    const endLine = comment.line;
+    if (!commentsByFile.has(comment.path)) {
+      commentsByFile.set(comment.path, []);
+    }
+    // Store the matched content alongside the comment to avoid re-matching later.
+    commentsByFile.get(comment.path).push({
+      comment,
+      suggestedContent: suggestionMatch[1],
+    });
+  }
 
+  for (const [filePath, fileEntries] of commentsByFile) {
     if (!fs.existsSync(filePath)) {
-      console.warn(`Warning: file not found, skipping suggestion for path: ${filePath}`);
+      console.warn(
+        `Warning: file not found, skipping suggestions for path: ${filePath}`
+      );
       continue;
     }
 
-    const fileLines = fs.readFileSync(filePath, "utf8").split("\n");
-
-    // Remove a single trailing newline if present (GitHub suggestions always
-    // end with one), but preserve any intentional blank lines within the block.
-    const trimmedContent = suggestedContent.endsWith("\n")
-      ? suggestedContent.slice(0, -1)
-      : suggestedContent;
-
-    // Replace the lines the comment targets (1-indexed)
-    const newLines = [
-      ...fileLines.slice(0, startLine - 1),
-      ...trimmedContent.split("\n"),
-      ...fileLines.slice(endLine),
-    ];
-
-    fs.writeFileSync(filePath, newLines.join("\n"), "utf8");
-    console.log(`Applied suggestion on ${filePath} lines ${startLine}-${endLine}`);
-    applied++;
-
-    // Post a reply to the review comment instead of deleting it,
-    // to preserve review history and auditability.
-    await octokit.pulls.createReplyForReviewComment({
-      owner,
-      repo,
-      pull_number,
-      comment_id: comment.id,
-      body: "✅ Suggestion applied automatically.",
+    // Sort descending by start line so bottom edits are applied first;
+    // this keeps earlier line numbers valid as we work upward.
+    fileEntries.sort((a, b) => {
+      const aLine = a.comment.start_line ?? a.comment.line;
+      const bLine = b.comment.start_line ?? b.comment.line;
+      return bLine - aLine;
     });
+
+    let fileLines = fs.readFileSync(filePath, "utf8").split("\n");
+
+    for (const { comment, suggestedContent } of fileEntries) {
+      const startLine = comment.start_line ?? comment.line;
+      const endLine = comment.line;
+
+      // Remove a single trailing newline if present (GitHub suggestions always
+      // end with one), but preserve any intentional blank lines within the block.
+      const trimmedContent = suggestedContent.endsWith("\n")
+        ? suggestedContent.slice(0, -1)
+        : suggestedContent;
+
+      // Replace the lines the comment targets (1-indexed)
+      fileLines = [
+        ...fileLines.slice(0, startLine - 1),
+        ...trimmedContent.split("\n"),
+        ...fileLines.slice(endLine),
+      ];
+
+      console.log(
+        `Applied suggestion on ${filePath} lines ${startLine}-${endLine}`
+      );
+      applied++;
+
+      // Post a reply to the review comment instead of deleting it,
+      // to preserve review history and auditability.
+      await octokit.pulls.createReplyForReviewComment({
+        owner,
+        repo,
+        pull_number,
+        comment_id: comment.id,
+        body: "✅ Suggestion applied automatically.",
+      });
+    }
+
+    fs.writeFileSync(filePath, fileLines.join("\n"), "utf8");
   }
 
   console.log(`Total suggestions applied: ${applied}`);
