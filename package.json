@@ -1,6 +1,7 @@
 {
   "name": "bytehub-workflow-scripts",
   "version": "1.0.0",
+  "private": true,
   "description": "GitHub Actions workflow helper scripts for ByteHub",
   "type": "module",
   "engines": {

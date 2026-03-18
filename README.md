@@ -138,8 +138,9 @@ docker compose run --rm web python manage.py migrate
 Open:
 - http://127.0.0.1:8000/
 
-> **Note:** The `web` service reads `USE_POSTGRES` and other settings from your `.env` file.
-> Ensure `USE_POSTGRES=true` and `POSTGRES_PASSWORD` are set when running via Compose.
+> **Note:** The `web` service in `docker-compose.yml` forces `USE_POSTGRES=true` via its
+> `environment` block, so Compose always uses PostgreSQL regardless of your `.env` file.
+> Ensure `POSTGRES_PASSWORD` is set in your `.env` before starting Compose.
 
 ## SQLite Fallback (without Docker)
 

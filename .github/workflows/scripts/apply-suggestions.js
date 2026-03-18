@@ -73,7 +73,10 @@ async function run() {
     const startLine = comment.start_line ?? comment.line;
     const endLine = comment.line;
 
-    if (!fs.existsSync(filePath)) continue;
+    if (!fs.existsSync(filePath)) {
+      console.warn(`Warning: file not found, skipping suggestion for path: ${filePath}`);
+      continue;
+    }
 
     const fileLines = fs.readFileSync(filePath, "utf8").split("\n");
 
