@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-{% load i18n %}
+{% load i18n static%}
 {% get_current_language as LANGUAGE_CODE %}
 <html lang="{{ LANGUAGE_CODE }}">
 
@@ -46,6 +46,13 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
+        }
+
+        .logo-image {
+            height: clamp(28px, 4vw, 44px);
+            width: auto;
+            display: block;
+            object-fit: contain;
         }
 
         .logo:hover {
@@ -305,6 +312,10 @@
             .logo {
                 font-size: 1.5rem;
             }
+
+            .logo-image {
+                height: 32px;
+            }
         }
     </style>
 </head>
@@ -313,13 +324,15 @@
     <header>
         <div class="header-container">
             <a href="/" class="logo">
-                <span>🔷</span>
+                <span><img class="logo-image" src="{% static 'images/ByteHubLogo.png' %}" alt="🔷"></span>
                 ByteHub
             </a>
             <nav>
                 <ul>
-                    <li><a class="nav-link {% if request.resolver_match.view_name == 'pages:home' %}active{% endif %}" href="{% url 'pages:home' %}">{% trans "Home" %}</a></li>
-                    <li><a class="nav-link {% if request.resolver_match.view_name == 'store:product-list' %}active{% endif %}" href="{% url 'store:product-list' %}">{% trans "Products" %}</a></li>
+                    <li><a class="nav-link {% if request.resolver_match.view_name == 'pages:home' %}active{% endif %}"
+                            href="{% url 'pages:home' %}">{% trans "Home" %}</a></li>
+                    <li><a class="nav-link {% if request.resolver_match.view_name == 'store:product-list' %}active{% endif %}"
+                            href="{% url 'store:product-list' %}">{% trans "Products" %}</a></li>
                     {% if user.is_authenticated %}
                     <li><a href="{% url 'accounts:profile' %}">{% trans "Profile" %}</a></li>
                     <li>
@@ -350,9 +363,9 @@
 
     <main>
         {% if messages %}
-            {% for message in messages %}
-                <div class="alert alert-{{ message.tags }}">{{ message }}</div>
-            {% endfor %}
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
         {% endif %}
         {% block content %}
         <!-- El contenido específico de cada página va aquí -->

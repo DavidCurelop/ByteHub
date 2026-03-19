@@ -366,5 +366,109 @@
       "created_by": 4,
       "created_at": "2026-03-17T02:53:30.762Z"
     }
+  },
+  {
+    "model": "store.review",
+    "pk": 1,
+    "fields": {
+      "product": 1,
+      "user": 1,
+      "rating": 5,
+      "title": "Excellent performance",
+      "body": "Fast, quiet, and perfect battery life for daily coding work.",
+      "is_verified_purchase": true,
+      "created_at": "2026-03-17T03:00:10.000Z"
+    }
+  },
+  {
+    "model": "store.review",
+    "pk": 2,
+    "fields": {
+      "product": 2,
+      "user": 1,
+      "rating": 4,
+      "title": "Solid laptop",
+      "body": "Great screen and keyboard, but battery could be better.",
+      "is_verified_purchase": true,
+      "created_at": "2026-03-17T03:01:25.000Z"
+    }
+  },
+  {
+    "model": "store.review",
+    "pk": 3,
+    "fields": {
+      "product": 3,
+      "user": 3,
+      "rating": 5,
+      "title": "Camera is amazing",
+      "body": "Night photos are impressive and overall performance is top tier.",
+      "is_verified_purchase": true,
+      "created_at": "2026-03-17T03:02:40.000Z"
+    }
+  },
+  {
+    "model": "store.review",
+    "pk": 4,
+    "fields": {
+      "product": 4,
+      "user": 5,
+      "rating": 4,
+      "title": "Very good Android",
+      "body": "Smooth experience and bright display, worth the price.",
+      "is_verified_purchase": false,
+      "created_at": "2026-03-17T03:03:55.000Z"
+    }
+  },
+  {
+    "model": "store.review",
+    "pk": 5,
+    "fields": {
+      "product": 5,
+      "user": 6,
+      "rating": 5,
+      "title": "Best ANC headphones",
+      "body": "Noise cancellation is excellent and comfort is outstanding.",
+      "is_verified_purchase": true,
+      "created_at": "2026-03-17T03:05:10.000Z"
+    }
+  },
+  {
+    "model": "store.review",
+    "pk": 6,
+    "fields": {
+      "product": 7,
+      "user": 5,
+      "rating": 5,
+      "title": "Fantastic console",
+      "body": "Load times are quick and performance is consistently smooth.",
+      "is_verified_purchase": true,
+      "created_at": "2026-03-17T03:06:25.000Z"
+    }
+  },
+  {
+    "model": "store.review",
+    "pk": 7,
+    "fields": {
+      "product": 8,
+      "user": 6,
+      "rating": 4,
+      "title": "Powerful hardware",
+      "body": "Runs modern games perfectly, interface can feel busy at times.",
+      "is_verified_purchase": true,
+      "created_at": "2026-03-17T03:07:40.000Z"
+    }
+  },
+  {
+    "model": "store.review",
+    "pk": 8,
+    "fields": {
+      "product": 12,
+      "user": 3,
+      "rating": 5,
+      "title": "Great earbuds",
+      "body": "Comfortable fit and reliable connectivity across devices.",
+      "is_verified_purchase": true,
+      "created_at": "2026-03-17T03:08:55.000Z"
+    }
   }
 ]
