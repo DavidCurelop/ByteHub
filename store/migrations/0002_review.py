@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
             name='Review',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('rating', models.PositiveSmallIntegerField(validators=[django.core.validators.MinValueValidator(1), django.core.validators.MaxValueValidator(5)], verbose_name='rating')),
+                ('rating', models.PositiveSmallIntegerField(validators=[django.core.validators.MinValueValidator(1, message='Rating must be between 1 and 5.'), django.core.validators.MaxValueValidator(5, message='Rating must be between 1 and 5.')], verbose_name='rating')),
                 ('title', models.CharField(blank=True, max_length=120, verbose_name='title')),
                 ('body', models.TextField(blank=True, verbose_name='review body')),
                 ('is_verified_purchase', models.BooleanField(default=False, verbose_name='verified purchase')),
