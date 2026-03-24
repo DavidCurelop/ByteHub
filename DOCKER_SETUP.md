@@ -40,11 +40,13 @@ Or edit `.env` and set `LOAD_FIXTURE_DATA=false` before running compose.
 
 ### Database Configuration
 
-The database persists in a Docker volume (`bytehub_postgres_data`), so data survives container restarts.
+The database persists in a shared Docker volume
+(`bytehub_shared_postgres_data`), so data survives container restarts and
+is reused across `docker compose up` runs on the same machine.
 
 **Default credentials** (from `.env`):
 - User: `bytehub_user`
-- Password: `12345678`
+- Password: `bytehub_dev_password`
 - Database: `bytehub`
 - Port (host): `5433`
 

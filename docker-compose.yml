@@ -1,11 +1,13 @@
 services:
   postgres:
     image: postgres:16-alpine
+    container_name: bytehub_postgres
     restart: unless-stopped
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-bytehub}
       POSTGRES_USER: ${POSTGRES_USER:-bytehub_user}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set in .env}
+      # Dev default so any teammate can run docker compose without extra setup.
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-bytehub_dev_password}
     ports:
       - "${POSTGRES_PORT:-5433}:5432"
     volumes:
@@ -21,11 +23,16 @@ services:
       context: .
       dockerfile: Dockerfile
     restart: unless-stopped
-    env_file: .env
+    env_file:
+      - path: .env
+        required: false
     depends_on:
       postgres:
         condition: service_healthy
     environment:
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:-dev-only-insecure-secret-key}
+      DEBUG: ${DEBUG:-true}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-bytehub_dev_password}
       # Override Postgres connection to use Docker internal hostname
       POSTGRES_HOST: postgres
       POSTGRES_PORT: "5432"
@@ -41,3 +48,5 @@ services:
 
 volumes:
   bytehub_postgres_data:
+    # Explicit volume name keeps one shared DB per Docker host.
+    name: bytehub_shared_postgres_data
