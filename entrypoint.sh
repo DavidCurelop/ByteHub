@@ -25,12 +25,12 @@ while retry_count < max_retries:
     try:
         conn = psycopg.connect(**db_config)
         conn.close()
-        print("✓ Database is ready!")
+        print("Database is ready!")
         break
     except Exception as e:
         retry_count += 1
         if retry_count >= max_retries:
-            print(f"✗ Database failed to respond after {max_retries} attempts")
+            print(f"Database failed to respond after {max_retries} attempts")
             raise
         print(f"Attempt {retry_count}/{max_retries}: Waiting for database... ({str(e)[:50]})")
         time.sleep(1)
@@ -43,13 +43,13 @@ python manage.py migrate --noinput
 if [ "$LOAD_FIXTURE_DATA" = "true" ]; then
     echo "Loading fixture data from dev_seed.json..."
     python manage.py loaddata dev_seed.json || {
-        echo "⚠ Warning: Could not load dev_seed.json. Continuing without fixture data."
+        echo "Warning: Could not load dev_seed.json. Continuing without fixture data."
     }
 else
-    echo "ℹ Fixture data loading disabled. Set LOAD_FIXTURE_DATA=true to enable."
+    echo "Fixture data loading disabled. Set LOAD_FIXTURE_DATA=true to enable."
 fi
 
-echo "✓ Initialization complete! Starting Django server..."
+echo "Initialization complete! Starting Django server..."
 
 # Start Django development server
 exec python manage.py runserver 0.0.0.0:8000

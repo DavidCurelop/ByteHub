@@ -241,3 +241,198 @@ msgstr "La calificación debe estar entre 1 y 5."
 
 msgid "Anonymous"
 msgstr "Anónimo"
+
+msgid "Add to cart"
+msgstr "Agregar al carrito"
+
+msgid "Out of stock"
+msgstr "Sin stock"
+
+msgid "Log in to add to cart"
+msgstr "Inicia sesión para agregar al carrito"
+
+msgid "Quantity"
+msgstr "Cantidad"
+
+msgid "This product is currently out of stock."
+msgstr "Este producto está sin stock actualmente."
+
+msgid "Log in to add this product to your cart."
+msgstr "Inicia sesión para agregar este producto a tu carrito."
+
+msgid "Invalid quantity."
+msgstr "Cantidad inválida."
+
+msgid "%(product)s was added to your cart."
+msgstr "%(product)s fue agregado a tu carrito."
+
+msgid "Your cart quantity for %(product)s was updated."
+msgstr "Se actualizó la cantidad de %(product)s en tu carrito."
+
+msgid "Quantity must be greater than zero."
+msgstr "La cantidad debe ser mayor que cero."
+
+msgid "Requested quantity exceeds available stock."
+msgstr "La cantidad solicitada supera el stock disponible."
+
+msgid "You cannot add more units than the available stock."
+msgstr "No puedes agregar más unidades que el stock disponible."
+
+msgid "Cart"
+msgstr "Carrito"
+
+msgid "Your cart"
+msgstr "Tu carrito"
+
+msgid "Items"
+msgstr "Artículos"
+
+msgid "Total"
+msgstr "Total"
+
+msgid "Your cart is empty."
+msgstr "Tu carrito está vacío."
+
+msgid "Continue shopping"
+msgstr "Seguir comprando"
+
+msgid "Unit price"
+msgstr "Precio unitario"
+
+msgid "Subtotal"
+msgstr "Subtotal"
+
+msgid "Update"
+msgstr "Actualizar"
+
+msgid "Remove"
+msgstr "Eliminar"
+
+msgid "Go to catalog"
+msgstr "Ir al catálogo"
+
+msgid "Quantity updated for %(product)s."
+msgstr "Cantidad actualizada para %(product)s."
+
+msgid "%(product)s was removed from your cart."
+msgstr "%(product)s fue eliminado de tu carrito."
+
+msgid "You cannot set more units than the available stock."
+msgstr "No puedes establecer más unidades que el stock disponible."
+
+msgid "Checkout"
+msgstr "Checkout"
+
+msgid "Proceed to checkout"
+msgstr "Proceder al checkout"
+
+msgid "Shipping address"
+msgstr "Dirección de envío"
+
+msgid "Use saved address"
+msgstr "Usar dirección guardada"
+
+msgid "Add a new address"
+msgstr "Agregar nueva dirección"
+
+msgid "Shipping address option"
+msgstr "Opción de dirección de envío"
+
+msgid "Street"
+msgstr "Calle"
+
+msgid "City"
+msgstr "Ciudad"
+
+msgid "State"
+msgstr "Provincia/Estado"
+
+msgid "ZIP code"
+msgstr "Código postal"
+
+msgid "Country"
+msgstr "País"
+
+msgid "Save as default address"
+msgstr "Guardar como dirección predeterminada"
+
+msgid "Saved address"
+msgstr "Dirección guardada"
+
+msgid "Please select a saved shipping address."
+msgstr "Selecciona una dirección de envío guardada."
+
+msgid "Please complete all required address fields."
+msgstr "Completa todos los campos obligatorios de dirección."
+
+msgid "Order summary"
+msgstr "Resumen del pedido"
+
+msgid "Qty"
+msgstr "Cant"
+
+msgid "Shipping"
+msgstr "Envío"
+
+msgid "Confirm and place order"
+msgstr "Confirmar y realizar pedido"
+
+msgid "Your order was created successfully."
+msgstr "Tu pedido fue creado correctamente."
+
+msgid "Order confirmed"
+msgstr "Pedido confirmado"
+
+msgid "Your order #%(order_id)s has been created."
+msgstr "Tu pedido #%(order_id)s ha sido creado."
+
+msgid "Stock changed for %(product)s. Please update your cart."
+msgstr "El stock cambió para %(product)s. Actualiza tu carrito."
+
+msgid "address"
+msgstr "dirección"
+
+msgid "addresses"
+msgstr "direcciones"
+
+msgid "default address"
+msgstr "dirección predeterminada"
+
+msgid "zip code"
+msgstr "código postal"
+
+msgid "Pending"
+msgstr "Pendiente"
+
+msgid "Paid"
+msgstr "Pagado"
+
+msgid "shipping address"
+msgstr "dirección de envío"
+
+msgid "status"
+msgstr "estado"
+
+msgid "subtotal"
+msgstr "subtotal"
+
+msgid "shipping cost"
+msgstr "costo de envío"
+
+msgid "total amount"
+msgstr "monto total"
+
+msgid "order"
+msgstr "pedido"
+
+msgid "orders"
+msgstr "pedidos"
+
+msgid "unit price"
+msgstr "precio unitario"
+
+msgid "order item"
+msgstr "ítem del pedido"
+
+msgid "order items"
+msgstr "ítems del pedido"

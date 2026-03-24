@@ -38,6 +38,47 @@
                     <strong>{% trans "Average rating" %}:</strong>
                     {% blocktrans with rating=average_rating|floatformat:1 %}{{ rating }} / 5{% endblocktrans %}
                 </p>
+                <div style="display: grid; gap: 0.6rem; margin-top: 0.3rem;">
+                    {% if user.is_authenticated %}
+                        {% if product.stock > 0 %}
+                        <form method="post"
+                              action="{% url 'store:add-to-cart' product_id=product.id %}"
+                              style="display: flex; align-items: end; gap: 0.6rem; flex-wrap: wrap;">
+                            {% csrf_token %}
+                            <input type="hidden" name="next"
+                                   value="{{ request.get_full_path }}">
+                            <div style="display: grid; gap: 0.25rem;">
+                                <label for="id_quantity"
+                                       style="font-weight: 600; color: #0A2A43;">
+                                    {% trans "Quantity" %}
+                                </label>
+                                <input id="id_quantity"
+                                       type="number"
+                                       name="quantity"
+                                       min="1"
+                                       max="{{ product.stock }}"
+                                       value="1"
+                                       style="padding: 0.55rem 0.7rem; border: 1px solid #9fb4c4; border-radius: 6px; width: 110px;">
+                            </div>
+                            <button type="submit"
+                                    style="padding: 0.6rem 1rem; border: none; border-radius: 6px; background: #00C2CB; color: #0A2A43; font-weight: 700; cursor: pointer;">
+                                {% trans "Add to cart" %}
+                            </button>
+                        </form>
+                        {% else %}
+                        <p style="margin: 0; color: #721c24; font-weight: 600;">
+                            {% trans "This product is currently out of stock." %}
+                        </p>
+                        {% endif %}
+                    {% else %}
+                    <p style="margin: 0; color: #31424d;">
+                        <a href="{% url 'accounts:login' %}?next={{ request.get_full_path|urlencode }}"
+                           style="color: #0A2A43; font-weight: 700; text-decoration: none;">
+                            {% trans "Log in to add this product to your cart." %}
+                        </a>
+                    </p>
+                    {% endif %}
+                </div>
                 <div>
                     <h2 style="font-size: 1.1rem; margin-bottom: 0.5rem;">{% trans "Description" %}</h2>
                     <p style="margin: 0; color: #31424d;">

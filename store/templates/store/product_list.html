@@ -43,6 +43,33 @@
                 <p style="font-size: 1.25rem; font-weight: 700; color: #0A2A43; margin-top: auto;">
                     ${{ product.price|localize }}
                 </p>
+                <p style="margin: 0.5rem 0 0; color: #31424d;">
+                    <strong>{% trans "Stock" %}:</strong> {{ product.stock }}
+                </p>
+                <div style="margin: 0.8rem 0 0; display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
+                    {% if user.is_authenticated %}
+                        {% if product.stock > 0 %}
+                        <form method="post" action="{% url 'store:add-to-cart' product_id=product.id %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="quantity" value="1">
+                            <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                            <button type="submit"
+                                    style="padding: 0.55rem 0.9rem; border: none; border-radius: 6px; background: #00C2CB; color: #0A2A43; font-weight: 700; cursor: pointer;">
+                                {% trans "Add to cart" %}
+                            </button>
+                        </form>
+                        {% else %}
+                        <span style="padding: 0.55rem 0.9rem; border-radius: 6px; background: #f8d7da; color: #721c24; font-weight: 600;">
+                            {% trans "Out of stock" %}
+                        </span>
+                        {% endif %}
+                    {% else %}
+                    <a href="{% url 'accounts:login' %}?next={{ request.get_full_path|urlencode }}"
+                       style="padding: 0.55rem 0.9rem; border-radius: 6px; background: #0A2A43; color: #fff; font-weight: 600; text-decoration: none;">
+                        {% trans "Log in to add to cart" %}
+                    </a>
+                    {% endif %}
+                </div>
                 <p style="margin: 0.8rem 0 0;">
                     <a href="{% url 'store:product-detail' slug=product.slug %}"
                        style="color: #0A2A43; font-weight: 600; text-decoration: none;">

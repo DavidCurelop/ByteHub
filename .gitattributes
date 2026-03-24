@@ -1,0 +1,14 @@
+# Force shell scripts to use LF line endings (critical for Docker/Linux)
+*.sh text eol=lf
+entrypoint.sh text eol=lf
+
+# Keep these as auto
+*.py text
+*.html text
+*.css text
+*.js text
+*.json text
+*.yml text
+*.yaml text
+*.md text
+*.txt text

@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% load i18n l10n %}
+
+{% block title %}{% trans "Checkout" %} | ByteHub{% endblock %}
+
+{% block content %}
+<section style="display: grid; gap: 1.2rem;">
+    <h1 style="margin: 0;">{% trans "Checkout" %}</h1>
+
+    <form method="post" style="display: grid; gap: 1rem;">
+        {% csrf_token %}
+
+        <article style="background: #fff; border: 1px solid #cfd8dc; border-radius: 8px; padding: 1rem; display: grid; gap: 0.8rem;">
+            <h2 style="margin: 0;">{% trans "Shipping address" %}</h2>
+
+            {% if form.non_field_errors %}
+            <div class="alert alert-error">{{ form.non_field_errors }}</div>
+            {% endif %}
+
+            <div style="display: grid; gap: 0.4rem;">
+                {% for choice in form.address_option %}
+                <label style="display: flex; align-items: center; gap: 0.4rem;">
+                    {{ choice.tag }} {{ choice.choice_label }}
+                </label>
+                {% endfor %}
+            </div>
+
+            {% if addresses %}
+            <div style="display: grid; gap: 0.4rem;">
+                <label for="id_address_id" style="font-weight: 600;">{% trans "Saved address" %}</label>
+                <select id="id_address_id" name="address_id" style="padding: 0.5rem 0.6rem; border: 1px solid #9fb4c4; border-radius: 6px;">
+                    {% for address in addresses %}
+                    <option value="{{ address.id }}" {% if form.initial.address_id == address.id %}selected{% endif %}>
+                        {{ address.street }}, {{ address.city }}, {{ address.state }}, {{ address.zip_code }}, {{ address.country }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            {% endif %}
+
+            <div style="display: grid; gap: 0.6rem; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));">
+                <div>
+                    <label for="id_street" style="font-weight: 600;">{% trans "Street" %}</label>
+                    <input id="id_street" type="text" name="street" value="{{ form.street.value|default:'' }}" style="width: 100%; padding: 0.5rem 0.6rem; border: 1px solid #9fb4c4; border-radius: 6px;">
+                </div>
+                <div>
+                    <label for="id_city" style="font-weight: 600;">{% trans "City" %}</label>
+                    <input id="id_city" type="text" name="city" value="{{ form.city.value|default:'' }}" style="width: 100%; padding: 0.5rem 0.6rem; border: 1px solid #9fb4c4; border-radius: 6px;">
+                </div>
+                <div>
+                    <label for="id_state" style="font-weight: 600;">{% trans "State" %}</label>
+                    <input id="id_state" type="text" name="state" value="{{ form.state.value|default:'' }}" style="width: 100%; padding: 0.5rem 0.6rem; border: 1px solid #9fb4c4; border-radius: 6px;">
+                </div>
+                <div>
+                    <label for="id_zip_code" style="font-weight: 600;">{% trans "ZIP code" %}</label>
+                    <input id="id_zip_code" type="text" name="zip_code" value="{{ form.zip_code.value|default:'' }}" style="width: 100%; padding: 0.5rem 0.6rem; border: 1px solid #9fb4c4; border-radius: 6px;">
+                </div>
+                <div>
+                    <label for="id_country" style="font-weight: 600;">{% trans "Country" %}</label>
+                    <input id="id_country" type="text" name="country" value="{{ form.country.value|default:'' }}" style="width: 100%; padding: 0.5rem 0.6rem; border: 1px solid #9fb4c4; border-radius: 6px;">
+                </div>
+            </div>
+
+            <label style="display: flex; align-items: center; gap: 0.4rem;">
+                <input type="checkbox" name="is_default" {% if form.is_default.value %}checked{% endif %}>
+                {% trans "Save as default address" %}
+            </label>
+        </article>
+
+        <article style="background: #fff; border: 1px solid #cfd8dc; border-radius: 8px; padding: 1rem; display: grid; gap: 0.7rem;">
+            <h2 style="margin: 0;">{% trans "Order summary" %}</h2>
+            {% for item in items %}
+            <div style="display: grid; grid-template-columns: 1fr auto; gap: 1rem;">
+                <p style="margin: 0; color: #31424d;">
+                    {{ item.product.name }}
+                    ({% trans "Qty" %}: {{ item.quantity }})
+                </p>
+                <p style="margin: 0; color: #0A2A43; font-weight: 600;">
+                    ${{ item.get_subtotal|localize }}
+                </p>
+            </div>
+            {% endfor %}
+            <hr style="border: none; border-top: 1px solid #e1e7ea;">
+            <p style="margin: 0; color: #31424d;">
+                <strong>{% trans "Subtotal" %}:</strong>
+                ${{ subtotal|localize }}
+            </p>
+            <p style="margin: 0; color: #31424d;">
+                <strong>{% trans "Shipping" %}:</strong>
+                ${{ shipping_cost|localize }}
+            </p>
+            <p style="margin: 0; color: #0A2A43; font-size: 1.1rem;">
+                <strong>{% trans "Total" %}:</strong>
+                ${{ total_amount|localize }}
+            </p>
+        </article>
+
+        <button type="submit" style="padding: 0.7rem 1rem; border: none; border-radius: 6px; background: #00C2CB; color: #0A2A43; font-weight: 700; cursor: pointer;">
+            {% trans "Confirm and place order" %}
+        </button>
+    </form>
+</section>
+{% endblock %}
