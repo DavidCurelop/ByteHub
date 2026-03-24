@@ -33,17 +33,11 @@ services:
       # Force Postgres; the web service always runs alongside the postgres
       # service so SQLite would be inconsistent with the Compose setup.
       USE_POSTGRES: "true"
+      # Load fixture data from dev_seed.json
+      LOAD_FIXTURE_DATA: "true"
     ports:
       - "8000:8000"
     working_dir: /app/ByteHub
-    # NOTE: migrations run on every start (dev convenience).
-    # For production or multi-replica setups, run migrations first as a
-    # one-off step before starting the service:
-    #   docker compose run --rm web python manage.py migrate
-    #   docker compose up web
-    command: >
-      sh -c "python manage.py migrate --noinput &&
-      python manage.py runserver 0.0.0.0:8000"
 
 volumes:
   bytehub_postgres_data:

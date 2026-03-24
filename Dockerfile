@@ -12,10 +12,13 @@ RUN pip install --no-cache-dir -r /app/requirements.txt
 
 COPY --chown=appuser:appgroup . /app
 
+# Make entrypoint script executable
+RUN chmod +x /app/entrypoint.sh
+
 USER appuser
 
 WORKDIR /app/ByteHub
 
 EXPOSE 8000
 
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+ENTRYPOINT ["/app/entrypoint.sh"]
