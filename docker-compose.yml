@@ -2,6 +2,7 @@ services:
   postgres:
     image: postgres:16-alpine
     container_name: bytehub_postgres
+    profiles: ["localdb"]
     restart: unless-stopped
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-bytehub}
@@ -26,22 +27,19 @@ services:
     env_file:
       - path: .env
         required: false
-    depends_on:
-      postgres:
-        condition: service_healthy
     environment:
       DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:-dev-only-insecure-secret-key}
       DEBUG: ${DEBUG:-true}
+      USE_POSTGRES: ${USE_POSTGRES:-true}
+      POSTGRES_DB: ${POSTGRES_DB:-bytehub}
+      POSTGRES_USER: ${POSTGRES_USER:-bytehub_user}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-bytehub_dev_password}
-      # Override Postgres connection to use Docker internal hostname
-      POSTGRES_HOST: postgres
-      POSTGRES_PORT: "5432"
-      POSTGRES_CONN_MAX_AGE: "60"
-      # Force Postgres; the web service always runs alongside the postgres
-      # service so SQLite would be inconsistent with the Compose setup.
-      USE_POSTGRES: "true"
+      POSTGRES_HOST: ${POSTGRES_HOST:-postgres}
+      POSTGRES_PORT: ${POSTGRES_PORT:-5432}
+      POSTGRES_CONN_MAX_AGE: ${POSTGRES_CONN_MAX_AGE:-60}
+      PGSSLMODE: ${PGSSLMODE:-prefer}
       # Load fixture data from dev_seed.json
-      LOAD_FIXTURE_DATA: "true"
+      LOAD_FIXTURE_DATA: ${LOAD_FIXTURE_DATA:-true}
     ports:
       - "8000:8000"
     working_dir: /app/ByteHub
