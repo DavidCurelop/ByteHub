@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     'accounts.apps.AccountsConfig',
     'django.contrib.sites',
     'store.apps.StoreConfig',
+    'orders.apps.OrdersConfig',
 ]
 
 SITE_ID = 1
