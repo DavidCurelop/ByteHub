@@ -267,7 +267,7 @@ class Order(models.Model):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.PROTECT,
-        related_name='orders',
+        related_name='store_orders',
         verbose_name=_('user'),
     )
     shipping_address = models.ForeignKey(
@@ -316,7 +316,7 @@ class OrderItem(models.Model):
     product = models.ForeignKey(
         Product,
         on_delete=models.PROTECT,
-        related_name='order_items',
+        related_name='store_order_items',
         verbose_name=_('product'),
     )
     quantity = models.PositiveIntegerField(_('quantity'))
