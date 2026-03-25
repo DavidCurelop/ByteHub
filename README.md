@@ -73,7 +73,7 @@ DEBUG=true
 USE_POSTGRES=true
 POSTGRES_DB=bytehub
 POSTGRES_USER=bytehub_user
-POSTGRES_PASSWORD=change_me
+POSTGRES_PASSWORD=bytehub_dev_password
 POSTGRES_HOST=127.0.0.1
 POSTGRES_PORT=5433
 POSTGRES_CONN_MAX_AGE=60
@@ -175,7 +175,17 @@ To disable seed data loading, either:
 
 > **Note:** The `web` service in `docker-compose.yml` forces `USE_POSTGRES=true` via its
 > `environment` block, so Compose always uses PostgreSQL regardless of your `.env` file.
-> Ensure `POSTGRES_PASSWORD` is set in your `.env` before starting Compose.
+> Docker Compose now includes dev defaults and a shared named Postgres volume
+> (`bytehub_shared_postgres_data`) so the DB is reused across runs.
+
+### Seed Data Reference
+
+The `ByteHub/dev_seed.json` fixture includes:
+- **5 Categories**: Electronics, Laptops, Smartphones, Accessories, Gaming
+- **Sample Users**: Test accounts with `@example.com` emails
+- **Products**: Sample products across categories
+
+See [DOCKER_SETUP.md](./DOCKER_SETUP.md) for details on sharing databases, creating custom seed data, and production deployments.
 
 ### Seed Data Reference
 
