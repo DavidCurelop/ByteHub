@@ -5,24 +5,42 @@
 
 {% block content %}
 <div class="auth-card">
-    <h1 class="auth-title">
-        {% trans "Welcome," %} {{ user.first_name }}!
-    </h1>
-    <p class="auth-subtitle">{% trans "Your account information" %}</p>
+    <h1 class="auth-title">{% trans "My Profile" %}</h1>
+    <p class="auth-subtitle">{% trans "View and edit your account information" %}</p>
 
-    <dl class="profile-list">
-        <dt>{% trans "Email" %}</dt>
-        <dd>{{ user.email }}</dd>
+    <form method="post" novalidate>
+        {% csrf_token %}
 
-        <dt>{% trans "First Name" %}</dt>
-        <dd>{{ user.first_name }}</dd>
+        <div class="form-group">
+            <label>{% trans "Email" %}</label>
+            <input type="email" value="{{ user.email }}" disabled class="form-control">
+            <small class="form-text">{% trans "Email cannot be changed" %}</small>
+        </div>
 
-        <dt>{% trans "Last Name" %}</dt>
-        <dd>{{ user.last_name }}</dd>
+        {% for field in form %}
+            <div class="form-group">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                    <ul class="field-errors">
+                        {% for error in field.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+        {% endfor %}
 
-        <dt>{% trans "Phone" %}</dt>
-        <dd>{{ user.phone|default:"—" }}</dd>
-    </dl>
+        {% if form.non_field_errors %}
+            <ul class="field-errors">
+                {% for error in form.non_field_errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        <button type="submit" class="btn-primary">{% trans "Update Profile" %}</button>
+    </form>
 
     <form method="post" action="{% url 'accounts:logout' %}" style="margin-top:1.5rem;">
         {% csrf_token %}

@@ -128,3 +128,31 @@ class UserLoginForm(forms.Form):
 
     def get_user(self):
         return self._user
+
+
+class UserUpdateForm(forms.ModelForm):
+    """Form for updating user profile information."""
+
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'phone']
+        labels = {
+            'first_name': _('First Name'),
+            'last_name': _('Last Name'),
+            'phone': _('Phone'),
+        }
+        widgets = {
+            'phone': forms.TextInput(attrs={'placeholder': ''}),
+        }
+
+    def clean_first_name(self):
+        first_name = self.cleaned_data.get('first_name', '').strip()
+        if not first_name:
+            raise forms.ValidationError(_('First name is required.'))
+        return first_name
+
+    def clean_last_name(self):
+        last_name = self.cleaned_data.get('last_name', '').strip()
+        if not last_name:
+            raise forms.ValidationError(_('Last name is required.'))
+        return last_name
