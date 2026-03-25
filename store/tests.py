@@ -345,6 +345,23 @@ class AddToCartTests(TestCase):
             'You cannot add more units than available stock.',
         )
 
+    def test_add_to_cart_rejects_out_of_stock_product(self):
+        self.product.stock = 0
+        self.product.save(update_fields=['stock'])
+        self.client.login(
+            email='customer-cart@example.com',
+            password='StrongPass123',
+        )
+        response = self.client.post(self.add_to_cart_url, follow=True)
+
+        self.assertFalse(
+            CartItem.objects.filter(product=self.product).exists(),
+        )
+        self.assertContains(
+            response,
+            'You cannot add more units than available stock.',
+        )
+
 
 class CartDetailAndItemActionsTests(TestCase):
     """Tests for cart detail listing and item actions."""
