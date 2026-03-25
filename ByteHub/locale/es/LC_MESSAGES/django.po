@@ -319,3 +319,93 @@ msgstr "Ítem eliminado de tu carrito."
 
 msgid "Quantity must be at least 1."
 msgstr "La cantidad debe ser al menos 1."
+
+msgid "Proceed to checkout"
+msgstr "Proceder al checkout"
+
+msgid "Checkout"
+msgstr "Checkout"
+
+msgid "Shipping address"
+msgstr "Dirección de envío"
+
+msgid "Select one of your saved addresses or add a new one."
+msgstr "Selecciona una de tus direcciones guardadas o agrega una nueva."
+
+msgid "Use a new address"
+msgstr "Usar una nueva dirección"
+
+msgid "Add your shipping address to continue."
+msgstr "Agrega tu dirección de envío para continuar."
+
+msgid "Street"
+msgstr "Calle"
+
+msgid "City"
+msgstr "Ciudad"
+
+msgid "State"
+msgstr "Estado"
+
+msgid "Zip code"
+msgstr "Código postal"
+
+msgid "Country"
+msgstr "País"
+
+msgid "Save as default address"
+msgstr "Guardar como dirección predeterminada"
+
+msgid "Order summary"
+msgstr "Resumen del pedido"
+
+msgid "Shipping"
+msgstr "Envío"
+
+msgid "Confirm and pay"
+msgstr "Confirmar y pagar"
+
+msgid "Please complete all shipping address fields."
+msgstr "Completa todos los campos de la dirección de envío."
+
+msgid "Your cart is empty."
+msgstr "Tu carrito está vacío."
+
+msgid "Order #%(order_id)s was created successfully."
+msgstr "La orden #%(order_id)s se creó correctamente."
+
+msgid "Product \"%(product)s\" does not have enough stock."
+msgstr "El producto \"%(product)s\" no tiene suficiente stock."
+
+msgid "Pending"
+msgstr "Pendiente"
+
+msgid "Confirmed"
+msgstr "Confirmada"
+
+msgid "address"
+msgstr "dirección"
+
+msgid "addresses"
+msgstr "direcciones"
+
+msgid "shipping address"
+msgstr "dirección de envío"
+
+msgid "order"
+msgstr "orden"
+
+msgid "orders"
+msgstr "órdenes"
+
+msgid "shipping cost"
+msgstr "costo de envío"
+
+msgid "total amount"
+msgstr "monto total"
+
+msgid "order item"
+msgstr "item de orden"
+
+msgid "order items"
+msgstr "items de orden"

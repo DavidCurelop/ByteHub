@@ -1,10 +1,12 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import ValidationError
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.http import require_POST
 
-from .models import Cart, CartItem, Product
+from .models import Address, Cart, CartItem, Product
+from .services import DEFAULT_SHIPPING_COST, create_order_from_cart
 
 
 def product_list(request):
@@ -120,3 +122,80 @@ def delete_cart_item(request, item_id):
     cart_item.delete()
     messages.success(request, _('Item removed from your cart.'))
     return redirect('store:cart-detail')
+
+
+@login_required
+def checkout(request):
+    cart = Cart.objects.get_user_carts_with_details(request.user.id).first()
+    cart_items = list(cart.items.all()) if cart else []
+    addresses = Address.objects.filter(user=request.user)
+
+    subtotal = cart.get_total() if cart else 0
+    shipping_cost = DEFAULT_SHIPPING_COST if cart_items else 0
+    total_amount = subtotal + shipping_cost
+
+    if request.method == 'POST':
+        if not cart_items:
+            messages.error(request, _('Your cart is empty.'))
+            return redirect('store:cart-detail')
+
+        selected_address_id = request.POST.get('shipping_address')
+        if selected_address_id == 'new' or not selected_address_id:
+            street = request.POST.get('street', '').strip()
+            city = request.POST.get('city', '').strip()
+            state = request.POST.get('state', '').strip()
+            zip_code = request.POST.get('zip_code', '').strip()
+            country = request.POST.get('country', '').strip()
+
+            if not all([street, city, state, zip_code, country]):
+                messages.error(
+                    request,
+                    _('Please complete all shipping address fields.'),
+                )
+                return redirect('store:checkout')
+
+            address = Address.objects.create(
+                user=request.user,
+                street=street,
+                city=city,
+                state=state,
+                zip_code=zip_code,
+                country=country,
+                is_default=(request.POST.get('set_default') == 'on'),
+            )
+            if address.is_default:
+                Address.objects.filter(user=request.user).exclude(
+                    id=address.id,
+                ).update(is_default=False)
+        else:
+            address = get_object_or_404(
+                Address,
+                id=selected_address_id,
+                user=request.user,
+            )
+
+        try:
+            order = create_order_from_cart(
+                user=request.user,
+                shipping_address=address,
+            )
+        except ValidationError as error:
+            messages.error(request, error.message)
+            return redirect('store:checkout')
+
+        messages.success(
+            request,
+            _('Order #%(order_id)s was created successfully.')
+            % {'order_id': order.id},
+        )
+        return redirect('store:cart-detail')
+
+    context = {
+        'cart': cart,
+        'cart_items': cart_items,
+        'addresses': addresses,
+        'subtotal': subtotal,
+        'shipping_cost': shipping_cost,
+        'total_amount': total_amount,
+    }
+    return render(request, 'store/checkout.html', context)

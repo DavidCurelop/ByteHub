@@ -7,7 +7,7 @@ from django.urls import reverse
 
 from pages.models import Category
 
-from .models import Cart, CartItem, Product, Review
+from .models import Address, Cart, CartItem, Order, OrderItem, Product, Review
 
 User = get_user_model()
 
@@ -486,3 +486,132 @@ class CartDetailAndItemActionsTests(TestCase):
         response = self.client.get(self.cart_detail_url)
         self.assertContains(response, 'Your cart is empty.')
         self.assertContains(response, reverse('store:product-list'))
+
+
+class CheckoutTests(TestCase):
+    """Tests for checkout process and order creation."""
+
+    def setUp(self):
+        self.admin_user = User.objects.create_user(
+            email='admin-checkout@example.com',
+            password='StrongPass123',
+            first_name='Admin',
+            last_name='Checkout',
+            is_admin=True,
+        )
+        self.customer = User.objects.create_user(
+            email='customer-checkout@example.com',
+            password='StrongPass123',
+            first_name='Customer',
+            last_name='Checkout',
+        )
+        self.category = Category.objects.create(
+            name='Computing',
+            slug='computing',
+        )
+        self.product = Product.objects.create(
+            name='Laptop Stand',
+            slug='laptop-stand',
+            price='30.00',
+            stock=5,
+            is_available=True,
+            category=self.category,
+            created_by=self.admin_user,
+        )
+        self.cart = Cart.objects.create(user=self.customer)
+        self.cart_item = CartItem.objects.create(
+            cart=self.cart,
+            product=self.product,
+            quantity=2,
+        )
+        self.address = Address.objects.create(
+            user=self.customer,
+            street='123 Main St',
+            city='Bogota',
+            state='Cundinamarca',
+            zip_code='110111',
+            country='Colombia',
+            is_default=True,
+        )
+        self.checkout_url = reverse('store:checkout')
+
+    def test_checkout_requires_authentication(self):
+        response = self.client.get(self.checkout_url)
+        self.assertEqual(response.status_code, 302)
+        self.assertIn(reverse('accounts:login'), response.url)
+
+    def test_checkout_shows_order_breakdown(self):
+        self.client.login(
+            email='customer-checkout@example.com',
+            password='StrongPass123',
+        )
+        response = self.client.get(self.checkout_url)
+
+        self.assertContains(response, 'Order summary')
+        self.assertContains(response, 'Subtotal')
+        self.assertContains(response, 'Shipping')
+        self.assertContains(response, 'Total')
+        self.assertEqual(response.context['subtotal'], Decimal('60.00'))
+        self.assertEqual(response.context['shipping_cost'], Decimal('10.00'))
+        self.assertEqual(response.context['total_amount'], Decimal('70.00'))
+
+    def test_checkout_requires_shipping_address_data_for_new_address(self):
+        self.client.login(
+            email='customer-checkout@example.com',
+            password='StrongPass123',
+        )
+        response = self.client.post(
+            self.checkout_url,
+            {'shipping_address': 'new'},
+            follow=True,
+        )
+
+        self.assertContains(response, 'Please complete all shipping address fields.')
+        self.assertEqual(Order.objects.count(), 0)
+
+    def test_checkout_validates_current_stock_before_order(self):
+        self.client.login(
+            email='customer-checkout@example.com',
+            password='StrongPass123',
+        )
+        self.product.stock = 1
+        self.product.save(update_fields=['stock'])
+
+        response = self.client.post(
+            self.checkout_url,
+            {'shipping_address': str(self.address.id)},
+            follow=True,
+        )
+
+        self.assertContains(response, 'does not have enough stock')
+        self.assertEqual(Order.objects.count(), 0)
+        self.assertEqual(CartItem.objects.count(), 1)
+
+    def test_checkout_creates_order_items_and_clears_cart(self):
+        self.client.login(
+            email='customer-checkout@example.com',
+            password='StrongPass123',
+        )
+        response = self.client.post(
+            self.checkout_url,
+            {'shipping_address': str(self.address.id)},
+            follow=True,
+        )
+
+        self.assertEqual(Order.objects.count(), 1)
+        order = Order.objects.get()
+        self.assertEqual(order.user, self.customer)
+        self.assertEqual(order.shipping_address, self.address)
+        self.assertEqual(order.subtotal, Decimal('60.00'))
+        self.assertEqual(order.shipping_cost, Decimal('10.00'))
+        self.assertEqual(order.total_amount, Decimal('70.00'))
+
+        self.assertEqual(OrderItem.objects.filter(order=order).count(), 1)
+        order_item = OrderItem.objects.get(order=order)
+        self.assertEqual(order_item.quantity, 2)
+        self.assertEqual(order_item.unit_price, Decimal('30.00'))
+
+        self.product.refresh_from_db()
+        self.assertEqual(self.product.stock, 3)
+        self.assertEqual(CartItem.objects.filter(cart=self.cart).count(), 0)
+        self.assertContains(response, 'was created successfully.')

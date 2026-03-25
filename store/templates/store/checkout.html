@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+{% load i18n l10n %}
+
+{% block title %}{% trans "Checkout" %} | ByteHub{% endblock %}
+
+{% block content %}
+<section style="display: grid; gap: 1rem;">
+    <h1 style="margin: 0;">{% trans "Checkout" %}</h1>
+
+    {% if cart_items %}
+    <form method="post" style="display: grid; gap: 1rem;">
+        {% csrf_token %}
+
+        <article style="background: #fff; border: 1px solid #cfd8dc; border-radius: 8px; padding: 1rem; display: grid; gap: 0.8rem;">
+            <h2 style="margin: 0; font-size: 1.1rem;">{% trans "Shipping address" %}</h2>
+
+            {% if addresses %}
+            <p style="margin: 0; color: #31424d;">{% trans "Select one of your saved addresses or add a new one." %}</p>
+            <div style="display: grid; gap: 0.6rem;">
+                {% for address in addresses %}
+                <label style="display: flex; gap: 0.5rem; align-items: flex-start;">
+                    <input type="radio" name="shipping_address" value="{{ address.id }}"
+                           {% if address.is_default %}checked{% endif %}>
+                    <span>
+                        {{ address.street }}, {{ address.city }}, {{ address.state }},
+                        {{ address.zip_code }}, {{ address.country }}
+                    </span>
+                </label>
+                {% endfor %}
+                <label style="display: flex; gap: 0.5rem; align-items: flex-start;">
+                    <input type="radio" name="shipping_address" value="new"
+                           {% if not addresses %}checked{% endif %}>
+                    <span>{% trans "Use a new address" %}</span>
+                </label>
+            </div>
+            {% else %}
+            <input type="hidden" name="shipping_address" value="new">
+            <p style="margin: 0; color: #31424d;">{% trans "Add your shipping address to continue." %}</p>
+            {% endif %}
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0.8rem;">
+                <label style="display: grid; gap: 0.35rem;">
+                    <span style="font-weight: 600;">{% trans "Street" %}</span>
+                    <input type="text" name="street"
+                           style="padding: 0.55rem; border: 1px solid #9fb4c4; border-radius: 6px;">
+                </label>
+                <label style="display: grid; gap: 0.35rem;">
+                    <span style="font-weight: 600;">{% trans "City" %}</span>
+                    <input type="text" name="city"
+                           style="padding: 0.55rem; border: 1px solid #9fb4c4; border-radius: 6px;">
+                </label>
+                <label style="display: grid; gap: 0.35rem;">
+                    <span style="font-weight: 600;">{% trans "State" %}</span>
+                    <input type="text" name="state"
+                           style="padding: 0.55rem; border: 1px solid #9fb4c4; border-radius: 6px;">
+                </label>
+                <label style="display: grid; gap: 0.35rem;">
+                    <span style="font-weight: 600;">{% trans "Zip code" %}</span>
+                    <input type="text" name="zip_code"
+                           style="padding: 0.55rem; border: 1px solid #9fb4c4; border-radius: 6px;">
+                </label>
+                <label style="display: grid; gap: 0.35rem;">
+                    <span style="font-weight: 600;">{% trans "Country" %}</span>
+                    <input type="text" name="country"
+                           style="padding: 0.55rem; border: 1px solid #9fb4c4; border-radius: 6px;">
+                </label>
+            </div>
+            <label style="display: flex; gap: 0.45rem; align-items: center;">
+                <input type="checkbox" name="set_default">
+                <span>{% trans "Save as default address" %}</span>
+            </label>
+        </article>
+
+        <article style="background: #fff; border: 1px solid #cfd8dc; border-radius: 8px; padding: 1rem; display: grid; gap: 0.7rem;">
+            <h2 style="margin: 0; font-size: 1.1rem;">{% trans "Order summary" %}</h2>
+            <div style="display: grid; gap: 0.5rem;">
+                {% for item in cart_items %}
+                <p style="margin: 0; color: #31424d;">
+                    {{ item.product.name }} x {{ item.quantity }} - ${{ item.get_subtotal|localize }}
+                </p>
+                {% endfor %}
+            </div>
+            <p style="margin: 0; color: #31424d;"><strong>{% trans "Subtotal" %}:</strong> ${{ subtotal|localize }}</p>
+            <p style="margin: 0; color: #31424d;"><strong>{% trans "Shipping" %}:</strong> ${{ shipping_cost|localize }}</p>
+            <p style="margin: 0; color: #0A2A43; font-size: 1.1rem;"><strong>{% trans "Total" %}:</strong> ${{ total_amount|localize }}</p>
+        </article>
+
+        <button type="submit"
+                style="padding: 0.7rem 1rem; border: none; border-radius: 6px; background: #0A2A43; color: #fff; font-weight: 600; cursor: pointer; width: fit-content;">
+            {% trans "Confirm and pay" %}
+        </button>
+    </form>
+    {% else %}
+    <p style="margin: 0; color: #31424d;">{% trans "Your cart is empty." %}</p>
+    <p style="margin: 0;">
+        <a href="{% url 'store:product-list' %}" style="color: #0A2A43; font-weight: 600; text-decoration: none;">
+            {% trans "Go to catalog" %}
+        </a>
+    </p>
+    {% endif %}
+</section>
+{% endblock %}
