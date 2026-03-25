@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "My Orders" %} – ByteHub{% endblock %}
+
+{% block content %}
+<div class="auth-card" style="max-width:900px;">
+    <h1 class="auth-title">{% trans "My Orders" %}</h1>
+    {% if orders %}
+    <table style="width:100%;border-collapse:collapse;margin-top:1rem;">
+        <thead>
+            <tr style="background:#0A2A43;color:#E2E8E9;">
+                <th style="padding:0.6rem 1rem;text-align:left;">
+                    {% trans "Order #" %}
+                </th>
+                <th style="padding:0.6rem 1rem;text-align:left;">
+                    {% trans "Date" %}
+                </th>
+                <th style="padding:0.6rem 1rem;text-align:left;">
+                    {% trans "Status" %}
+                </th>
+                <th style="padding:0.6rem 1rem;text-align:right;">
+                    {% trans "Total" %}
+                </th>
+                <th style="padding:0.6rem 1rem;text-align:center;">
+                    {% trans "Actions" %}
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in orders %}
+            <tr style="border-bottom:1px solid #ccc;">
+                <td style="padding:0.6rem 1rem;">{{ order.pk }}</td>
+                <td style="padding:0.6rem 1rem;">
+                    {{ order.created_at|date:"Y-m-d" }}
+                </td>
+                <td style="padding:0.6rem 1rem;">
+                    {{ order.get_status_display }}
+                </td>
+                <td style="padding:0.6rem 1rem;text-align:right;">
+                    ${{ order.total_amount }}
+                </td>
+                <td style="padding:0.6rem 1rem;text-align:center;">
+                    <a href="{% url 'orders:order-detail' order.pk %}"
+                       style="color:#00C2CB;font-weight:600;">
+                        {% trans "View" %}
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p style="margin-top:1rem;color:#666;">
+        {% trans "You have no orders yet." %}
+    </p>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Order" %} #{{ order.pk }} – ByteHub{% endblock %}
+
+{% block content %}
+<div class="auth-card" style="max-width:900px;">
+    <h1 class="auth-title">{% trans "Order" %} #{{ order.pk }}</h1>
+    <p style="color:#666;margin-bottom:1.2rem;">
+        {{ order.created_at|date:"Y-m-d H:i" }}
+    </p>
+
+    {# Customer information #}
+    <section style="margin-bottom:1.5rem;">
+        <h2 style="font-size:1.2rem;color:#0A2A43;margin-bottom:0.5rem;">
+            {% trans "Customer Information" %}
+        </h2>
+        <dl class="profile-list">
+            <dt>{% trans "Name" %}</dt>
+            <dd>{{ order.user.get_full_name }}</dd>
+            <dt>{% trans "Email" %}</dt>
+            <dd>{{ order.user.email }}</dd>
+            {% if order.user.phone %}
+            <dt>{% trans "Phone" %}</dt>
+            <dd>{{ order.user.phone }}</dd>
+            {% endif %}
+        </dl>
+    </section>
+
+    {# Shipping address #}
+    {% if order.shipping_address %}
+    <section style="margin-bottom:1.5rem;">
+        <h2 style="font-size:1.2rem;color:#0A2A43;margin-bottom:0.5rem;">
+            {% trans "Shipping Address" %}
+        </h2>
+        <p>
+            {{ order.shipping_address.street }},
+            {{ order.shipping_address.city }},
+            {{ order.shipping_address.state }}
+            {{ order.shipping_address.zip_code }},
+            {{ order.shipping_address.country }}
+        </p>
+    </section>
+    {% endif %}
+
+    {# Order items #}
+    <section style="margin-bottom:1.5rem;">
+        <h2 style="font-size:1.2rem;color:#0A2A43;margin-bottom:0.5rem;">
+            {% trans "Products" %}
+        </h2>
+        <table style="width:100%;border-collapse:collapse;">
+            <thead>
+                <tr style="background:#0A2A43;color:#E2E8E9;">
+                    <th style="padding:0.5rem 0.8rem;text-align:left;">
+                        {% trans "Product" %}
+                    </th>
+                    <th style="padding:0.5rem 0.8rem;text-align:center;">
+                        {% trans "Qty" %}
+                    </th>
+                    <th style="padding:0.5rem 0.8rem;text-align:right;">
+                        {% trans "Unit Price" %}
+                    </th>
+                    <th style="padding:0.5rem 0.8rem;text-align:right;">
+                        {% trans "Subtotal" %}
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in order.items.all %}
+                <tr style="border-bottom:1px solid #ccc;">
+                    <td style="padding:0.5rem 0.8rem;">
+                        {{ item.product.name }}
+                    </td>
+                    <td style="padding:0.5rem 0.8rem;text-align:center;">
+                        {{ item.quantity }}
+                    </td>
+                    <td style="padding:0.5rem 0.8rem;text-align:right;">
+                        ${{ item.unit_price }}
+                    </td>
+                    <td style="padding:0.5rem 0.8rem;text-align:right;">
+                        ${{ item.get_subtotal }}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </section>
+
+    {# Totals #}
+    <section style="margin-bottom:1.5rem;">
+        <table style="width:100%;border-collapse:collapse;max-width:400px;margin-left:auto;">
+            <tr>
+                <td style="padding:0.4rem 0;">{% trans "Subtotal" %}</td>
+                <td style="padding:0.4rem 0;text-align:right;">
+                    ${{ order.subtotal }}
+                </td>
+            </tr>
+            <tr>
+                <td style="padding:0.4rem 0;">{% trans "Shipping" %}</td>
+                <td style="padding:0.4rem 0;text-align:right;">
+                    ${{ order.shipping_cost }}
+                </td>
+            </tr>
+            <tr style="font-weight:700;font-size:1.1rem;border-top:2px solid #0A2A43;">
+                <td style="padding:0.5rem 0;">{% trans "Total" %}</td>
+                <td style="padding:0.5rem 0;text-align:right;">
+                    ${{ order.total_amount }}
+                </td>
+            </tr>
+        </table>
+    </section>
+
+    {# Payment status #}
+    <section style="margin-bottom:1.5rem;">
+        <h2 style="font-size:1.2rem;color:#0A2A43;margin-bottom:0.5rem;">
+            {% trans "Payment" %}
+        </h2>
+        {% if order.is_paid %}
+        <span style="color:#155724;background:#d4edda;padding:0.3rem 0.7rem;border-radius:4px;font-weight:600;">
+            {% trans "Completed" %}
+        </span>
+        {% else %}
+        <span style="color:#721c24;background:#f8d7da;padding:0.3rem 0.7rem;border-radius:4px;font-weight:600;">
+            {% trans "Not completed" %}
+        </span>
+        {% endif %}
+    </section>
+
+    {# Download Invoice button – only when payment is completed #}
+    {% if order.is_paid %}
+    <a href="{% url 'orders:invoice' order.pk %}"
+       class="btn-primary"
+       style="display:inline-block;text-align:center;text-decoration:none;
+              padding:0.75rem 1.5rem;width:auto;">
+        {% trans "Download Invoice" %}
+    </a>
+    {% endif %}
+
+    <p style="margin-top:1.5rem;">
+        <a href="{% url 'orders:order-list' %}" style="color:#00C2CB;font-weight:600;">
+            &larr; {% trans "Back to my orders" %}
+        </a>
+    </p>
+</div>
+{% endblock %}
