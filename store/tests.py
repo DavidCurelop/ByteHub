@@ -7,7 +7,7 @@ from django.urls import reverse
 
 from pages.models import Category
 
-from .models import Product, Review
+from .models import Address, Cart, CartItem, Order, OrderItem, Product, Review
 
 User = get_user_model()
 
@@ -261,3 +261,374 @@ class ProductDetailTests(TestCase):
                     body='Duplicate attempt.',
                     is_verified_purchase=True,
                 )
+
+
+class AddToCartTests(TestCase):
+    """Tests for add-to-cart user flow."""
+
+    def setUp(self):
+        self.admin_user = User.objects.create_user(
+            email='admin-cart@example.com',
+            password='StrongPass123',
+            first_name='Admin',
+            last_name='Cart',
+            is_admin=True,
+        )
+        self.customer = User.objects.create_user(
+            email='customer-cart@example.com',
+            password='StrongPass123',
+            first_name='Customer',
+            last_name='Cart',
+        )
+        self.category = Category.objects.create(
+            name='Accessories',
+            slug='accessories',
+        )
+        self.product = Product.objects.create(
+            name='Mechanical Keyboard',
+            slug='mechanical-keyboard',
+            price='120.00',
+            stock=2,
+            is_available=True,
+            category=self.category,
+            created_by=self.admin_user,
+        )
+        self.add_to_cart_url = reverse(
+            'store:add-to-cart',
+            kwargs={'slug': self.product.slug},
+        )
+
+    def test_only_authenticated_users_can_add_to_cart(self):
+        response = self.client.post(self.add_to_cart_url)
+        self.assertEqual(response.status_code, 302)
+        self.assertIn(reverse('accounts:login'), response.url)
+        self.assertFalse(Cart.objects.exists())
+
+    def test_add_to_cart_creates_cart_item_for_authenticated_user(self):
+        self.client.login(
+            email='customer-cart@example.com',
+            password='StrongPass123',
+        )
+        response = self.client.post(self.add_to_cart_url, follow=True)
+
+        cart = Cart.objects.get(user=self.customer)
+        cart_item = CartItem.objects.get(cart=cart, product=self.product)
+        self.assertEqual(cart_item.quantity, 1)
+        self.assertContains(response, 'Product added to your cart.')
+
+    def test_add_to_cart_increases_quantity_when_item_already_exists(self):
+        self.client.login(
+            email='customer-cart@example.com',
+            password='StrongPass123',
+        )
+        self.client.post(self.add_to_cart_url)
+        self.client.post(self.add_to_cart_url)
+
+        cart = Cart.objects.get(user=self.customer)
+        cart_item = CartItem.objects.get(cart=cart, product=self.product)
+        self.assertEqual(cart_item.quantity, 2)
+
+    def test_add_to_cart_does_not_exceed_stock(self):
+        self.client.login(
+            email='customer-cart@example.com',
+            password='StrongPass123',
+        )
+        self.client.post(self.add_to_cart_url)
+        self.client.post(self.add_to_cart_url)
+        response = self.client.post(self.add_to_cart_url, follow=True)
+
+        cart = Cart.objects.get(user=self.customer)
+        cart_item = CartItem.objects.get(cart=cart, product=self.product)
+        self.assertEqual(cart_item.quantity, 2)
+        self.assertContains(
+            response,
+            'You cannot add more units than available stock.',
+        )
+
+    def test_add_to_cart_rejects_out_of_stock_product(self):
+        self.product.stock = 0
+        self.product.save(update_fields=['stock'])
+        self.client.login(
+            email='customer-cart@example.com',
+            password='StrongPass123',
+        )
+        response = self.client.post(self.add_to_cart_url, follow=True)
+
+        self.assertFalse(
+            CartItem.objects.filter(product=self.product).exists(),
+        )
+        self.assertContains(
+            response,
+            'This product is currently out of stock.',
+        )
+
+
+class CartDetailAndItemActionsTests(TestCase):
+    """Tests for cart detail listing and item actions."""
+
+    def setUp(self):
+        self.admin_user = User.objects.create_user(
+            email='admin-cart-actions@example.com',
+            password='StrongPass123',
+            first_name='Admin',
+            last_name='Actions',
+            is_admin=True,
+        )
+        self.customer = User.objects.create_user(
+            email='customer-cart-actions@example.com',
+            password='StrongPass123',
+            first_name='Customer',
+            last_name='Actions',
+        )
+        self.category = Category.objects.create(
+            name='Peripherals',
+            slug='peripherals',
+        )
+        self.product_one = Product.objects.create(
+            name='Wireless Mouse',
+            slug='wireless-mouse',
+            price='50.00',
+            stock=10,
+            is_available=True,
+            category=self.category,
+            created_by=self.admin_user,
+        )
+        self.product_two = Product.objects.create(
+            name='USB-C Hub',
+            slug='usb-c-hub',
+            price='70.00',
+            stock=10,
+            is_available=True,
+            category=self.category,
+            created_by=self.admin_user,
+        )
+        self.cart = Cart.objects.create(user=self.customer)
+        self.item_one = CartItem.objects.create(
+            cart=self.cart,
+            product=self.product_one,
+            quantity=2,
+        )
+        self.item_two = CartItem.objects.create(
+            cart=self.cart,
+            product=self.product_two,
+            quantity=1,
+        )
+        self.cart_detail_url = reverse('store:cart-detail')
+
+    def test_cart_detail_requires_authentication(self):
+        response = self.client.get(self.cart_detail_url)
+        self.assertEqual(response.status_code, 302)
+        self.assertIn(reverse('accounts:login'), response.url)
+
+    def test_cart_detail_lists_items_with_required_fields_and_total(self):
+        self.client.login(
+            email='customer-cart-actions@example.com',
+            password='StrongPass123',
+        )
+        response = self.client.get(self.cart_detail_url)
+
+        self.assertContains(response, 'Wireless Mouse')
+        self.assertContains(response, 'USB-C Hub')
+        self.assertContains(response, 'Unit price')
+        self.assertContains(response, 'Quantity')
+        self.assertContains(response, 'Subtotal')
+        self.assertContains(response, 'Total')
+        self.assertEqual(response.context['cart'].get_total(), Decimal('170.00'))
+
+    def test_update_cart_item_quantity_recalculates_subtotal(self):
+        self.client.login(
+            email='customer-cart-actions@example.com',
+            password='StrongPass123',
+        )
+        update_url = reverse(
+            'store:update-cart-item',
+            kwargs={'item_id': self.item_one.id},
+        )
+        response = self.client.post(
+            update_url,
+            {'quantity': 3},
+            follow=True,
+        )
+        self.item_one.refresh_from_db()
+
+        self.assertEqual(self.item_one.quantity, 3)
+        self.assertContains(response, 'Cart item quantity updated.')
+        self.assertContains(response, '150.00')
+
+    def test_update_cart_item_quantity_cannot_exceed_stock(self):
+        self.client.login(
+            email='customer-cart-actions@example.com',
+            password='StrongPass123',
+        )
+        self.product_one.stock = 2
+        self.product_one.save(update_fields=['stock'])
+        update_url = reverse(
+            'store:update-cart-item',
+            kwargs={'item_id': self.item_one.id},
+        )
+        response = self.client.post(
+            update_url,
+            {'quantity': 5},
+            follow=True,
+        )
+        self.item_one.refresh_from_db()
+
+        self.assertEqual(self.item_one.quantity, 2)
+        self.assertContains(
+            response,
+            'You cannot add more units than available stock.',
+        )
+
+    def test_delete_cart_item_removes_item_from_cart(self):
+        self.client.login(
+            email='customer-cart-actions@example.com',
+            password='StrongPass123',
+        )
+        delete_url = reverse(
+            'store:delete-cart-item',
+            kwargs={'item_id': self.item_two.id},
+        )
+        response = self.client.post(delete_url, follow=True)
+
+        self.assertFalse(CartItem.objects.filter(id=self.item_two.id).exists())
+        self.assertContains(response, 'Item removed from your cart.')
+
+    def test_empty_cart_shows_message_and_catalog_link(self):
+        self.client.login(
+            email='customer-cart-actions@example.com',
+            password='StrongPass123',
+        )
+        self.cart.items.all().delete()
+
+        response = self.client.get(self.cart_detail_url)
+        self.assertContains(response, 'Your cart is empty.')
+        self.assertContains(response, reverse('store:product-list'))
+
+
+class CheckoutTests(TestCase):
+    """Tests for checkout process and order creation."""
+
+    def setUp(self):
+        self.admin_user = User.objects.create_user(
+            email='admin-checkout@example.com',
+            password='StrongPass123',
+            first_name='Admin',
+            last_name='Checkout',
+            is_admin=True,
+        )
+        self.customer = User.objects.create_user(
+            email='customer-checkout@example.com',
+            password='StrongPass123',
+            first_name='Customer',
+            last_name='Checkout',
+        )
+        self.category = Category.objects.create(
+            name='Computing',
+            slug='computing',
+        )
+        self.product = Product.objects.create(
+            name='Laptop Stand',
+            slug='laptop-stand',
+            price='30.00',
+            stock=5,
+            is_available=True,
+            category=self.category,
+            created_by=self.admin_user,
+        )
+        self.cart = Cart.objects.create(user=self.customer)
+        self.cart_item = CartItem.objects.create(
+            cart=self.cart,
+            product=self.product,
+            quantity=2,
+        )
+        self.address = Address.objects.create(
+            user=self.customer,
+            street='123 Main St',
+            city='Bogota',
+            state='Cundinamarca',
+            zip_code='110111',
+            country='Colombia',
+            is_default=True,
+        )
+        self.checkout_url = reverse('store:checkout')
+
+    def test_checkout_requires_authentication(self):
+        response = self.client.get(self.checkout_url)
+        self.assertEqual(response.status_code, 302)
+        self.assertIn(reverse('accounts:login'), response.url)
+
+    def test_checkout_shows_order_breakdown(self):
+        self.client.login(
+            email='customer-checkout@example.com',
+            password='StrongPass123',
+        )
+        response = self.client.get(self.checkout_url)
+
+        self.assertContains(response, 'Order summary')
+        self.assertContains(response, 'Subtotal')
+        self.assertContains(response, 'Shipping')
+        self.assertContains(response, 'Total')
+        self.assertEqual(response.context['subtotal'], Decimal('60.00'))
+        self.assertEqual(response.context['shipping_cost'], Decimal('10.00'))
+        self.assertEqual(response.context['total_amount'], Decimal('70.00'))
+
+    def test_checkout_requires_shipping_address_data_for_new_address(self):
+        self.client.login(
+            email='customer-checkout@example.com',
+            password='StrongPass123',
+        )
+        response = self.client.post(
+            self.checkout_url,
+            {'shipping_address': 'new'},
+            follow=True,
+        )
+
+        self.assertContains(response, 'Please complete all shipping address fields.')
+        self.assertEqual(Order.objects.count(), 0)
+
+    def test_checkout_validates_current_stock_before_order(self):
+        self.client.login(
+            email='customer-checkout@example.com',
+            password='StrongPass123',
+        )
+        self.product.stock = 1
+        self.product.save(update_fields=['stock'])
+
+        response = self.client.post(
+            self.checkout_url,
+            {'shipping_address': str(self.address.id)},
+            follow=True,
+        )
+
+        self.assertContains(response, 'does not have enough stock')
+        self.assertEqual(Order.objects.count(), 0)
+        self.assertEqual(CartItem.objects.count(), 1)
+
+    def test_checkout_creates_order_items_and_clears_cart(self):
+        self.client.login(
+            email='customer-checkout@example.com',
+            password='StrongPass123',
+        )
+        response = self.client.post(
+            self.checkout_url,
+            {'shipping_address': str(self.address.id)},
+            follow=True,
+        )
+
+        self.assertEqual(Order.objects.count(), 1)
+        order = Order.objects.get()
+        self.assertEqual(order.user, self.customer)
+        self.assertEqual(order.shipping_address, self.address)
+        self.assertEqual(order.subtotal, Decimal('60.00'))
+        self.assertEqual(order.shipping_cost, Decimal('10.00'))
+        self.assertEqual(order.total_amount, Decimal('70.00'))
+
+        self.assertEqual(OrderItem.objects.filter(order=order).count(), 1)
+        order_item = OrderItem.objects.get(order=order)
+        self.assertEqual(order_item.quantity, 2)
+        self.assertEqual(order_item.unit_price, Decimal('30.00'))
+
+        self.product.refresh_from_db()
+        self.assertEqual(self.product.stock, 3)
+        self.assertEqual(CartItem.objects.filter(cart=self.cart).count(), 0)
+        self.assertContains(response, 'was created successfully.')

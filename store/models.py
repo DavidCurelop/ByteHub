@@ -4,7 +4,7 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-from django.db.models import Avg, Prefetch, Q
+from django.db.models import Avg, F, Prefetch, Q, Sum
 from django.utils.translation import gettext_lazy as _
 
 from pages.models import Category
@@ -128,6 +128,211 @@ class Product(models.Model):
             ).aggregate(average=Avg('rating'))
             value = result['average']
         return float(value) if value is not None else 0.0
+
+
+class CartManager(models.Manager):
+    """Custom manager with optimized cart queries."""
+
+    def get_user_carts_with_details(self, user_id):
+        return (
+            self.filter(user_id=user_id)
+            .select_related('user')
+            .prefetch_related('items__product')
+        )
+
+
+class Cart(models.Model):
+    """Shopping cart for a customer."""
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='carts',
+        verbose_name=_('user'),
+    )
+    created_at = models.DateTimeField(_('created at'), auto_now_add=True)
+    updated_at = models.DateTimeField(_('updated at'), auto_now=True)
+
+    objects = CartManager()
+
+    class Meta:
+        ordering = ['-updated_at']
+        verbose_name = _('cart')
+        verbose_name_plural = _('carts')
+
+    def __str__(self):
+        return f'Cart #{self.pk} - User #{self.user_id}'
+
+    def get_total(self):
+        total = self.items.aggregate(
+            total=Sum(F('quantity') * F('product__price')),
+        )['total']
+        return total or Decimal('0.00')
+
+    def get_item_count(self):
+        count = self.items.aggregate(total=Sum('quantity'))['total']
+        return count or 0
+
+
+class CartItem(models.Model):
+    """Product line in a shopping cart."""
+
+    cart = models.ForeignKey(
+        Cart,
+        on_delete=models.CASCADE,
+        related_name='items',
+        verbose_name=_('cart'),
+    )
+    product = models.ForeignKey(
+        Product,
+        on_delete=models.CASCADE,
+        related_name='cart_items',
+        verbose_name=_('product'),
+    )
+    quantity = models.PositiveIntegerField(_('quantity'), default=1)
+
+    class Meta:
+        verbose_name = _('cart item')
+        verbose_name_plural = _('cart items')
+        constraints = [
+            models.UniqueConstraint(
+                fields=['cart', 'product'],
+                name='store_cart_item_unique_cart_product',
+            )
+        ]
+
+    def __str__(self):
+        return f'Cart #{self.cart_id} - Product #{self.product_id}'
+
+    def clean(self):
+        super().clean()
+        if self.quantity > self.product.stock:
+            raise ValidationError(
+                {
+                    'quantity': _(
+                        'Quantity cannot exceed available stock.',
+                    )
+                }
+            )
+
+    def get_subtotal(self):
+        return self.product.price * self.quantity
+
+
+class Address(models.Model):
+    """Shipping address for a customer."""
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='addresses',
+        verbose_name=_('user'),
+    )
+    street = models.CharField(_('street'), max_length=200)
+    city = models.CharField(_('city'), max_length=120)
+    state = models.CharField(_('state'), max_length=120)
+    zip_code = models.CharField(_('zip code'), max_length=20)
+    country = models.CharField(_('country'), max_length=120)
+    is_default = models.BooleanField(_('default address'), default=False)
+
+    class Meta:
+        verbose_name = _('address')
+        verbose_name_plural = _('addresses')
+
+    def __str__(self):
+        return f'{self.street}, {self.city}, {self.country}'
+
+
+class OrderManager(models.Manager):
+    """Custom manager with reusable order queries."""
+
+    def get_user_orders_with_details(self, user_id):
+        return (
+            self.filter(user_id=user_id)
+            .select_related('shipping_address', 'user')
+            .prefetch_related('items__product')
+        )
+
+
+class Order(models.Model):
+    """Customer order generated from checkout."""
+
+    STATUS_PENDING = 'pending'
+    STATUS_CONFIRMED = 'confirmed'
+    STATUS_CHOICES = [
+        (STATUS_PENDING, _('Pending')),
+        (STATUS_CONFIRMED, _('Confirmed')),
+    ]
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.PROTECT,
+        related_name='store_orders',
+        verbose_name=_('user'),
+    )
+    shipping_address = models.ForeignKey(
+        Address,
+        on_delete=models.PROTECT,
+        related_name='shipping_orders',
+        verbose_name=_('shipping address'),
+    )
+    status = models.CharField(
+        _('status'),
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default=STATUS_CONFIRMED,
+    )
+    subtotal = models.DecimalField(
+        _('subtotal'), max_digits=10, decimal_places=2,
+    )
+    shipping_cost = models.DecimalField(
+        _('shipping cost'), max_digits=10, decimal_places=2,
+    )
+    total_amount = models.DecimalField(
+        _('total amount'), max_digits=10, decimal_places=2,
+    )
+    created_at = models.DateTimeField(_('created at'), auto_now_add=True)
+
+    objects = OrderManager()
+
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name = _('order')
+        verbose_name_plural = _('orders')
+
+    def __str__(self):
+        return f'Order #{self.pk}'
+
+
+class OrderItem(models.Model):
+    """Line item snapshot generated at checkout."""
+
+    order = models.ForeignKey(
+        Order,
+        on_delete=models.CASCADE,
+        related_name='items',
+        verbose_name=_('order'),
+    )
+    product = models.ForeignKey(
+        Product,
+        on_delete=models.PROTECT,
+        related_name='store_order_items',
+        verbose_name=_('product'),
+    )
+    quantity = models.PositiveIntegerField(_('quantity'))
+    unit_price = models.DecimalField(
+        _('unit price'), max_digits=10, decimal_places=2,
+    )
+
+    class Meta:
+        verbose_name = _('order item')
+        verbose_name_plural = _('order items')
+
+    def __str__(self):
+        return f'Order #{self.order_id} - Product #{self.product_id}'
+
+    def get_subtotal(self):
+        return self.unit_price * self.quantity
 
 
 class Review(models.Model):
