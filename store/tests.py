@@ -359,7 +359,7 @@ class AddToCartTests(TestCase):
         )
         self.assertContains(
             response,
-            'You cannot add more units than available stock.',
+            'This product is currently out of stock.',
         )
 
 

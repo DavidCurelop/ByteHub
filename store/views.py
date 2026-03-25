@@ -45,6 +45,13 @@ def add_to_cart(request, slug):
         Product.objects.get_active_products(),
         slug=slug,
     )
+    if product.stock < 1:
+        messages.error(
+            request,
+            _('This product is currently out of stock.'),
+        )
+        return redirect('store:product-detail', slug=product.slug)
+
     cart, _created = Cart.objects.get_or_create(user=request.user)
     cart_item, item_created = CartItem.objects.get_or_create(
         cart=cart,
