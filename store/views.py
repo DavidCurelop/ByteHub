@@ -69,12 +69,54 @@ def add_to_cart(request, slug):
 
 @login_required
 def cart_detail(request):
-    cart = Cart.objects.filter(user=request.user).prefetch_related(
-        'items__product',
-    ).first()
+    cart = Cart.objects.get_user_carts_with_details(request.user.id).first()
     cart_items = cart.items.all() if cart else []
     context = {
         'cart': cart,
         'cart_items': cart_items,
     }
     return render(request, 'store/cart_detail.html', context)
+
+
+@login_required
+@require_POST
+def update_cart_item(request, item_id):
+    cart_item = get_object_or_404(
+        CartItem.objects.select_related('cart', 'product'),
+        id=item_id,
+        cart__user=request.user,
+    )
+    try:
+        quantity = int(request.POST.get('quantity', '1'))
+    except ValueError:
+        quantity = 1
+
+    if quantity < 1:
+        messages.error(request, _('Quantity must be at least 1.'))
+        return redirect('store:cart-detail')
+
+    if quantity > cart_item.product.stock:
+        messages.error(
+            request,
+            _('You cannot add more units than available stock.'),
+        )
+        return redirect('store:cart-detail')
+
+    cart_item.quantity = quantity
+    cart_item.full_clean()
+    cart_item.save(update_fields=['quantity'])
+    messages.success(request, _('Cart item quantity updated.'))
+    return redirect('store:cart-detail')
+
+
+@login_required
+@require_POST
+def delete_cart_item(request, item_id):
+    cart_item = get_object_or_404(
+        CartItem.objects.select_related('cart'),
+        id=item_id,
+        cart__user=request.user,
+    )
+    cart_item.delete()
+    messages.success(request, _('Item removed from your cart.'))
+    return redirect('store:cart-detail')

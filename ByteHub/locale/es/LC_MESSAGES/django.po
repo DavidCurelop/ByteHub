@@ -295,3 +295,27 @@ msgstr "item del carrito"
 
 msgid "cart items"
 msgstr "items del carrito"
+
+msgid "Unit price"
+msgstr "Precio unitario"
+
+msgid "Update quantity"
+msgstr "Actualizar cantidad"
+
+msgid "Update"
+msgstr "Actualizar"
+
+msgid "Remove item"
+msgstr "Eliminar ítem"
+
+msgid "Go to catalog"
+msgstr "Ir al catálogo"
+
+msgid "Cart item quantity updated."
+msgstr "Cantidad del ítem actualizada."
+
+msgid "Item removed from your cart."
+msgstr "Ítem eliminado de tu carrito."
+
+msgid "Quantity must be at least 1."
+msgstr "La cantidad debe ser al menos 1."

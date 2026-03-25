@@ -13,11 +13,35 @@
         <article style="background: #fff; border: 1px solid #cfd8dc; border-radius: 8px; padding: 0.9rem; display: grid; gap: 0.5rem;">
             <p style="margin: 0; font-weight: 600;">{{ item.product.name }}</p>
             <p style="margin: 0; color: #31424d;">
+                <strong>{% trans "Unit price" %}:</strong>
+                ${{ item.product.price|localize }}
+            </p>
+            <p style="margin: 0; color: #31424d;">
                 <strong>{% trans "Quantity" %}:</strong> {{ item.quantity }}
             </p>
             <p style="margin: 0; color: #31424d;">
                 <strong>{% trans "Subtotal" %}:</strong> ${{ item.get_subtotal|localize }}
             </p>
+            <form method="post" action="{% url 'store:update-cart-item' item_id=item.id %}" style="display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: end;">
+                {% csrf_token %}
+                <label for="quantity_{{ item.id }}" style="font-weight: 600; color: #0A2A43;">
+                    {% trans "Update quantity" %}
+                </label>
+                <input id="quantity_{{ item.id }}" type="number" name="quantity"
+                       min="1" max="{{ item.product.stock }}" value="{{ item.quantity }}"
+                       style="padding: 0.45rem 0.5rem; border: 1px solid #9fb4c4; border-radius: 6px; width: 90px;">
+                <button type="submit"
+                        style="padding: 0.5rem 0.8rem; border: none; border-radius: 6px; background: #0A2A43; color: #fff; font-weight: 600; cursor: pointer;">
+                    {% trans "Update" %}
+                </button>
+            </form>
+            <form method="post" action="{% url 'store:delete-cart-item' item_id=item.id %}">
+                {% csrf_token %}
+                <button type="submit"
+                        style="padding: 0.45rem 0.8rem; border: 1px solid #c0392b; border-radius: 6px; background: #fff; color: #c0392b; font-weight: 600; cursor: pointer;">
+                    {% trans "Remove item" %}
+                </button>
+            </form>
         </article>
         {% endfor %}
     </div>
@@ -28,12 +52,20 @@
     <p style="margin: 0; color: #31424d;">
         {% trans "Your cart is empty." %}
     </p>
+    <p style="margin: 0;">
+        <a href="{% url 'store:product-list' %}"
+           style="color: #0A2A43; font-weight: 600; text-decoration: none;">
+            {% trans "Go to catalog" %}
+        </a>
+    </p>
     {% endif %}
 
+    {% if cart_items %}
     <p style="margin: 0;">
         <a href="{% url 'store:product-list' %}" style="color: #0A2A43; font-weight: 600; text-decoration: none;">
             {% trans "Continue shopping" %}
         </a>
     </p>
+    {% endif %}
 </section>
 {% endblock %}
