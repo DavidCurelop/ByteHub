@@ -187,6 +187,15 @@ The `ByteHub/dev_seed.json` fixture includes:
 
 See [DOCKER_SETUP.md](./DOCKER_SETUP.md) for details on sharing databases, creating custom seed data, and production deployments.
 
+### Seed Data Reference
+
+The `ByteHub/dev_seed.json` fixture includes:
+- **5 Categories**: Electronics, Laptops, Smartphones, Accessories, Gaming
+- **Sample Users**: Test accounts with `@example.com` emails
+- **Products**: Sample products across categories
+
+See [DOCKER_SETUP.md](./DOCKER_SETUP.md) for details on sharing databases, creating custom seed data, and production deployments.
+
 ## SQLite Fallback (without Docker)
 
 Set this in `.env`:
