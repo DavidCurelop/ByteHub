@@ -45,6 +45,13 @@ def add_to_cart(request, slug):
         Product.objects.get_active_products(),
         slug=slug,
     )
+    if product.stock < 1:
+        messages.error(
+            request,
+            _('This product is currently out of stock.'),
+        )
+        return redirect('store:product-detail', slug=product.slug)
+
     cart, _created = Cart.objects.get_or_create(user=request.user)
     cart_item, item_created = CartItem.objects.get_or_create(
         cart=cart,
@@ -52,7 +59,19 @@ def add_to_cart(request, slug):
         defaults={'quantity': 1},
     )
 
-    if not item_created:
+    if item_created:
+        try:
+            cart_item.full_clean()
+        except ValidationError:
+            cart_item.delete()
+            messages.error(
+                request,
+                _(
+                    'You cannot add more units than available stock.',
+                ),
+            )
+            return redirect('store:product-detail', slug=product.slug)
+    else:
         if cart_item.quantity >= product.stock:
             messages.error(
                 request,
