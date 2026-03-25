@@ -262,3 +262,73 @@ msgstr "El nombre es obligatorio."
 
 msgid "Last name is required."
 msgstr "El apellido es obligatorio."
+
+msgid "My Orders"
+msgstr "Mis pedidos"
+
+msgid "Order #%(pk)s"
+msgstr "Pedido #%(pk)s"
+
+msgid "Date"
+msgstr "Fecha"
+
+msgid "Status"
+msgstr "Estado"
+
+msgid "You have no orders yet."
+msgstr "Aún no tienes pedidos."
+
+msgid "Shipping address"
+msgstr "Dirección de envío"
+
+msgid "Unit price"
+msgstr "Precio unitario"
+
+msgid "Quantity"
+msgstr "Cantidad"
+
+msgid "This order has no items."
+msgstr "Este pedido no tiene productos."
+
+msgid "Order summary"
+msgstr "Resumen del pedido"
+
+msgid "Shipping cost"
+msgstr "Costo de envío"
+
+msgid "Total"
+msgstr "Total"
+
+msgid "Back to my orders"
+msgstr "Volver a mis pedidos"
+
+msgid "Pending"
+msgstr "Pendiente"
+
+msgid "Confirmed"
+msgstr "Confirmado"
+
+msgid "Shipped"
+msgstr "Enviado"
+
+msgid "Delivered"
+msgstr "Entregado"
+
+msgid "Cancelled"
+msgstr "Cancelado"
+
+msgid "order"
+msgstr "pedido"
+
+msgid "orders"
+msgstr "pedidos"
+
+msgid "order item"
+msgstr "artículo del pedido"
+
+msgid "order items"
+msgstr "artículos del pedido"
+
+msgid "Total amount must equal subtotal plus shipping cost."
+msgstr "El total debe ser igual al subtotal más el costo de envío."
+

@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% load i18n l10n %}
+
+{% block title %}{% trans "My Orders" %} | ByteHub{% endblock %}
+
+{% block content %}
+<section>
+    <h1 style="margin-bottom: 1.5rem;">{% trans "My Orders" %}</h1>
+
+    {% if orders %}
+    <div style="display: grid; gap: 1rem;">
+        {% for order in orders %}
+        <article style="background: #fff; border: 1px solid #cfd8dc; border-radius: 8px; padding: 1.2rem; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem;">
+            <div>
+                <p style="margin: 0 0 0.4rem; font-weight: 700; color: #0A2A43;">
+                    {% blocktrans with pk=order.pk %}Order #{{ pk }}{% endblocktrans %}
+                </p>
+                <p style="margin: 0 0 0.2rem; color: #31424d;">
+                    <strong>{% trans "Date" %}:</strong>
+                    {{ order.created_at|date:"N j, Y" }}
+                </p>
+                <p style="margin: 0; color: #31424d;">
+                    <strong>{% trans "Status" %}:</strong>
+                    {{ order.get_status_display }}
+                </p>
+            </div>
+            <div style="text-align: right;">
+                <p style="margin: 0 0 0.6rem; font-size: 1.2rem; font-weight: 700; color: #0A2A43;">
+                    ${{ order.total_amount|localize }}
+                </p>
+                <a href="{% url 'orders:order-detail' pk=order.pk %}"
+                   style="color: #0A2A43; font-weight: 600; text-decoration: none; border: 1px solid #0A2A43; padding: 0.4rem 0.8rem; border-radius: 4px;">
+                    {% trans "View details" %}
+                </a>
+            </div>
+        </article>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p>{% trans "You have no orders yet." %}</p>
+    {% endif %}
+</section>
+{% endblock %}
