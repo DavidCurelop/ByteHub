@@ -31,7 +31,7 @@ load_dotenv(BASE_DIR / ".env")
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv("DEBUG", "false").lower() in {"1", "true", "yes"}
+DEBUG = os.getenv("DEBUG", "true").lower() in {"1", "true", "yes"}
 
 # SECURITY WARNING: keep the secret key used in production secret!
 _secret_key = os.getenv("DJANGO_SECRET_KEY")
@@ -191,7 +191,7 @@ USE_TZ = True
 
 STATIC_URL = "/static/"
 STATICFILES_DIRS = [
-    BASE_DIR / "ByteHub" / "static",
+    Path(__file__).resolve().parent / "static",
 ]
 # Custom user model
 AUTH_USER_MODEL = "accounts.User"

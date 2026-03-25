@@ -334,7 +334,7 @@
                     <li><a class="nav-link {% if request.resolver_match.view_name == 'store:product-list' %}active{% endif %}"
                             href="{% url 'store:product-list' %}">{% trans "Products" %}</a></li>
                     {% if user.is_authenticated %}
-                        <li><a class="nav-link {% if request.resolver_match.view_name == 'store:cart-detail' %}active{% endif %}"
+                    <li><a class="nav-link {% if request.resolver_match.view_name == 'store:cart-detail' %}active{% endif %}"
                             href="{% url 'store:cart-detail' %}">{% trans "Cart" %}</a></li>
                     <li><a href="{% url 'accounts:profile' %}">{% trans "Profile" %}</a></li>
                     <li>
