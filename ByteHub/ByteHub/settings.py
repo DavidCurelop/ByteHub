@@ -209,11 +209,12 @@ EMAIL_BACKEND = os.getenv(
     'django.core.mail.backends.smtp.EmailBackend',
 )
 EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp-relay.sendinblue.com')
+EMAIL_ADDRESS = os.getenv('EMAIL_ADDRESS', '') #DEJAR ASI SOLO CAMBIAR EN EL .ENV
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
-DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default=EMAIL_HOST_USER)
+DEFAULT_FROM_EMAIL = EMAIL_ADDRESS #DEJAR ASI
 
 
 # Password reset token lifetime (24 hours)
