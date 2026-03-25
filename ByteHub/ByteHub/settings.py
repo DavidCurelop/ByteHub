@@ -10,8 +10,6 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
-
-
 import os
 import sys
 from pathlib import Path
@@ -26,6 +24,7 @@ sys.path.insert(0, str(BASE_DIR.parent))
 load_dotenv(BASE_DIR.parent / ".env")
 load_dotenv(BASE_DIR / ".env")
 
+DOMAIN = "localhost:8000"
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
@@ -191,7 +190,7 @@ USE_TZ = True
 
 STATIC_URL = "/static/"
 STATICFILES_DIRS = [
-    BASE_DIR / "ByteHub" / "static",
+    Path(__file__).resolve().parent / "static",
 ]
 # Custom user model
 AUTH_USER_MODEL = "accounts.User"
@@ -209,7 +208,7 @@ EMAIL_BACKEND = os.getenv(
     'django.core.mail.backends.smtp.EmailBackend',
 )
 EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp-relay.sendinblue.com')
-EMAIL_ADDRESS = os.getenv('EMAIL_ADDRESS', '') #DEJAR ASI SOLO CAMBIAR EN EL .ENV
+EMAIL_ADDRESS = os.getenv('EMAIL_ADDRESS', '') #DEJAR ASI
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='')
@@ -219,5 +218,3 @@ DEFAULT_FROM_EMAIL = EMAIL_ADDRESS #DEJAR ASI
 
 # Password reset token lifetime (24 hours)
 PASSWORD_RESET_TIMEOUT = 60 * 60 * 24
-
-STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY', '')
