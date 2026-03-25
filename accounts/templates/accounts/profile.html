@@ -12,9 +12,9 @@
         {% csrf_token %}
 
         <div class="form-group">
-            <label>{% trans "Email" %}</label>
-            <input type="email" value="{{ user.email }}" disabled class="form-control">
-            <small class="form-text">{% trans "Email cannot be changed" %}</small>
+            <label for="email">{% trans "Email" %}</label>
+            <input id="email" type="email" value="{{ user.email }}" disabled aria-describedby="email-help" class="form-control">
+            <small id="email-help" class="form-text">{% trans "Email cannot be changed" %}</small>
         </div>
 
         {% for field in form %}

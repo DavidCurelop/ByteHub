@@ -241,3 +241,24 @@ msgstr "La calificación debe estar entre 1 y 5."
 
 msgid "Anonymous"
 msgstr "Anónimo"
+
+msgid "My Profile"
+msgstr "Mi perfil"
+
+msgid "View and edit your account information"
+msgstr "Ver y editar la información de tu cuenta"
+
+msgid "Email cannot be changed"
+msgstr "El correo electrónico no puede cambiarse"
+
+msgid "Update Profile"
+msgstr "Actualizar perfil"
+
+msgid "Profile updated successfully."
+msgstr "Perfil actualizado exitosamente."
+
+msgid "First name is required."
+msgstr "El nombre es obligatorio."
+
+msgid "Last name is required."
+msgstr "El apellido es obligatorio."

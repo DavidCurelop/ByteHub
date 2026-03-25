@@ -142,7 +142,9 @@ class UserUpdateForm(forms.ModelForm):
             'phone': _('Phone'),
         }
         widgets = {
-            'phone': forms.TextInput(attrs={'placeholder': ''}),
+            'phone': forms.TextInput(
+                attrs={'placeholder': _('e.g. +1 555 123 4567')}
+            ),
         }
 
     def clean_first_name(self):
