@@ -65,9 +65,10 @@ Before providing any code or review, you **must** internally process these steps
 ## 5. DOMAIN MAP (STRICT ADHERENCE)
 All new code must respect this structure. Do not deviate from the defined relationships or `related_name` attributes.
 
-    %% --------------------------------------------------------
-    %% PATRÓN REPOSITORIO / MANAGERS (DRY & Consultas Eficientes)
-    %% --------------------------------------------------------
+%% --------------------------------------------------------
+%% PATRÓN REPOSITORIO / MANAGERS (DRY & Consultas Eficientes)
+%% --------------------------------------------------------
+classDiagram
     class UserManager {
         +get_all_admins() QuerySet
         +get_active_clients_with_orders() QuerySet
@@ -97,22 +98,10 @@ All new code must respect this structure. Do not deviate from the defined relati
         +bool is_admin
         +bool is_active
         +DateTime created_at
-        +UserManager objects$
+        +UserManager objects
         +clean() void
         +has_admin_privileges() bool
         +get_client_lifetime_value() Decimal
-    }
-
-    class Address {
-        +int id
-        +User user
-        +String street
-        +String city
-        +String state
-        +String zip_code
-        +String country
-        +bool is_default
-        +clean() void
     }
 
     class Category {
@@ -138,7 +127,7 @@ All new code must respect this structure. Do not deviate from the defined relati
         +Category category
         +User created_by
         +DateTime created_at
-        +ProductManager objects$
+        +ProductManager objects
         +clean() void
         +float avg_rating()
         +int total_sold()
@@ -167,13 +156,13 @@ All new code must respect this structure. Do not deviate from the defined relati
     class Order {
         +int id
         +User user
-        +Address shipping_address
+        +String shipping_address
         +String status
         +Decimal subtotal
         +Decimal shipping_cost
         +Decimal total_amount
         +DateTime created_at
-        +OrderManager objects$
+        +OrderManager objects
         +clean() void
     }
 
@@ -237,13 +226,10 @@ All new code must respect this structure. Do not deviate from the defined relati
     %% --------------------------------------------------------
     %% RELACIONES CON RELATED_NAME EXPLÍCITO (Semántica)
     %% --------------------------------------------------------
-    
-    %% Relaciones del Administrador (Auditoría/Gestión)
     User "1" <-- "0..*" Product : related_name="managed_products" (Admin)
     User "1" <-- "0..*" Category : related_name="managed_categories" (Admin)
 
     %% Relaciones del Cliente (Tienda)
-    User "1" --> "0..*" Address : related_name="addresses" (Client)
     User "1" <-- "0..*" Cart : related_name="carts" (Client)
     User "1" <-- "0..*" Order : related_name="orders" (Client)
     User "1" <-- "0..*" Review : related_name="reviews" (Client)
@@ -255,7 +241,6 @@ All new code must respect this structure. Do not deviate from the defined relati
     Cart "1" --> "0..*" CartItem : related_name="items"
     CartItem "0..*" --> "1" Product : related_name="cart_items"
     
-    Order "0..*" --> "1" Address : related_name="shipping_address"
     Order "1" --> "1..*" OrderItem : related_name="items"
     Order "1" --> "0..1" Payment : related_name="payment"
     OrderItem "0..*" --> "1" Product : related_name="order_items"
@@ -265,7 +250,7 @@ All new code must respect this structure. Do not deviate from the defined relati
     %% Relación Lógica (Managers -> Modelos)
     UserManager --> User : manages
     ProductManager --> Product : manages
-    OrderManager --> Order : manages 
+    OrderManager --> Order : manages
 
     6. FINAL VERIFICATION CHECKLIST (MANDATORY)
 Review every line of code against this list before outputting:

@@ -242,170 +242,93 @@ msgstr "La calificación debe estar entre 1 y 5."
 msgid "Anonymous"
 msgstr "Anónimo"
 
-msgid "Cart"
-msgstr "Carrito"
+msgid "My Profile"
+msgstr "Mi perfil"
 
-msgid "Add to cart"
-msgstr "Agregar al carrito"
+msgid "View and edit your account information"
+msgstr "Ver y editar la información de tu cuenta"
 
-msgid "View cart"
-msgstr "Ver carrito"
+msgid "Email cannot be changed"
+msgstr "El correo electrónico no puede cambiarse"
 
-msgid "Log in to add this product to your cart."
-msgstr "Inicia sesión para agregar este producto a tu carrito."
+msgid "Update Profile"
+msgstr "Actualizar perfil"
 
-msgid "Log in"
-msgstr "Iniciar sesión"
+msgid "Profile updated successfully."
+msgstr "Perfil actualizado exitosamente."
 
-msgid "Product added to your cart."
-msgstr "Producto agregado a tu carrito."
+msgid "First name is required."
+msgstr "El nombre es obligatorio."
 
-msgid "You cannot add more units than available stock."
-msgstr "No puedes agregar más unidades que el stock disponible."
+msgid "Last name is required."
+msgstr "El apellido es obligatorio."
 
-msgid "Your cart"
-msgstr "Tu carrito"
+msgid "My Orders"
+msgstr "Mis pedidos"
 
-msgid "Quantity"
-msgstr "Cantidad"
+msgid "Order #%(pk)s"
+msgstr "Pedido #%(pk)s"
 
-msgid "Subtotal"
-msgstr "Subtotal"
+msgid "Date"
+msgstr "Fecha"
 
-msgid "Total"
-msgstr "Total"
+msgid "Status"
+msgstr "Estado"
 
-msgid "Your cart is empty."
-msgstr "Tu carrito está vacío."
-
-msgid "Continue shopping"
-msgstr "Seguir comprando"
-
-msgid "Quantity cannot exceed available stock."
-msgstr "La cantidad no puede superar el stock disponible."
-
-msgid "cart"
-msgstr "carrito"
-
-msgid "carts"
-msgstr "carritos"
-
-msgid "cart item"
-msgstr "item del carrito"
-
-msgid "cart items"
-msgstr "items del carrito"
-
-msgid "Unit price"
-msgstr "Precio unitario"
-
-msgid "Update quantity"
-msgstr "Actualizar cantidad"
-
-msgid "Update"
-msgstr "Actualizar"
-
-msgid "Remove item"
-msgstr "Eliminar ítem"
-
-msgid "Go to catalog"
-msgstr "Ir al catálogo"
-
-msgid "Cart item quantity updated."
-msgstr "Cantidad del ítem actualizada."
-
-msgid "Item removed from your cart."
-msgstr "Ítem eliminado de tu carrito."
-
-msgid "Quantity must be at least 1."
-msgstr "La cantidad debe ser al menos 1."
-
-msgid "Proceed to checkout"
-msgstr "Proceder al checkout"
-
-msgid "Checkout"
-msgstr "Checkout"
+msgid "You have no orders yet."
+msgstr "Aún no tienes pedidos."
 
 msgid "Shipping address"
 msgstr "Dirección de envío"
 
-msgid "Select one of your saved addresses or add a new one."
-msgstr "Selecciona una de tus direcciones guardadas o agrega una nueva."
+msgid "Unit price"
+msgstr "Precio unitario"
 
-msgid "Use a new address"
-msgstr "Usar una nueva dirección"
+msgid "Quantity"
+msgstr "Cantidad"
 
-msgid "Add your shipping address to continue."
-msgstr "Agrega tu dirección de envío para continuar."
-
-msgid "Street"
-msgstr "Calle"
-
-msgid "City"
-msgstr "Ciudad"
-
-msgid "State"
-msgstr "Estado"
-
-msgid "Zip code"
-msgstr "Código postal"
-
-msgid "Country"
-msgstr "País"
-
-msgid "Save as default address"
-msgstr "Guardar como dirección predeterminada"
+msgid "This order has no items."
+msgstr "Este pedido no tiene productos."
 
 msgid "Order summary"
 msgstr "Resumen del pedido"
 
-msgid "Shipping"
-msgstr "Envío"
+msgid "Shipping cost"
+msgstr "Costo de envío"
 
-msgid "Confirm and pay"
-msgstr "Confirmar y pagar"
+msgid "Total"
+msgstr "Total"
 
-msgid "Please complete all shipping address fields."
-msgstr "Completa todos los campos de la dirección de envío."
-
-msgid "Your cart is empty."
-msgstr "Tu carrito está vacío."
-
-msgid "Order #%(order_id)s was created successfully."
-msgstr "La orden #%(order_id)s se creó correctamente."
-
-msgid "Product \"%(product)s\" does not have enough stock."
-msgstr "El producto \"%(product)s\" no tiene suficiente stock."
+msgid "Back to my orders"
+msgstr "Volver a mis pedidos"
 
 msgid "Pending"
 msgstr "Pendiente"
 
 msgid "Confirmed"
-msgstr "Confirmada"
+msgstr "Confirmado"
 
-msgid "address"
-msgstr "dirección"
+msgid "Shipped"
+msgstr "Enviado"
 
-msgid "addresses"
-msgstr "direcciones"
+msgid "Delivered"
+msgstr "Entregado"
 
-msgid "shipping address"
-msgstr "dirección de envío"
+msgid "Cancelled"
+msgstr "Cancelado"
 
 msgid "order"
-msgstr "orden"
+msgstr "pedido"
 
 msgid "orders"
-msgstr "órdenes"
-
-msgid "shipping cost"
-msgstr "costo de envío"
-
-msgid "total amount"
-msgstr "monto total"
+msgstr "pedidos"
 
 msgid "order item"
-msgstr "item de orden"
+msgstr "artículo del pedido"
 
 msgid "order items"
-msgstr "items de orden"
+msgstr "artículos del pedido"
+
+msgid "Total amount must equal subtotal plus shipping cost."
+msgstr "El total debe ser igual al subtotal más el costo de envío."
+
