@@ -179,3 +179,63 @@ class UserProfileTest(TestCase):
             response,
             f"{reverse('accounts:login')}?next={reverse('accounts:profile')}",
         )
+
+    def test_profile_post_updates_fields(self):
+        """Successful POST updates first_name, last_name and phone."""
+        self.client.force_login(self.user)
+        response = self.client.post(reverse('accounts:profile'), {
+            'first_name': 'Updated',
+            'last_name': 'Name',
+            'phone': '999-0000',
+        })
+        self.assertRedirects(response, reverse('accounts:profile'))
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.first_name, 'Updated')
+        self.assertEqual(self.user.last_name, 'Name')
+        self.assertEqual(self.user.phone, '999-0000')
+
+    def test_profile_post_email_unchanged(self):
+        """Email must not change even if someone tampers the POST data."""
+        self.client.force_login(self.user)
+        self.client.post(reverse('accounts:profile'), {
+            'first_name': 'Any',
+            'last_name': 'Name',
+            'phone': '123',
+            'email': 'hacked@evil.com',
+        })
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.email, 'profile@example.com')
+
+    def test_profile_post_invalid_rerenders_form(self):
+        """Submitting empty first_name re-renders the form with errors."""
+        self.client.force_login(self.user)
+        response = self.client.post(reverse('accounts:profile'), {
+            'first_name': '',
+            'last_name': 'Name',
+            'phone': '',
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.context['form'].errors.get('first_name'))
+
+    def test_profile_post_whitespace_first_name_invalid(self):
+        """Submitting whitespace-only first_name re-renders with an error."""
+        self.client.force_login(self.user)
+        response = self.client.post(reverse('accounts:profile'), {
+            'first_name': '   ',
+            'last_name': 'Name',
+            'phone': '',
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.context['form'].errors.get('first_name'))
+
+    def test_profile_post_unauthenticated_redirects(self):
+        """Unauthenticated POST to profile redirects to login."""
+        response = self.client.post(reverse('accounts:profile'), {
+            'first_name': 'X',
+            'last_name': 'Y',
+            'phone': '',
+        })
+        self.assertRedirects(
+            response,
+            f"{reverse('accounts:login')}?next={reverse('accounts:profile')}",
+        )

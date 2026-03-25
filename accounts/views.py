@@ -8,7 +8,12 @@ from django.urls import reverse_lazy
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.utils.translation import gettext_lazy as _
 
-from .forms import SafePasswordResetForm, UserLoginForm, UserRegistrationForm
+from .forms import (
+    SafePasswordResetForm,
+    UserLoginForm,
+    UserRegistrationForm,
+    UserUpdateForm,
+)
 
 
 class UserPasswordResetView(PasswordResetView):
@@ -102,5 +107,16 @@ def logout_view(request):
 
 @login_required
 def profile_view(request):
-    """Display the authenticated user's profile."""
-    return render(request, 'accounts/profile.html', {'user': request.user})
+    """Display and update the authenticated user's profile."""
+    if request.method == 'POST':
+        form = UserUpdateForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, _('Profile updated successfully.'))
+            return redirect('accounts:profile')
+    else:
+        form = UserUpdateForm(instance=request.user)
+
+    return render(
+        request, 'accounts/profile.html', {'form': form, 'user': request.user}
+    )
