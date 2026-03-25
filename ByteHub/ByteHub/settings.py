@@ -218,3 +218,5 @@ DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default=EMAIL_HOST_USER)
 
 # Password reset token lifetime (24 hours)
 PASSWORD_RESET_TIMEOUT = 60 * 60 * 24
+
+STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY', '')

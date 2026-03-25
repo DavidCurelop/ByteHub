@@ -17,11 +17,18 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 
+from orders.views import process_payment
+
 urlpatterns = [
     path('i18n/', include('django.conf.urls.i18n')),
     path('', include('pages.urls')),
     path('accounts/', include('accounts.urls', namespace='accounts')),
     path('products/', include('store.urls', namespace='store')),
+    path(
+        'payment/<int:order_id>/',
+        process_payment,
+        name='process-payment',
+    ),
     path('orders/', include('orders.urls', namespace='orders')),
     path('admin/', admin.site.urls),
 ]

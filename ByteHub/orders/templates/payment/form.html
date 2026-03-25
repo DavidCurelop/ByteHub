@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% load i18n l10n %}
+
+{% block title %}{% trans "Pay order" %} | ByteHub{% endblock %}
+
+{% block content %}
+<section class="auth-card" style="max-width: 620px;">
+    <h1 class="auth-title">{% trans "Pay order" %}</h1>
+    <p class="auth-subtitle">
+        {% blocktrans with pk=order.pk %}Complete payment for order #{{ pk }}{% endblocktrans %}
+    </p>
+
+    <dl style="display: grid; grid-template-columns: max-content 1fr; gap: 0.35rem 1.2rem; margin-bottom: 1.2rem;">
+        <dt style="font-weight: 700;">{% trans "Payment method" %}</dt>
+        <dd style="margin: 0;">{% trans "Stripe" %}</dd>
+
+        <dt style="font-weight: 700;">{% trans "Total amount" %}</dt>
+        <dd style="margin: 0;">${{ order.total_amount|localize }}</dd>
+    </dl>
+
+    <form method="post" style="display: grid; gap: 1rem;">
+        {% csrf_token %}
+        <div class="form-group" style="margin-bottom: 0;">
+            <label for="stripe_token">{% trans "Stripe token" %}</label>
+            <input
+                id="stripe_token"
+                name="stripe_token"
+                type="text"
+                autocomplete="off"
+                placeholder="tok_visa"
+                required
+            >
+        </div>
+
+        <p style="margin: 0; color: #444; font-size: 0.95rem;">
+            {% trans "Use tok_visa in Stripe test mode to simulate a successful payment." %}
+        </p>
+
+        <button class="btn-primary" type="submit">{% trans "Confirm payment" %}</button>
+    </form>
+
+    <p style="margin-top: 1rem;">
+        <a href="{% url 'orders:order-detail' pk=order.pk %}" style="color: #0A2A43; font-weight: 600; text-decoration: none;">
+            {% trans "Back to order detail" %}
+        </a>
+    </p>
+</section>
+{% endblock %}

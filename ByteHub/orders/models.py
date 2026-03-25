@@ -28,6 +28,7 @@ class OrderManager(models.Manager):
 
 
 STATUS_PENDING = 'pending'
+STATUS_PAID = 'paid'
 STATUS_CONFIRMED = 'confirmed'
 STATUS_SHIPPED = 'shipped'
 STATUS_DELIVERED = 'delivered'
@@ -35,10 +36,23 @@ STATUS_CANCELLED = 'cancelled'
 
 ORDER_STATUS_CHOICES = [
     (STATUS_PENDING, _('Pending')),
+    (STATUS_PAID, _('Paid')),
     (STATUS_CONFIRMED, _('Confirmed')),
     (STATUS_SHIPPED, _('Shipped')),
     (STATUS_DELIVERED, _('Delivered')),
     (STATUS_CANCELLED, _('Cancelled')),
+]
+
+PAYMENT_METHOD_STRIPE = 'stripe'
+PAYMENT_METHOD_CHOICES = [
+    (PAYMENT_METHOD_STRIPE, _('Stripe')),
+]
+
+PAYMENT_STATUS_SUCCEEDED = 'succeeded'
+PAYMENT_STATUS_FAILED = 'failed'
+PAYMENT_STATUS_CHOICES = [
+    (PAYMENT_STATUS_SUCCEEDED, _('Succeeded')),
+    (PAYMENT_STATUS_FAILED, _('Failed')),
 ]
 
 
@@ -150,3 +164,48 @@ class OrderItem(models.Model):
     def get_subtotal(self):
         """Return line total as unit_price × quantity."""
         return self.unit_price * self.quantity
+
+
+class Payment(models.Model):
+    """Payment attempt associated with an order."""
+
+    order = models.OneToOneField(
+        Order,
+        on_delete=models.CASCADE,
+        related_name='payment',
+        verbose_name=_('order'),
+    )
+    payment_method = models.CharField(
+        _('payment method'),
+        max_length=20,
+        choices=PAYMENT_METHOD_CHOICES,
+        default=PAYMENT_METHOD_STRIPE,
+    )
+    amount = models.DecimalField(
+        _('amount'),
+        max_digits=10,
+        decimal_places=2,
+        validators=[MinValueValidator(Decimal('0.01'))],
+    )
+    status = models.CharField(
+        _('status'),
+        max_length=20,
+        choices=PAYMENT_STATUS_CHOICES,
+    )
+    transaction_id = models.CharField(
+        _('transaction ID'),
+        max_length=128,
+        blank=True,
+    )
+    paid_at = models.DateTimeField(
+        _('paid at'),
+        null=True,
+        blank=True,
+    )
+
+    class Meta:
+        verbose_name = _('payment')
+        verbose_name_plural = _('payments')
+
+    def __str__(self):
+        return f'Payment for order #{self.order_id}'
