@@ -12,8 +12,8 @@ RUN pip install --no-cache-dir -r /app/requirements.txt
 
 COPY --chown=appuser:appgroup . /app
 
-# Fix line endings (Windows CRLF -> Unix LF) and make executable
-RUN sed -i 's/\r$//' /app/entrypoint.sh && chmod +x /app/entrypoint.sh
+# Make entrypoint script executable
+RUN chmod +x /app/entrypoint.sh
 
 USER appuser
 
