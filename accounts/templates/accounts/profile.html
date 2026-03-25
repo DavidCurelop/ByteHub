@@ -42,6 +42,12 @@
         <button type="submit" class="btn-primary">{% trans "Update Profile" %}</button>
     </form>
 
+    <p style="margin-top: 1rem;">
+        <a href="{% url 'orders:order-list' %}" class="btn-primary" style="display: inline-block; text-align: center; text-decoration: none;">
+            {% trans "View order history" %}
+        </a>
+    </p>
+
     <form method="post" action="{% url 'accounts:logout' %}" style="margin-top:1.5rem;">
         {% csrf_token %}
         <button type="submit" class="btn-secondary">{% trans "Logout" %}</button>

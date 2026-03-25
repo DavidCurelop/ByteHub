@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% load i18n l10n %}
+
+{% block title %}
+{% blocktrans with pk=order.pk %}Order #{{ pk }}{% endblocktrans %} | ByteHub
+{% endblock %}
+
+{% block content %}
+<section style="display: grid; gap: 1.5rem;">
+    <article style="background: #fff; border: 1px solid #cfd8dc; border-radius: 8px; padding: 1.2rem; display: grid; gap: 0.6rem;">
+        <h1 style="margin: 0;">
+            {% blocktrans with pk=order.pk %}Order #{{ pk }}{% endblocktrans %}
+        </h1>
+        <p style="margin: 0; color: #31424d;">
+            <strong>{% trans "Date" %}:</strong>
+            {{ order.created_at|date:"SHORT_DATETIME_FORMAT" }}
+        </p>
+        <p style="margin: 0; color: #31424d;">
+            <strong>{% trans "Status" %}:</strong>
+            {{ order.get_status_display }}
+        </p>
+        {% if order.shipping_address %}
+        <p style="margin: 0; color: #31424d;">
+            <strong>{% trans "Shipping address" %}:</strong>
+            {{ order.shipping_address }}
+        </p>
+        {% endif %}
+    </article>
+
+    <article style="background: #fff; border: 1px solid #cfd8dc; border-radius: 8px; padding: 1.2rem;">
+        <h2 style="margin-top: 0; margin-bottom: 1rem;">{% trans "Products" %}</h2>
+
+        {% if items %}
+        <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse; font-size: 0.95rem;">
+                <thead>
+                    <tr style="background: #0A2A43; color: #E2E8E9;">
+                        <th style="padding: 0.6rem 0.8rem; text-align: left;">{% trans "Product" %}</th>
+                        <th style="padding: 0.6rem 0.8rem; text-align: right;">{% trans "Unit price" %}</th>
+                        <th style="padding: 0.6rem 0.8rem; text-align: right;">{% trans "Quantity" %}</th>
+                        <th style="padding: 0.6rem 0.8rem; text-align: right;">{% trans "Subtotal" %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in items %}
+                    <tr style="border-bottom: 1px solid #e1e7ea;">
+                        <td style="padding: 0.6rem 0.8rem;">{{ item.product.name }}</td>
+                        <td style="padding: 0.6rem 0.8rem; text-align: right;">${{ item.unit_price|localize }}</td>
+                        <td style="padding: 0.6rem 0.8rem; text-align: right;">{{ item.quantity }}</td>
+                        <td style="padding: 0.6rem 0.8rem; text-align: right;">${{ item.get_subtotal|localize }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p style="margin: 0; color: #31424d;">{% trans "This order has no items." %}</p>
+        {% endif %}
+    </article>
+
+    <article style="background: #fff; border: 1px solid #cfd8dc; border-radius: 8px; padding: 1.2rem;">
+        <h2 style="margin-top: 0; margin-bottom: 0.8rem;">{% trans "Order summary" %}</h2>
+        <dl style="display: grid; grid-template-columns: max-content 1fr; gap: 0.4rem 1.5rem; margin: 0;">
+            <dt style="font-weight: 600; color: #0A2A43;">{% trans "Subtotal" %}</dt>
+            <dd style="margin: 0; color: #31424d;">${{ order.subtotal|localize }}</dd>
+            <dt style="font-weight: 600; color: #0A2A43;">{% trans "Shipping cost" %}</dt>
+            <dd style="margin: 0; color: #31424d;">${{ order.shipping_cost|localize }}</dd>
+            <dt style="font-weight: 700; font-size: 1.1rem; color: #0A2A43;">{% trans "Total" %}</dt>
+            <dd style="margin: 0; font-weight: 700; font-size: 1.1rem; color: #0A2A43;">${{ order.total_amount|localize }}</dd>
+        </dl>
+    </article>
+
+    <p style="margin: 0;">
+        <a href="{% url 'orders:order-list' %}"
+           style="color: #0A2A43; font-weight: 600; text-decoration: none;">
+            {% trans "Back to my orders" %}
+        </a>
+    </p>
+</section>
+{% endblock %}
