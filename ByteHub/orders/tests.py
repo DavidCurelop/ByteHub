@@ -85,7 +85,7 @@ class OrderListViewTests(TestCase):
     def test_template_used(self):
         self.client.login(email='buyer@example.com', password='StrongPass123')
         response = self.client.get(reverse('orders:order-list'))
-        self.assertTemplateUsed(response, 'orders/order_list.html')
+        self.assertTemplateUsed(response, 'orders/list.html')
 
 
 class OrderDetailViewTests(TestCase):
@@ -138,7 +138,7 @@ class OrderDetailViewTests(TestCase):
         self.client.login(email='buyer2@example.com', password='StrongPass123')
         url = reverse('orders:order-detail', kwargs={'pk': self.order.pk})
         response = self.client.get(url)
-        self.assertTemplateUsed(response, 'orders/order_detail.html')
+        self.assertTemplateUsed(response, 'orders/detail.html')
 
     def test_nonexistent_order_returns_404(self):
         self.client.login(email='buyer2@example.com', password='StrongPass123')
