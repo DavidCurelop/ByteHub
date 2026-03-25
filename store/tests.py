@@ -7,7 +7,7 @@ from django.urls import reverse
 
 from pages.models import Category
 
-from .models import Product, Review
+from .models import Cart, CartItem, Product, Review
 
 User = get_user_model()
 
@@ -261,3 +261,86 @@ class ProductDetailTests(TestCase):
                     body='Duplicate attempt.',
                     is_verified_purchase=True,
                 )
+
+
+class AddToCartTests(TestCase):
+    """Tests for add-to-cart user flow."""
+
+    def setUp(self):
+        self.admin_user = User.objects.create_user(
+            email='admin-cart@example.com',
+            password='StrongPass123',
+            first_name='Admin',
+            last_name='Cart',
+            is_admin=True,
+        )
+        self.customer = User.objects.create_user(
+            email='customer-cart@example.com',
+            password='StrongPass123',
+            first_name='Customer',
+            last_name='Cart',
+        )
+        self.category = Category.objects.create(
+            name='Accessories',
+            slug='accessories',
+        )
+        self.product = Product.objects.create(
+            name='Mechanical Keyboard',
+            slug='mechanical-keyboard',
+            price='120.00',
+            stock=2,
+            is_available=True,
+            category=self.category,
+            created_by=self.admin_user,
+        )
+        self.add_to_cart_url = reverse(
+            'store:add-to-cart',
+            kwargs={'slug': self.product.slug},
+        )
+
+    def test_only_authenticated_users_can_add_to_cart(self):
+        response = self.client.post(self.add_to_cart_url)
+        self.assertEqual(response.status_code, 302)
+        self.assertIn(reverse('accounts:login'), response.url)
+        self.assertFalse(Cart.objects.exists())
+
+    def test_add_to_cart_creates_cart_item_for_authenticated_user(self):
+        self.client.login(
+            email='customer-cart@example.com',
+            password='StrongPass123',
+        )
+        response = self.client.post(self.add_to_cart_url, follow=True)
+
+        cart = Cart.objects.get(user=self.customer)
+        cart_item = CartItem.objects.get(cart=cart, product=self.product)
+        self.assertEqual(cart_item.quantity, 1)
+        self.assertContains(response, 'Product added to your cart.')
+
+    def test_add_to_cart_increases_quantity_when_item_already_exists(self):
+        self.client.login(
+            email='customer-cart@example.com',
+            password='StrongPass123',
+        )
+        self.client.post(self.add_to_cart_url)
+        self.client.post(self.add_to_cart_url)
+
+        cart = Cart.objects.get(user=self.customer)
+        cart_item = CartItem.objects.get(cart=cart, product=self.product)
+        self.assertEqual(cart_item.quantity, 2)
+
+    def test_add_to_cart_does_not_exceed_stock(self):
+        self.client.login(
+            email='customer-cart@example.com',
+            password='StrongPass123',
+        )
+        self.client.post(self.add_to_cart_url)
+        self.client.post(self.add_to_cart_url)
+        response = self.client.post(self.add_to_cart_url, follow=True)
+
+        cart = Cart.objects.get(user=self.customer)
+        cart_item = CartItem.objects.get(cart=cart, product=self.product)
+        self.assertEqual(cart_item.quantity, 2)
+        self.assertContains(
+            response,
+            'You cannot add more units than available stock.',
+        )

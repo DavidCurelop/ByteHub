@@ -241,3 +241,57 @@ msgstr "La calificación debe estar entre 1 y 5."
 
 msgid "Anonymous"
 msgstr "Anónimo"
+
+msgid "Cart"
+msgstr "Carrito"
+
+msgid "Add to cart"
+msgstr "Agregar al carrito"
+
+msgid "View cart"
+msgstr "Ver carrito"
+
+msgid "Log in to add this product to your cart."
+msgstr "Inicia sesión para agregar este producto a tu carrito."
+
+msgid "Log in"
+msgstr "Iniciar sesión"
+
+msgid "Product added to your cart."
+msgstr "Producto agregado a tu carrito."
+
+msgid "You cannot add more units than available stock."
+msgstr "No puedes agregar más unidades que el stock disponible."
+
+msgid "Your cart"
+msgstr "Tu carrito"
+
+msgid "Quantity"
+msgstr "Cantidad"
+
+msgid "Subtotal"
+msgstr "Subtotal"
+
+msgid "Total"
+msgstr "Total"
+
+msgid "Your cart is empty."
+msgstr "Tu carrito está vacío."
+
+msgid "Continue shopping"
+msgstr "Seguir comprando"
+
+msgid "Quantity cannot exceed available stock."
+msgstr "La cantidad no puede superar el stock disponible."
+
+msgid "cart"
+msgstr "carrito"
+
+msgid "carts"
+msgstr "carritos"
+
+msgid "cart item"
+msgstr "item del carrito"
+
+msgid "cart items"
+msgstr "items del carrito"

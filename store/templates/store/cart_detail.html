@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load i18n l10n %}
+
+{% block title %}{% trans "Your cart" %} | ByteHub{% endblock %}
+
+{% block content %}
+<section style="display: grid; gap: 1rem;">
+    <h1 style="margin: 0;">{% trans "Your cart" %}</h1>
+
+    {% if cart_items %}
+    <div style="display: grid; gap: 0.75rem;">
+        {% for item in cart_items %}
+        <article style="background: #fff; border: 1px solid #cfd8dc; border-radius: 8px; padding: 0.9rem; display: grid; gap: 0.5rem;">
+            <p style="margin: 0; font-weight: 600;">{{ item.product.name }}</p>
+            <p style="margin: 0; color: #31424d;">
+                <strong>{% trans "Quantity" %}:</strong> {{ item.quantity }}
+            </p>
+            <p style="margin: 0; color: #31424d;">
+                <strong>{% trans "Subtotal" %}:</strong> ${{ item.get_subtotal|localize }}
+            </p>
+        </article>
+        {% endfor %}
+    </div>
+    <p style="margin: 0; font-size: 1.1rem; font-weight: 700; color: #0A2A43;">
+        {% trans "Total" %}: ${{ cart.get_total|localize }}
+    </p>
+    {% else %}
+    <p style="margin: 0; color: #31424d;">
+        {% trans "Your cart is empty." %}
+    </p>
+    {% endif %}
+
+    <p style="margin: 0;">
+        <a href="{% url 'store:product-list' %}" style="color: #0A2A43; font-weight: 600; text-decoration: none;">
+            {% trans "Continue shopping" %}
+        </a>
+    </p>
+</section>
+{% endblock %}
