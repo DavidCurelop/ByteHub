@@ -1,13 +1,24 @@
 from decimal import Decimal
 
 from django.contrib.auth import get_user_model
+from django.contrib.messages import get_messages
 from django.test import TestCase
 from django.urls import reverse
+from unittest.mock import patch
 
 from pages.models import Category
 from store.models import Product
 
-from .models import Order, OrderItem
+from .models import (
+    PAYMENT_STATUS_FAILED,
+    PAYMENT_STATUS_SUCCEEDED,
+    STATUS_PAID,
+    STATUS_PENDING,
+    Order,
+    OrderItem,
+    Payment,
+)
+from .services.payment_providers import PaymentResult
 
 User = get_user_model()
 
@@ -183,3 +194,99 @@ class OrderManagerTests(TestCase):
         order = next(o for o in qs if o.pk == self.order1.pk)
         # Access prefetched items without triggering an extra query
         self.assertEqual(len(order.items.all()), 1)
+
+
+class ProcessPaymentViewTests(TestCase):
+    """Tests for payment processing flow."""
+
+    def setUp(self):
+        self.admin = _make_user('payment_admin@example.com', is_admin=True)
+        self.user = _make_user('payment_user@example.com')
+        self.other = _make_user('payment_other@example.com')
+        self.category = Category.objects.create(
+            name='Accessories',
+            slug='accessories',
+        )
+        self.product = _make_product('Cable', self.category, self.admin)
+        self.order = _make_order(self.user, status=STATUS_PENDING)
+        self.url = reverse(
+            'process-payment',
+            kwargs={'order_id': self.order.pk},
+        )
+
+    def test_redirects_anonymous_user(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 302)
+        self.assertIn('/accounts/login/', response['Location'])
+
+    def test_user_cannot_pay_another_user_order(self):
+        self.client.login(
+            email='payment_other@example.com',
+            password='StrongPass123',
+        )
+        response = self.client.post(
+            self.url,
+            data={'stripe_token': 'tok_visa'},
+        )
+        self.assertEqual(response.status_code, 404)
+
+    @patch('orders.views.StripePaymentProvider.process_payment')
+    def test_successful_payment_sets_order_paid_and_creates_payment(
+        self,
+        mock_process_payment,
+    ):
+        mock_process_payment.return_value = PaymentResult(
+            success=True,
+            transaction_id='ch_test_123',
+        )
+        self.client.login(
+            email='payment_user@example.com',
+            password='StrongPass123',
+        )
+
+        response = self.client.post(
+            self.url,
+            data={'stripe_token': 'tok_visa'},
+        )
+
+        self.assertRedirects(
+            response,
+            reverse('orders:order-detail', kwargs={'pk': self.order.pk}),
+        )
+        self.order.refresh_from_db()
+        self.assertEqual(self.order.status, STATUS_PAID)
+
+        payment = Payment.objects.get(order=self.order)
+        self.assertEqual(payment.status, PAYMENT_STATUS_SUCCEEDED)
+        self.assertEqual(payment.transaction_id, 'ch_test_123')
+        self.assertEqual(payment.amount, self.order.total_amount)
+
+    @patch('orders.views.StripePaymentProvider.process_payment')
+    def test_failed_payment_keeps_order_pending_and_stores_failed_payment(
+        self,
+        mock_process_payment,
+    ):
+        mock_process_payment.return_value = PaymentResult(
+            success=False,
+            error_message='Payment rejected.',
+        )
+        self.client.login(
+            email='payment_user@example.com',
+            password='StrongPass123',
+        )
+
+        response = self.client.post(
+            self.url,
+            data={'stripe_token': 'tok_chargeDeclined'},
+            follow=True,
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.order.refresh_from_db()
+        self.assertEqual(self.order.status, STATUS_PENDING)
+
+        payment = Payment.objects.get(order=self.order)
+        self.assertEqual(payment.status, PAYMENT_STATUS_FAILED)
+        self.assertEqual(payment.transaction_id, '')
+        messages = [m.message for m in get_messages(response.wsgi_request)]
+        self.assertIn('Payment rejected.', messages)

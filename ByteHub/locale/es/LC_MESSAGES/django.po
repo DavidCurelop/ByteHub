@@ -332,3 +332,84 @@ msgstr "artículos del pedido"
 msgid "Total amount must equal subtotal plus shipping cost."
 msgstr "El total debe ser igual al subtotal más el costo de envío."
 
+msgid "Paid"
+msgstr "Pagado"
+
+msgid "Stripe"
+msgstr "Stripe"
+
+msgid "Succeeded"
+msgstr "Exitoso"
+
+msgid "Failed"
+msgstr "Fallido"
+
+msgid "payment method"
+msgstr "método de pago"
+
+msgid "amount"
+msgstr "monto"
+
+msgid "transaction ID"
+msgstr "ID de transacción"
+
+msgid "paid at"
+msgstr "pagado en"
+
+msgid "payment"
+msgstr "pago"
+
+msgid "payments"
+msgstr "pagos"
+
+msgid "Unsupported payment method."
+msgstr "Método de pago no soportado."
+
+msgid "Stripe token is required."
+msgstr "El token de Stripe es obligatorio."
+
+msgid "Stripe is not configured."
+msgstr "Stripe no está configurado."
+
+msgid "Stripe SDK is not installed."
+msgstr "El SDK de Stripe no está instalado."
+
+msgid "Payment could not be completed."
+msgstr "No se pudo completar el pago."
+
+msgid "This order is already paid."
+msgstr "Este pedido ya está pagado."
+
+msgid "ByteHub order payment #%(order_id)s"
+msgstr "Pago del pedido ByteHub #%(order_id)s"
+
+msgid "Payment completed successfully. Transaction number: %(transaction_id)s"
+msgstr "Pago completado exitosamente. Número de transacción: %(transaction_id)s"
+
+msgid "Payment failed. Please verify your data and try again."
+msgstr "El pago falló. Verifica tus datos e inténtalo de nuevo."
+
+msgid "Transaction number: %(transaction_id)s"
+msgstr "Número de transacción: %(transaction_id)s"
+
+msgid "Pay order"
+msgstr "Pagar pedido"
+
+msgid "Complete payment for order #%(pk)s"
+msgstr "Completa el pago del pedido #%(pk)s"
+
+msgid "Total amount"
+msgstr "Monto total"
+
+msgid "Stripe token"
+msgstr "Token de Stripe"
+
+msgid "Use tok_visa in Stripe test mode to simulate a successful payment."
+msgstr "Usa tok_visa en modo de prueba de Stripe para simular un pago exitoso."
+
+msgid "Confirm payment"
+msgstr "Confirmar pago"
+
+msgid "Back to order detail"
+msgstr "Volver al detalle del pedido"
+

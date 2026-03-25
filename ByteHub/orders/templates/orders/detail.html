@@ -68,7 +68,24 @@
             <dt style="font-weight: 700; font-size: 1.1rem; color: #0A2A43;">{% trans "Total" %}</dt>
             <dd style="margin: 0; font-weight: 700; font-size: 1.1rem; color: #0A2A43;">${{ order.total_amount|localize }}</dd>
         </dl>
+
+        {% if order.payment and order.payment.transaction_id %}
+        <p style="margin-top: 1rem; color: #155724; font-weight: 600;">
+            {% blocktrans with transaction_id=order.payment.transaction_id %}
+            Transaction number: {{ transaction_id }}
+            {% endblocktrans %}
+        </p>
+        {% endif %}
     </article>
+
+    {% if order.status == 'pending' %}
+    <p style="margin: 0;">
+        <a href="{% url 'process-payment' order_id=order.pk %}"
+           style="display: inline-block; color: #E2E8E9; background: #0A2A43; font-weight: 600; text-decoration: none; padding: 0.5rem 0.9rem; border-radius: 4px;">
+            {% trans "Pay order" %}
+        </a>
+    </p>
+    {% endif %}
 
     <p style="margin: 0;">
         <a href="{% url 'orders:order-list' %}"
