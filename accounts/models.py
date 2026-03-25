@@ -1,6 +1,7 @@
 import re
 from decimal import Decimal
 
+from django.conf import settings
 from django.contrib.auth.models import (
     AbstractBaseUser,
     BaseUserManager,
@@ -103,5 +104,53 @@ class User(AbstractBaseUser, PermissionsMixin):
         if self.is_admin and not self.is_active:
             errors['is_active'] = _('Admin users must be active.')
 
+        if errors:
+            raise ValidationError(errors)
+
+
+class Address(models.Model):
+    """Shipping or billing address belonging to a user."""
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='addresses',
+        verbose_name=_('user'),
+    )
+    street = models.CharField(_('street'), max_length=255)
+    city = models.CharField(_('city'), max_length=100)
+    state = models.CharField(_('state'), max_length=100)
+    zip_code = models.CharField(_('zip code'), max_length=20)
+    country = models.CharField(_('country'), max_length=100)
+    is_default = models.BooleanField(_('default address'), default=False)
+
+    class Meta:
+        verbose_name = _('address')
+        verbose_name_plural = _('addresses')
+        ordering = ['-is_default', 'id']
+
+    def __str__(self):
+        return f'{self.street}, {self.city}, {self.state} {self.zip_code}'
+
+    def clean(self):
+        from django.core.exceptions import ValidationError
+
+        self.street = (self.street or '').strip()
+        self.city = (self.city or '').strip()
+        self.state = (self.state or '').strip()
+        self.zip_code = (self.zip_code or '').strip()
+        self.country = (self.country or '').strip()
+
+        errors = {}
+        if not self.street:
+            errors['street'] = _('Street is required.')
+        if not self.city:
+            errors['city'] = _('City is required.')
+        if not self.state:
+            errors['state'] = _('State is required.')
+        if not self.zip_code:
+            errors['zip_code'] = _('Zip code is required.')
+        if not self.country:
+            errors['country'] = _('Country is required.')
         if errors:
             raise ValidationError(errors)

@@ -3,7 +3,7 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import UserChangeForm, UserCreationForm
 from django.utils.translation import gettext_lazy as _
 
-from .models import User
+from .models import Address, User
 
 
 class UserAdminCreationForm(UserCreationForm):
@@ -57,3 +57,14 @@ class UserAdmin(BaseUserAdmin):
         }),
     )
     readonly_fields = ['created_at']
+
+
+@admin.register(Address)
+class AddressAdmin(admin.ModelAdmin):
+    list_display = (
+        'pk', 'user', 'street', 'city', 'state',
+        'zip_code', 'country', 'is_default',
+    )
+    list_select_related = ('user',)
+    list_filter = ('country', 'is_default')
+    search_fields = ('street', 'city', 'zip_code', 'user__email')
