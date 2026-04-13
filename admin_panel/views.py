@@ -41,7 +41,7 @@ def category_list(request):
 @admin_required
 def category_create(request):
     """Create a new category."""
-    parents = Category.objects.select_related('parent').all()
+    parents = Category.objects.only('pk', 'name').all()
     errors = {}
 
     if request.method == 'POST':
@@ -87,7 +87,7 @@ def category_edit(request, pk):
     category = get_object_or_404(
         Category.objects.select_related('parent', 'created_by'), pk=pk
     )
-    parents = Category.objects.select_related('parent').exclude(pk=pk)
+    parents = Category.objects.only('pk', 'name').exclude(pk=pk)
     errors = {}
 
     if request.method == 'POST':

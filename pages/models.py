@@ -43,7 +43,7 @@ class Category(models.Model):
             )
 
     def save(self, *args, **kwargs):
-        base_slug = slugify(self.name)
+        base_slug = slugify(self.name) or 'category'
         slug = base_slug
         counter = 1
         while True:
