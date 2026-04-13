@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}
+    {% if category %}{% trans "Edit Category" %}{% else %}{% trans "New Category" %}{% endif %} | ByteHub
+{% endblock %}
+
+{% block content %}
+<div class="auth-card" style="max-width: 600px;">
+    <h1 class="auth-title">
+        {% if category %}{% trans "Edit Category" %}{% else %}{% trans "New Category" %}{% endif %}
+    </h1>
+
+    <form method="post" novalidate>
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label for="id_name">{% trans "Name" %}</label>
+            <input
+                type="text"
+                id="id_name"
+                name="name"
+                value="{% if post %}{{ post.name }}{% elif category %}{{ category.name }}{% endif %}"
+                maxlength="100"
+                required>
+            {% if errors.name %}
+            <ul class="field-errors"><li>{{ errors.name }}</li></ul>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="id_description">{% trans "Description" %}</label>
+            <textarea
+                id="id_description"
+                name="description"
+                rows="4"
+                style="width:100%; padding: 0.6rem 0.8rem; border: 1px solid #ccc; border-radius: 4px; font-size: 1rem; font-family: inherit; background: #f9f9f9; resize: vertical;">{% if post %}{{ post.description }}{% elif category %}{{ category.description }}{% endif %}</textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="id_parent">{% trans "Parent Category" %}</label>
+            <select
+                id="id_parent"
+                name="parent"
+                style="width:100%; padding: 0.6rem 0.8rem; border: 1px solid #ccc; border-radius: 4px; font-size: 1rem; background: #f9f9f9;">
+                <option value="">— {% trans "None (top-level)" %} —</option>
+                {% for parent in parents %}
+                <option value="{{ parent.pk }}"
+                    {% if post %}
+                        {% if post.parent == parent.pk|stringformat:"s" %}selected{% endif %}
+                    {% elif category %}
+                        {% if category.parent_id == parent.pk %}selected{% endif %}
+                    {% endif %}>
+                    {{ parent.name }}
+                </option>
+                {% endfor %}
+            </select>
+            {% if errors.parent %}
+            <ul class="field-errors"><li>{{ errors.parent }}</li></ul>
+            {% endif %}
+        </div>
+
+        <div class="form-group" style="display: flex; align-items: center; gap: 0.6rem;">
+            <input
+                type="checkbox"
+                id="id_is_active"
+                name="is_active"
+                {% if post %}
+                    {% if post.is_active %}checked{% endif %}
+                {% elif category %}
+                    {% if category.is_active %}checked{% endif %}
+                {% else %}
+                    checked
+                {% endif %}>
+            <label for="id_is_active" style="margin-bottom: 0;">{% trans "Active" %}</label>
+        </div>
+
+        <p style="font-size: 0.85rem; color: #666; margin-bottom: 1rem;">
+            {% trans "The slug is generated automatically from the name." %}
+        </p>
+
+        <div style="display: flex; gap: 1rem;">
+            <button type="submit" class="btn-primary" style="width: auto; padding: 0.65rem 1.5rem;">
+                {% if category %}{% trans "Save changes" %}{% else %}{% trans "Create category" %}{% endif %}
+            </button>
+            <a href="{% url 'admin_panel:category-list' %}"
+               style="padding: 0.65rem 1.5rem; border: 1px solid #0A2A43; border-radius: 4px; color: #0A2A43; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center;">
+                {% trans "Cancel" %}
+            </a>
+        </div>
+    </form>
+</div>
+{% endblock %}

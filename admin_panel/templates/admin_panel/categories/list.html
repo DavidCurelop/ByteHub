@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Manage Categories" %} | ByteHub{% endblock %}
+
+{% block content %}
+<div style="max-width: 900px; margin: 0 auto;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+        <h1 style="font-size: 1.8rem; color: #0A2A43;">{% trans "Manage Categories" %}</h1>
+        <a href="{% url 'admin_panel:category-create' %}"
+           style="padding: 0.6rem 1.2rem; background: #00C2CB; color: #0A2A43; border-radius: 4px; font-weight: 700; text-decoration: none;">
+            + {% trans "New Category" %}
+        </a>
+    </div>
+
+    {% if categories %}
+    <table style="width: 100%; border-collapse: collapse; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(10,42,67,0.08);">
+        <thead>
+            <tr style="background: #0A2A43; color: #E2E8E9;">
+                <th style="padding: 0.9rem 1rem; text-align: left;">{% trans "Name" %}</th>
+                <th style="padding: 0.9rem 1rem; text-align: left;">{% trans "Slug" %}</th>
+                <th style="padding: 0.9rem 1rem; text-align: left;">{% trans "Parent" %}</th>
+                <th style="padding: 0.9rem 1rem; text-align: center;">{% trans "Active" %}</th>
+                <th style="padding: 0.9rem 1rem; text-align: center;">{% trans "Actions" %}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for category in categories %}
+            <tr style="border-bottom: 1px solid #e0e0e0;">
+                <td style="padding: 0.8rem 1rem; font-weight: 600;">{{ category.name }}</td>
+                <td style="padding: 0.8rem 1rem; color: #555; font-size: 0.9rem;">{{ category.slug }}</td>
+                <td style="padding: 0.8rem 1rem; color: #555;">
+                    {{ category.parent.name|default:"—" }}
+                </td>
+                <td style="padding: 0.8rem 1rem; text-align: center;">
+                    {% if category.is_active %}
+                    <span style="color: #27ae60; font-weight: 700;">✓</span>
+                    {% else %}
+                    <span style="color: #c0392b; font-weight: 700;">✗</span>
+                    {% endif %}
+                </td>
+                <td style="padding: 0.8rem 1rem; text-align: center; display: flex; gap: 0.5rem; justify-content: center;">
+                    <a href="{% url 'admin_panel:category-edit' category.pk %}"
+                       style="padding: 0.35rem 0.8rem; background: #0A2A43; color: #E2E8E9; border-radius: 4px; text-decoration: none; font-size: 0.9rem;">
+                        {% trans "Edit" %}
+                    </a>
+                    <a href="{% url 'admin_panel:category-delete' category.pk %}"
+                       style="padding: 0.35rem 0.8rem; background: #c0392b; color: #fff; border-radius: 4px; text-decoration: none; font-size: 0.9rem;">
+                        {% trans "Delete" %}
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p style="color: #555;">{% trans "No categories found." %}</p>
+    {% endif %}
+</div>
+{% endblock %}

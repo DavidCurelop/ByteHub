@@ -332,3 +332,116 @@ msgstr "artículos del pedido"
 msgid "Total amount must equal subtotal plus shipping cost."
 msgstr "El total debe ser igual al subtotal más el costo de envío."
 
+msgid "You do not have permission to access this page."
+msgstr "No tienes permiso para acceder a esta página."
+
+msgid "Admin Panel"
+msgstr "Panel de Administración"
+
+msgid "Manage Categories"
+msgstr "Gestionar Categorías"
+
+msgid "New Category"
+msgstr "Nueva Categoría"
+
+msgid "Name"
+msgstr "Nombre"
+
+msgid "Slug"
+msgstr "Slug"
+
+msgid "Parent"
+msgstr "Categoría padre"
+
+msgid "Active"
+msgstr "Activo"
+
+msgid "Actions"
+msgstr "Acciones"
+
+msgid "Edit"
+msgstr "Editar"
+
+msgid "Delete"
+msgstr "Eliminar"
+
+msgid "No categories found."
+msgstr "No se encontraron categorías."
+
+msgid "Edit Category"
+msgstr "Editar Categoría"
+
+msgid "Parent Category"
+msgstr "Categoría Padre"
+
+msgid "None (top-level)"
+msgstr "Ninguna (nivel superior)"
+
+msgid "The slug is generated automatically from the name."
+msgstr "El slug se genera automáticamente a partir del nombre."
+
+msgid "Save changes"
+msgstr "Guardar cambios"
+
+msgid "Create category"
+msgstr "Crear categoría"
+
+msgid "Cancel"
+msgstr "Cancelar"
+
+msgid "Delete Category"
+msgstr "Eliminar Categoría"
+
+msgid ""
+"Are you sure you want to delete the category <strong>%(name)s</strong>? "
+"This action cannot be undone."
+msgstr ""
+"¿Estás seguro de que deseas eliminar la categoría <strong>%(name)s</strong>? "
+"Esta acción no se puede deshacer."
+
+msgid ""
+"This category has %(count)s product(s). You cannot delete it while it has "
+"active products."
+msgstr ""
+"Esta categoría tiene %(count)s producto(s). No puedes eliminarla mientras "
+"tenga productos activos."
+
+msgid "Yes, delete"
+msgstr "Sí, eliminar"
+
+msgid "Name is required."
+msgstr "El nombre es obligatorio."
+
+msgid "A category cannot be its own parent."
+msgstr "Una categoría no puede ser su propio padre."
+
+msgid "Category created successfully."
+msgstr "Categoría creada exitosamente."
+
+msgid "Category updated successfully."
+msgstr "Categoría actualizada exitosamente."
+
+msgid "Category deleted successfully."
+msgstr "Categoría eliminada exitosamente."
+
+msgid "Cannot delete a category that has active products."
+msgstr "No se puede eliminar una categoría que tiene productos activos."
+
+msgid "name"
+msgstr "nombre"
+
+msgid "active"
+msgstr "activo"
+
+msgid "parent category"
+msgstr "categoría padre"
+
+msgid "created by"
+msgstr "creado por"
+
+msgid "category"
+msgstr "categoría"
+
+msgid "categories"
+msgstr "categorías"
+
