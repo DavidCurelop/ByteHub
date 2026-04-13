@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+{% load i18n static %}
+{% get_current_language as LANGUAGE_CODE %}
+<html lang="{{ LANGUAGE_CODE }}">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% trans "Admin Panel" %} | ByteHub{% endblock %}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+                Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: #f0f2f5;
+            color: #1a1a2e;
+        }
+
+        /* Admin header */
+        header {
+            background-color: #1a1a2e;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .admin-logo {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #e94560;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .admin-badge {
+            background: #e94560;
+            color: #fff;
+            font-size: 0.65rem;
+            font-weight: 700;
+            padding: 0.15rem 0.4rem;
+            border-radius: 3px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        nav a,
+        button.nav-btn {
+            color: #c9d1d9;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            font-family: inherit;
+            transition: color 0.2s ease;
+            padding: 0.4rem 0;
+            border: 0;
+            border-bottom: 2px solid transparent;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        button.nav-btn {
+            background: none;
+            cursor: pointer;
+            appearance: none;
+            -webkit-appearance: none;
+        }
+
+        nav a:hover,
+        button.nav-btn:hover {
+            color: #e94560;
+        }
+
+        nav a.active {
+            color: #e94560;
+            border-bottom-color: #e94560;
+        }
+
+        /* Sidebar + Layout */
+        .admin-layout {
+            display: flex;
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+            gap: 2rem;
+            min-height: calc(100vh - 160px);
+        }
+
+        .admin-sidebar {
+            width: 220px;
+            flex-shrink: 0;
+        }
+
+        .sidebar-nav {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+
+        .sidebar-nav h3 {
+            padding: 0.8rem 1rem;
+            background: #1a1a2e;
+            color: #e94560;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .sidebar-nav a {
+            display: block;
+            padding: 0.7rem 1rem;
+            color: #333;
+            text-decoration: none;
+            font-size: 0.9rem;
+            border-bottom: 1px solid #f0f0f0;
+            transition: background 0.15s ease;
+        }
+
+        .sidebar-nav a:hover,
+        .sidebar-nav a.active {
+            background: #fff0f3;
+            color: #e94560;
+            font-weight: 600;
+        }
+
+        /* Main content */
+        .admin-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        /* Alerts */
+        .alert {
+            padding: 0.75rem 1rem;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error,
+        .alert-warning {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        /* Cards */
+        .admin-card {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .admin-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.25rem;
+        }
+
+        .admin-card-header h1 {
+            font-size: 1.4rem;
+            color: #1a1a2e;
+        }
+
+        /* Table */
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        .admin-table th {
+            background: #f8f9fa;
+            padding: 0.6rem 0.8rem;
+            text-align: left;
+            font-weight: 600;
+            color: #555;
+            border-bottom: 2px solid #e0e0e0;
+            white-space: nowrap;
+        }
+
+        .admin-table td {
+            padding: 0.65rem 0.8rem;
+            border-bottom: 1px solid #f0f0f0;
+            vertical-align: middle;
+        }
+
+        .admin-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .admin-table tr:hover td {
+            background: #fafafa;
+        }
+
+        /* Status badges */
+        .badge {
+            display: inline-block;
+            padding: 0.2rem 0.55rem;
+            border-radius: 4px;
+            font-size: 0.78rem;
+            font-weight: 600;
+        }
+
+        .badge-success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .badge-danger {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-block;
+            padding: 0.45rem 0.9rem;
+            border-radius: 5px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            font-family: inherit;
+            transition: opacity 0.15s ease;
+        }
+
+        .btn:hover {
+            opacity: 0.85;
+        }
+
+        .btn-primary {
+            background: #1a1a2e;
+            color: #fff;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: #fff;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: #fff;
+        }
+
+        .btn-warning {
+            background: #ffc107;
+            color: #212529;
+        }
+
+        .btn-danger {
+            background: #e94560;
+            color: #fff;
+        }
+
+        .btn-sm {
+            padding: 0.3rem 0.65rem;
+            font-size: 0.8rem;
+        }
+
+        /* Form */
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.35rem;
+            color: #1a1a2e;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.55rem 0.75rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 0.95rem;
+            background: #fafafa;
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #e94560;
+            background: #fff;
+        }
+
+        .form-group input[type="checkbox"] {
+            width: auto;
+        }
+
+        .field-errors {
+            list-style: none;
+            margin-top: 0.3rem;
+            color: #c0392b;
+            font-size: 0.85rem;
+        }
+
+        .form-check {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+        }
+
+        /* Language switcher */
+        .lang-switcher {
+            display: flex;
+            gap: 0.4rem;
+        }
+
+        .lang-btn {
+            padding: 0.3rem 0.55rem;
+            border: 1px solid #e94560;
+            background: transparent;
+            color: #c9d1d9;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .lang-btn:hover {
+            background: #e94560;
+            color: #fff;
+        }
+
+        footer {
+            background-color: #1a1a2e;
+            color: #c9d1d9;
+            text-align: center;
+            padding: 1rem 2rem;
+            margin-top: 3rem;
+            font-size: 0.85rem;
+        }
+
+        @media (max-width: 768px) {
+            .admin-layout {
+                flex-direction: column;
+            }
+
+            .admin-sidebar {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="header-container">
+            <a href="{% url 'admin_panel:product-list' %}" class="admin-logo">
+                ByteHub
+                <span class="admin-badge">{% trans "Admin" %}</span>
+            </a>
+            <nav>
+                <ul>
+                    <li>
+                        <a href="{% url 'store:product-list' %}">
+                            {% trans "View Store" %}
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'accounts:profile' %}">
+                            {{ request.user.get_full_name }}
+                        </a>
+                    </li>
+                    <li>
+                        <form method="post" action="{% url 'accounts:logout' %}"
+                              style="display:inline-flex;">
+                            {% csrf_token %}
+                            <button type="submit" class="nav-btn">
+                                {% trans "Logout" %}
+                            </button>
+                        </form>
+                    </li>
+                </ul>
+            </nav>
+            <form action="{% url 'set_language' %}" method="post"
+                  class="lang-switcher">
+                {% csrf_token %}
+                <input name="next" type="hidden" value="{{ request.get_full_path }}">
+                <button type="submit" name="language" value="en" class="lang-btn">
+                    EN
+                </button>
+                <button type="submit" name="language" value="es" class="lang-btn">
+                    ES
+                </button>
+            </form>
+        </div>
+    </header>
+
+    <div class="admin-layout">
+        <aside class="admin-sidebar">
+            <nav class="sidebar-nav">
+                <h3>{% trans "Catalog" %}</h3>
+                <a href="{% url 'admin_panel:product-list' %}"
+                   class="{% if request.resolver_match.url_name == 'product-list' %}active{% endif %}">
+                    {% trans "Products" %}
+                </a>
+            </nav>
+        </aside>
+
+        <main class="admin-content">
+            {% if messages %}
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 ByteHub {% trans "Admin Panel" %} &mdash; {% trans "All rights reserved." %}</p>
+    </footer>
+
+    {% block scripts %}{% endblock %}
+</body>
+
+</html>

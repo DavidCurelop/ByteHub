@@ -332,3 +332,78 @@ msgstr "artículos del pedido"
 msgid "Total amount must equal subtotal plus shipping cost."
 msgstr "El total debe ser igual al subtotal más el costo de envío."
 
+msgid "Admin"
+msgstr "Administrador"
+
+msgid "Admin Panel"
+msgstr "Panel de administración"
+
+msgid "View Store"
+msgstr "Ver tienda"
+
+msgid "Catalog"
+msgstr "Catálogo"
+
+msgid "New Product"
+msgstr "Nuevo producto"
+
+msgid "Name"
+msgstr "Nombre"
+
+msgid "Available"
+msgstr "Disponible"
+
+msgid "Actions"
+msgstr "Acciones"
+
+msgid "Yes"
+msgstr "Sí"
+
+msgid "No"
+msgstr "No"
+
+msgid "Edit"
+msgstr "Editar"
+
+msgid "Deactivate"
+msgstr "Desactivar"
+
+msgid "Deactivate this product?"
+msgstr "¿Desactivar este producto?"
+
+msgid "No products found."
+msgstr "No se encontraron productos."
+
+msgid "Create Product"
+msgstr "Crear producto"
+
+msgid "Create"
+msgstr "Crear"
+
+msgid "Edit Product"
+msgstr "Editar producto"
+
+msgid "Save Changes"
+msgstr "Guardar cambios"
+
+msgid "Cancel"
+msgstr "Cancelar"
+
+msgid "Image URL"
+msgstr "URL de imagen"
+
+msgid "Auto-generated from name if empty"
+msgstr "Se genera automáticamente desde el nombre si está vacío"
+
+msgid "Product \"%(name)s\" created successfully."
+msgstr "Producto \"%(name)s\" creado exitosamente."
+
+msgid "Product \"%(name)s\" updated successfully."
+msgstr "Producto \"%(name)s\" actualizado exitosamente."
+
+msgid "Product \"%(name)s\" has been deactivated."
+msgstr "Producto \"%(name)s\" desactivado exitosamente."
+
+msgid "You do not have permission to access the admin panel."
+msgstr "No tienes permiso para acceder al panel de administración."
+
