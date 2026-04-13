@@ -1,8 +1,8 @@
 import functools
 
 from django.contrib import messages
+from django.contrib.auth.views import redirect_to_login
 from django.shortcuts import get_object_or_404, redirect, render
-from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 
 from pages.models import Category
@@ -13,10 +13,7 @@ def admin_required(view_func):
     @functools.wraps(view_func)
     def wrapper(request, *args, **kwargs):
         if not request.user.is_authenticated:
-            from django.conf import settings
-            return redirect(
-                f"{settings.LOGIN_URL}?next={request.path}"
-            )
+            return redirect_to_login(request.get_full_path())
         if not request.user.is_admin:
             messages.error(
                 request,
@@ -25,22 +22,6 @@ def admin_required(view_func):
             return redirect('pages:home')
         return view_func(request, *args, **kwargs)
     return wrapper
-
-
-def _unique_slug(name, exclude_pk=None):
-    """Return a unique slug derived from *name*."""
-    base_slug = slugify(name)
-    slug = base_slug
-    counter = 1
-    while True:
-        qs = Category.objects.filter(slug=slug)
-        if exclude_pk:
-            qs = qs.exclude(pk=exclude_pk)
-        if not qs.exists():
-            break
-        slug = f'{base_slug}-{counter}'
-        counter += 1
-    return slug
 
 
 @admin_required
@@ -60,7 +41,7 @@ def category_list(request):
 @admin_required
 def category_create(request):
     """Create a new category."""
-    parents = Category.objects.all()
+    parents = Category.objects.select_related('parent').all()
     errors = {}
 
     if request.method == 'POST':
@@ -73,14 +54,12 @@ def category_create(request):
             errors['name'] = _('Name is required.')
 
         if not errors:
-            slug = _unique_slug(name)
             parent = (
                 get_object_or_404(Category, pk=parent_id)
                 if parent_id else None
             )
             Category.objects.create(
                 name=name,
-                slug=slug,
                 description=description,
                 is_active=is_active,
                 parent=parent,
@@ -105,8 +84,10 @@ def category_create(request):
 @admin_required
 def category_edit(request, pk):
     """Edit an existing category."""
-    category = get_object_or_404(Category, pk=pk)
-    parents = Category.objects.exclude(pk=pk)
+    category = get_object_or_404(
+        Category.objects.select_related('parent', 'created_by'), pk=pk
+    )
+    parents = Category.objects.select_related('parent').exclude(pk=pk)
     errors = {}
 
     if request.method == 'POST':
@@ -124,8 +105,6 @@ def category_edit(request, pk):
             )
 
         if not errors:
-            if name != category.name:
-                category.slug = _unique_slug(name, exclude_pk=pk)
             category.name = name
             category.description = description
             category.is_active = is_active

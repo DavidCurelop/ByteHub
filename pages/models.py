@@ -43,18 +43,16 @@ class Category(models.Model):
             )
 
     def save(self, *args, **kwargs):
-        if not self.slug:
-            base_slug = slugify(self.name)
-            slug = base_slug
-            counter = 1
+        base_slug = slugify(self.name)
+        slug = base_slug
+        counter = 1
+        while True:
             qs = Category.objects.filter(slug=slug)
             if self.pk:
                 qs = qs.exclude(pk=self.pk)
-            while qs.exists():
-                slug = f'{base_slug}-{counter}'
-                counter += 1
-                qs = Category.objects.filter(slug=slug)
-                if self.pk:
-                    qs = qs.exclude(pk=self.pk)
-            self.slug = slug
+            if not qs.exists():
+                break
+            slug = f'{base_slug}-{counter}'
+            counter += 1
+        self.slug = slug
         super().save(*args, **kwargs)

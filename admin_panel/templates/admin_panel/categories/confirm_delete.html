@@ -14,12 +14,9 @@
         {% endblocktrans %}
     </p>
 
-    {% if category.products.count %}
+    {% if category.products.exists %}
     <div class="alert alert-warning" style="margin-bottom: 1rem;">
-        {% blocktrans with count=category.products.count %}
-            This category has {{ count }} product(s). You cannot delete it while
-            it has active products.
-        {% endblocktrans %}
+        {% trans "This category has products. You cannot delete it while it has active products." %}
     </div>
     {% endif %}
 
