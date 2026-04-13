@@ -337,6 +337,9 @@
                     <li><a class="nav-link {% if request.resolver_match.view_name == 'store:cart-detail' %}active{% endif %}"
                             href="{% url 'store:cart-detail' %}">{% trans "Cart" %}</a></li>
                     <li><a href="{% url 'accounts:profile' %}">{% trans "Profile" %}</a></li>
+                    {% if user.is_admin %}
+                    <li><a href="{% url 'admin_panel:product-list' %}">{% trans "Admin Panel" %}</a></li>
+                    {% endif %}
                     <li>
                         <form method="post" action="{% url 'accounts:logout' %}" style="display:inline-flex;">
                             {% csrf_token %} <button type="submit" class="nav-btn">{% trans "Logout" %}</button>
