@@ -2,6 +2,8 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from store.models import Order
+import os
+import stripe
 
 # Create your views here.
 from django.shortcuts import redirect, get_object_or_404
@@ -26,8 +28,11 @@ def create_payment(request, order_id):
 @csrf_exempt
 def stripe_webhook(request):
     payload = request.body
-    sig_header = request.META.get('HTTP_STRIPE_SIGNATURE')
+    sig_header = request.META.get("HTTP_STRIPE_SIGNATURE")
     endpoint_secret = os.getenv("STRIPE_WEBHOOK_SECRET")
+
+    print("SIGNATURE HEADER:", sig_header)
+    print("SECRET LOADED:", endpoint_secret is not None)
 
     try:
         event = stripe.Webhook.construct_event(
@@ -35,15 +40,11 @@ def stripe_webhook(request):
             sig_header,
             endpoint_secret
         )
-    except Exception:
+    except Exception as e:
+        print("WEBHOOK ERROR:", str(e))
         return HttpResponse(status=400)
 
-    # Evento de pago exitoso
-    if event['type'] == 'checkout.session.completed':
-        session = event['data']['object']
-
-        # Aquí luego conectamos con Order real
-        print("Pago confirmado:", session['id'])
+    print("EVENT TYPE:", event["type"])
 
     return HttpResponse(status=200)
 
