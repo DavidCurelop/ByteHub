@@ -14,6 +14,7 @@ from .forms import (
     UserRegistrationForm,
     UserUpdateForm,
 )
+from .services import register_user, update_user_profile
 
 
 class UserPasswordResetView(PasswordResetView):
@@ -62,7 +63,7 @@ def register_view(request):
     if request.method == 'POST':
         form = UserRegistrationForm(request.POST)
         if form.is_valid():
-            form.save()
+            register_user(form)
             messages.success(
                 request, _('Registration successful. Please log in.')
             )
@@ -111,7 +112,7 @@ def profile_view(request):
     if request.method == 'POST':
         form = UserUpdateForm(request.POST, instance=request.user)
         if form.is_valid():
-            form.save()
+            update_user_profile(form)
             messages.success(request, _('Profile updated successfully.'))
             return redirect('accounts:profile')
     else:

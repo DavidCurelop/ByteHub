@@ -4,7 +4,7 @@ from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.utils.translation import gettext_lazy as _
 
-from .models import Cart, Order, OrderItem, Product
+from store.models import Cart, Order, OrderItem, Product
 
 
 DEFAULT_SHIPPING_COST = Decimal('10.00')
