@@ -9,7 +9,7 @@ from django.views.decorators.http import require_POST
 
 from orders.services import create_order_from_cart
 from .forms import ReviewForm
-from .models import Product
+from .models import Order, OrderItem, Product
 from .services import (
     add_product_to_cart,
     compute_checkout_summary,
@@ -39,10 +39,18 @@ def product_detail(request, slug):
         Product.objects.get_public_detail(),
         slug=slug,
     )
+    has_purchased = False
+    if request.user.is_authenticated:
+        has_purchased = OrderItem.objects.filter(
+            product=product,
+            order__user=request.user,
+            order__status=Order.STATUS_CONFIRMED,
+        ).exists()
     context = {
         'product': product,
         'verified_reviews': product.verified_reviews,
         'average_rating': product.avg_rating(),
+        'has_purchased': has_purchased,
     }
     if request.user.is_authenticated:
         context['review_form'] = ReviewForm()

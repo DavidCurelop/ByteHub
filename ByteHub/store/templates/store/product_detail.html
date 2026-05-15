@@ -102,7 +102,7 @@
         </p>
         {% endif %}
 
-        {% if user.is_authenticated %}
+        {% if has_purchased %}
         <section style="margin-top: 1.2rem; border-top: 1px solid #e1e7ea; padding-top: 1rem;">
             <h3 style="margin-top: 0; margin-bottom: 0.8rem;">{% trans "Write a review" %}</h3>
             <form method="post" action="{% url 'store:add-review' slug=product.slug %}"
@@ -134,6 +134,10 @@
                 </div>
             </form>
         </section>
+        {% elif user.is_authenticated %}
+        <p style="margin-top: 1rem; color: #31424d;">
+            {% trans "You can only review products you have purchased." %}
+        </p>
         {% else %}
         <p style="margin-top: 1rem; color: #31424d;">
             {% trans "Log in to write a review for this product." %}
