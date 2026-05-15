@@ -4,6 +4,7 @@ from .views import (
     add_to_cart,
     cart_detail,
     checkout,
+    create_review_view,
     delete_cart_item_view,
     product_detail,
     product_list,
@@ -19,5 +20,6 @@ urlpatterns = [
     path('cart/items/<int:item_id>/update/', update_cart_item, name='update-cart-item'),
     path('cart/items/<int:item_id>/delete/', delete_cart_item_view, name='delete-cart-item'),
     path('<slug:slug>/add-to-cart/', add_to_cart, name='add-to-cart'),
+    path('<slug:slug>/reviews/add/', create_review_view, name='add-review'),
     path('<slug:slug>/', product_detail, name='product-detail'),
 ]

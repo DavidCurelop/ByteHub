@@ -101,6 +101,44 @@
             {% trans "There are no verified reviews for this product yet." %}
         </p>
         {% endif %}
+
+        {% if user.is_authenticated %}
+        <section style="margin-top: 1.2rem; border-top: 1px solid #e1e7ea; padding-top: 1rem;">
+            <h3 style="margin-top: 0; margin-bottom: 0.8rem;">{% trans "Write a review" %}</h3>
+            <form method="post" action="{% url 'store:add-review' slug=product.slug %}"
+                  style="display: grid; gap: 0.6rem;">
+                {% csrf_token %}
+                <div>
+                    <label for="{{ review_form.rating.id_for_label }}" style="display: block; font-weight: 600; color: #31424d;">
+                        {{ review_form.rating.label }}
+                    </label>
+                    {{ review_form.rating }}
+                </div>
+                <div>
+                    <label for="{{ review_form.title.id_for_label }}" style="display: block; font-weight: 600; color: #31424d;">
+                        {{ review_form.title.label }}
+                    </label>
+                    {{ review_form.title }}
+                </div>
+                <div>
+                    <label for="{{ review_form.body.id_for_label }}" style="display: block; font-weight: 600; color: #31424d;">
+                        {{ review_form.body.label }}
+                    </label>
+                    {{ review_form.body }}
+                </div>
+                <div>
+                    <button type="submit"
+                            style="padding: 0.65rem 1rem; border: none; border-radius: 6px; background: #0A2A43; color: #fff; font-weight: 600; cursor: pointer;">
+                        {% trans "Submit review" %}
+                    </button>
+                </div>
+            </form>
+        </section>
+        {% else %}
+        <p style="margin-top: 1rem; color: #31424d;">
+            {% trans "Log in to write a review for this product." %}
+        </p>
+        {% endif %}
     </article>
 
     <p style="margin: 0;">

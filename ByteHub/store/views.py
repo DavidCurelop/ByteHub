@@ -1,16 +1,19 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
+from django.db import IntegrityError
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.http import require_POST
 
 from orders.services import create_order_from_cart
+from .forms import ReviewForm
 from .models import Product
 from .services import (
     add_product_to_cart,
     compute_checkout_summary,
+    create_review,
     delete_cart_item,
     resolve_shipping_address,
     update_cart_item_quantity,
@@ -41,6 +44,8 @@ def product_detail(request, slug):
         'verified_reviews': product.verified_reviews,
         'average_rating': product.avg_rating(),
     }
+    if request.user.is_authenticated:
+        context['review_form'] = ReviewForm()
     return render(request, 'store/product_detail.html', context)
 
 
@@ -99,6 +104,35 @@ def delete_cart_item_view(request, item_id):
         raise Http404
     messages.success(request, _('Item removed from your cart.'))
     return redirect('store:cart-detail')
+
+
+@login_required
+@require_POST
+def create_review_view(request, slug):
+    form = ReviewForm(request.POST)
+    if not form.is_valid():
+        messages.error(request, _('Please correct the errors in the review form.'))
+        return redirect('store:product-detail', slug=slug)
+
+    try:
+        create_review(
+            user=request.user,
+            product_slug=slug,
+            rating=form.cleaned_data['rating'],
+            title=form.cleaned_data['title'],
+            body=form.cleaned_data['body'],
+        )
+    except ObjectDoesNotExist:
+        raise Http404
+    except ValidationError as error:
+        messages.error(request, error.message)
+        return redirect('store:product-detail', slug=slug)
+    except IntegrityError:
+        messages.error(request, _('You have already reviewed this product.'))
+        return redirect('store:product-detail', slug=slug)
+
+    messages.success(request, _('Your review has been published.'))
+    return redirect('store:product-detail', slug=slug)
 
 
 @login_required

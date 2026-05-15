@@ -2,7 +2,7 @@ from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import transaction
 from django.utils.translation import gettext_lazy as _
 
-from .models import Address, Cart, CartItem, Product
+from .models import Address, Cart, CartItem, Order, OrderItem, Product, Review
 
 
 def add_product_to_cart(user, product_slug):
@@ -133,3 +133,39 @@ def resolve_shipping_address(user, selected_address_id, address_data):
             ).update(is_default=False)
 
     return address
+
+
+@transaction.atomic
+def create_review(*, user, product_slug, rating, title, body):
+    """Create a verified-purchase review for ``product_slug`` by ``user``.
+
+    Raises ObjectDoesNotExist when the product slug is missing or inactive.
+    Raises ValidationError when the user has not purchased the product in a
+    confirmed order.
+    The Review model's UniqueConstraint on (product, user) enforces that a
+    user cannot review the same product twice.
+    Returns the created Review.
+    """
+    try:
+        product = Product.objects.get_active_products().get(slug=product_slug)
+    except Product.DoesNotExist as exc:
+        raise ObjectDoesNotExist(_('Product not found.')) from exc
+
+    has_purchased = OrderItem.objects.filter(
+        product=product,
+        order__user=user,
+        order__status=Order.STATUS_CONFIRMED,
+    ).exists()
+    if not has_purchased:
+        raise ValidationError(
+            _('You can only review products you have purchased.')
+        )
+
+    return Review.objects.create(
+        product=product,
+        user=user,
+        rating=rating,
+        title=title or '',
+        body=body or '',
+        is_verified_purchase=True,
+    )
