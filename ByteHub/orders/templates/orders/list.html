@@ -13,7 +13,7 @@
         <article style="background: #fff; border: 1px solid #cfd8dc; border-radius: 8px; padding: 1.2rem; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem;">
             <div>
                 <p style="margin: 0 0 0.4rem; font-weight: 700; color: #0A2A43;">
-                    {% blocktrans with pk=order.pk %}Order #{{ pk }}{% endblocktrans %}
+                    {% blocktrans with num=forloop.counter %}Order #{{ num }}{% endblocktrans %}
                 </p>
                 <p style="margin: 0 0 0.2rem; color: #31424d;">
                     <strong>{% trans "Date" %}:</strong>
