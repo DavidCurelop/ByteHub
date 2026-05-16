@@ -1,2 +1,109 @@
-<h1>Pago cancelado ❌</h1>
-<p>No se completó la transacción.</p>
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+.cancel-wrapper {
+    min-height: 70vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.cancel-card {
+    background: white;
+    padding: 50px;
+    border-radius: 20px;
+    text-align: center;
+    max-width: 550px;
+    width: 90%;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+}
+
+.cancel-icon {
+    font-size: 80px;
+    margin-bottom: 20px;
+}
+
+.cancel-title {
+    font-size: 42px;
+    color: #0a2540;
+    margin-bottom: 15px;
+}
+
+.cancel-text {
+    font-size: 18px;
+    color: #555;
+    margin-bottom: 35px;
+    line-height: 1.6;
+}
+
+.cancel-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.cancel-btn {
+    text-decoration: none;
+    padding: 14px 28px;
+    border-radius: 12px;
+    font-weight: bold;
+    transition: 0.3s ease;
+}
+
+.primary-btn {
+    background-color: #ff4d4f;
+    color: white;
+}
+
+.primary-btn:hover {
+    background-color: #e53935;
+}
+
+.secondary-btn {
+    border: 2px solid #0a2540;
+    color: #0a2540;
+}
+
+.secondary-btn:hover {
+    background-color: #0a2540;
+    color: white;
+}
+</style>
+
+<div class="cancel-wrapper">
+
+    <div class="cancel-card">
+
+        <div class="cancel-icon">
+            ❌
+        </div>
+
+        <h1 class="cancel-title">
+            Payment Cancelled
+        </h1>
+
+        <p class="cancel-text">
+            Your payment process was cancelled.
+            You can return to your cart and try again whenever you want.
+        </p>
+
+        <div class="cancel-buttons">
+
+            <a href="{% url 'store:cart-detail' %}" class="cancel-btn primary-btn">
+                Return to Cart
+            </a>
+
+            <a href="{% url 'pages:home' %}" class="cancel-btn secondary-btn">
+                Go Home
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

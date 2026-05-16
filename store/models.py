@@ -302,6 +302,12 @@ class Order(models.Model):
 
     def __str__(self):
         return f'Order #{self.pk}'
+    
+    stripe_session_id = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
+    )
 
 
 class OrderItem(models.Model):

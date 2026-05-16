@@ -4,6 +4,7 @@ from django.views.decorators.csrf import csrf_exempt
 from store.models import Order
 import os
 import stripe
+from store.models import Order
 
 # Create your views here.
 from django.shortcuts import redirect, get_object_or_404
@@ -46,6 +47,19 @@ def stripe_webhook(request):
 
     print("EVENT TYPE:", event["type"])
 
+    if event["type"] == "checkout.session.completed":
+        session = event["data"]["object"]
+        print("Session ID:", session["id"])
+
+        order = Order.objects.filter(stripe_session_id=session["id"]).first()
+
+        if order:
+            order.status = "paid"
+            order.save()
+
+            print(f"Order {order.id} Marked as paid")
+        else:
+            print("Order not found")
     return HttpResponse(status=200)
 
 def payment_success(request):

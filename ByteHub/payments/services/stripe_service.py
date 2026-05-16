@@ -29,4 +29,7 @@ def create_checkout_session(order):
         cancel_url='http://localhost:8000/payments/cancel/',
     )
 
+    order.stripe_session_id = session.id
+    order.save()
+
     return session

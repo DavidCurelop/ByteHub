@@ -207,7 +207,7 @@ def checkout(request):
             _('Order #%(order_id)s was created successfully.')
             % {'order_id': order.id},
         )
-        return redirect('store:cart-detail')
+        return redirect('payments:create-payment', order_id=order.id)
 
     context = {
         'cart': cart,
