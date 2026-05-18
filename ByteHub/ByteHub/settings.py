@@ -57,7 +57,7 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'store.apps.StoreConfig',
     'orders.apps.OrdersConfig',
-    'admin_panel.apps.AdminPanelConfig',
+    'payments',          
 ]
 
 SITE_ID = 1

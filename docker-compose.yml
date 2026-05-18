@@ -23,10 +23,13 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+
     restart: unless-stopped
+
     env_file:
-      - path: .env
-        required: false
+    - path: .env
+      required: false
+
     environment:
       DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:-dev-only-insecure-secret-key}
       DEBUG: ${DEBUG:-true}
@@ -38,13 +41,12 @@ services:
       POSTGRES_PORT: ${POSTGRES_PORT:-5432}
       POSTGRES_CONN_MAX_AGE: ${POSTGRES_CONN_MAX_AGE:-60}
       PGSSLMODE: ${PGSSLMODE:-prefer}
-      # Load fixture data from dev_seed.json
       LOAD_FIXTURE_DATA: ${LOAD_FIXTURE_DATA:-true}
+
     ports:
       - "8000:8000"
+
     working_dir: /app/ByteHub
 
-volumes:
-  bytehub_postgres_data:
-    # Explicit volume name keeps one shared DB per Docker host.
-    name: bytehub_shared_postgres_data
+    volumes:
+    - .:/app

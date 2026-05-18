@@ -28,4 +28,5 @@ urlpatterns = [
         include('admin_panel.urls', namespace='admin_panel'),
     ),
     path('admin/', admin.site.urls),
+    path('payments/', include('payments.urls', namespace='payments')),
 ]
