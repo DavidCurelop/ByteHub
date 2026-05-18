@@ -1,13 +1,22 @@
 {% extends 'base.html' %}
 {% load i18n l10n %}
 
-{% block title %}{% trans "Products" %} | ByteHub{% endblock %}
+{% block title %}{% if current_category %}{{ current_category.name }}{% else %}{% trans "Products" %}{% endif %} | ByteHub{% endblock %}
 
 {% block content %}
 <section>
+    {% if current_category %}
+    <h1 style="margin-bottom: 1.5rem;">{{ current_category.name }}</h1>
+    <p style="margin-bottom: 1rem;">
+        <a href="{% url 'store:product-list' %}" style="color: #0A2A43; font-weight: 600;">
+            &laquo; {% trans "Back to all products" %}
+        </a>
+    </p>
+    {% else %}
     <h1 style="margin-bottom: 1.5rem;">{% trans "Products" %}</h1>
+    {% endif %}
 
-    <form method="get" action="{% url 'store:product-list' %}"
+    <form method="get" action="{% if current_category %}{% url 'store:product-list-by-category' slug=current_category.slug %}{% else %}{% url 'store:product-list' %}{% endif %}"
           style="display: flex; gap: 0.75rem; align-items: end; margin-bottom: 1.5rem; flex-wrap: wrap;">
         <div style="display: flex; flex-direction: column; min-width: 240px; flex: 1;">
             <label for="id_q" style="margin-bottom: 0.35rem; font-weight: 600; color: #0A2A43;">
@@ -22,6 +31,22 @@
             {% trans "Search" %}
         </button>
     </form>
+
+    {% if categories %}
+    <nav aria-label="{% trans 'Filter by category' %}"
+         style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.5rem;">
+        <a href="{% url 'store:product-list' %}"
+           style="padding: 0.5rem 1rem; border-radius: 999px; text-decoration: none; font-weight: 600; border: 1px solid #0A2A43; {% if not current_category %}background: #0A2A43; color: #fff;{% else %}background: transparent; color: #0A2A43;{% endif %}">
+            {% trans "All" %}
+        </a>
+        {% for category in categories %}
+        <a href="{% url 'store:product-list-by-category' slug=category.slug %}"
+           style="padding: 0.5rem 1rem; border-radius: 999px; text-decoration: none; font-weight: 600; border: 1px solid #0A2A43; {% if current_category and current_category.slug == category.slug %}background: #0A2A43; color: #fff;{% else %}background: transparent; color: #0A2A43;{% endif %}">
+            {{ category.name }}
+        </a>
+        {% endfor %}
+    </nav>
+    {% endif %}
 
     {% if products %}
     <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1.5rem;">
@@ -61,7 +86,15 @@
         {% endblocktrans %}
     </p>
     {% else %}
+    {% if current_category %}
+    <p>
+        {% blocktrans with name=current_category.name %}
+        No products available in "{{ name }}" right now.
+        {% endblocktrans %}
+    </p>
+    {% else %}
     <p>{% trans "There are no products available at the moment." %}</p>
+    {% endif %}
     {% endif %}
     {% endif %}
 </section>

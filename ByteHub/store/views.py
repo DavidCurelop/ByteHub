@@ -8,6 +8,7 @@ from django.utils.translation import gettext_lazy as _
 from django.views.decorators.http import require_POST
 
 from orders.services import create_order_from_cart
+from pages.models import Category
 from .forms import ReviewForm
 from .models import Address, Order, OrderItem, Product
 from .services import (
@@ -28,6 +29,24 @@ def product_list(request):
         request, 'store/product_list.html',
         {
             'products': products,
+            'search_query': search_query,
+            'is_searching': bool(search_query),
+        },
+    )
+
+
+def product_list_by_category(request, slug):
+    category = get_object_or_404(Category, slug=slug, is_active=True)
+    products = Product.objects.get_products_by_category(slug)
+    raw_search_query = request.GET.get('q', '')
+    search_query = raw_search_query.strip()
+    if search_query:
+        products = products.filter(name__icontains=search_query)
+    return render(
+        request, 'store/product_list.html',
+        {
+            'products': products,
+            'current_category': category,
             'search_query': search_query,
             'is_searching': bool(search_query),
         },

@@ -403,7 +403,12 @@
                 <h3>{% trans "Categories" %}</h3>
                 <ul>
                     {% for category in categories %}
-                    <li><a href="#">{{ category.name }}</a></li>
+                    <li>
+                        <a href="{% url 'store:product-list-by-category' slug=category.slug %}"
+                           {% if request.resolver_match.view_name == 'store:product-list-by-category' and request.resolver_match.kwargs.slug == category.slug %}style="color: #7DFF26; font-weight: 700;"{% endif %}>
+                            {{ category.name }}
+                        </a>
+                    </li>
                     {% endfor %}
                 </ul>
             </div>

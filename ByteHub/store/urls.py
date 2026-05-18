@@ -8,6 +8,7 @@ from .views import (
     delete_cart_item_view,
     product_detail,
     product_list,
+    product_list_by_category,
     update_cart_item,
 )
 
@@ -15,6 +16,7 @@ app_name = 'store'
 
 urlpatterns = [
     path('', product_list, name='product-list'),
+    path('category/<slug:slug>/', product_list_by_category, name='product-list-by-category'),
     path('cart/', cart_detail, name='cart-detail'),
     path('checkout/', checkout, name='checkout'),
     path('cart/items/<int:item_id>/update/', update_cart_item, name='update-cart-item'),
