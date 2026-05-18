@@ -1,13 +1,8 @@
-from django.shortcuts import render
-from django.http import HttpResponse
-from django.views.decorators.csrf import csrf_exempt
-from store.models import Order
 import os
 import stripe
-from store.models import Order
-
-# Create your views here.
-from django.shortcuts import redirect, get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404
+from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 
 from store.models import Order
@@ -21,10 +16,13 @@ def create_payment(request, order_id):
         id=order_id,
         user=request.user,
     )
-
-    checkout_session = create_checkout_session(order)
-
-    return redirect(checkout_session.url)
+    try:
+        checkout_session = create_checkout_session(order, request)
+        print("SESSION URL:", checkout_session.url)
+        return redirect(checkout_session.url)
+    except Exception as e:
+        print("PAYMENT ERROR:", str(e))
+        raise
 
 @csrf_exempt
 def stripe_webhook(request):

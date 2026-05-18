@@ -9,7 +9,7 @@ from django.views.decorators.http import require_POST
 
 from orders.services import create_order_from_cart
 from .forms import ReviewForm
-from .models import Order, OrderItem, Product
+from .models import Address, Order, OrderItem, Product
 from .services import (
     add_product_to_cart,
     compute_checkout_summary,
@@ -174,14 +174,8 @@ def checkout(request):
             messages.error(request, error.message)
             return redirect('store:checkout')
 
-        messages.success(
-            request,
-            _('Order #%(order_id)s was created successfully.')
-            % {'order_id': order.id},
-        )
-        return redirect('store:cart-detail')
+        return redirect('payments:create-payment', order_id=order.id)
 
-    from .models import Address
     addresses = Address.objects.filter(user=request.user)
     return render(
         request, 'store/checkout.html',

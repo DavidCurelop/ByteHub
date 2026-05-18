@@ -259,9 +259,11 @@ class Order(models.Model):
 
     STATUS_PENDING = 'pending'
     STATUS_CONFIRMED = 'confirmed'
+    STATUS_PAID = 'paid'
     STATUS_CHOICES = [
         (STATUS_PENDING, _('Pending')),
         (STATUS_CONFIRMED, _('Confirmed')),
+        (STATUS_PAID, _('Paid')),
     ]
 
     user = models.ForeignKey(
@@ -280,7 +282,7 @@ class Order(models.Model):
         _('status'),
         max_length=20,
         choices=STATUS_CHOICES,
-        default=STATUS_CONFIRMED,
+        default=STATUS_PENDING,
     )
     subtotal = models.DecimalField(
         _('subtotal'), max_digits=10, decimal_places=2,
@@ -290,6 +292,11 @@ class Order(models.Model):
     )
     total_amount = models.DecimalField(
         _('total amount'), max_digits=10, decimal_places=2,
+    )
+    stripe_session_id = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
     )
     created_at = models.DateTimeField(_('created at'), auto_now_add=True)
 
@@ -302,12 +309,6 @@ class Order(models.Model):
 
     def __str__(self):
         return f'Order #{self.pk}'
-    
-    stripe_session_id = models.CharField(
-        max_length=255,
-        null=True,
-        blank=True,
-    )
 
 
 class OrderItem(models.Model):
