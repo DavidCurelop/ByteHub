@@ -70,11 +70,17 @@
         </dl>
     </article>
 
-    <p style="margin: 0;">
+    <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
         <a href="{% url 'orders:order-list' %}"
            style="color: #0A2A43; font-weight: 600; text-decoration: none;">
             {% trans "Back to my orders" %}
         </a>
-    </p>
+        {% if order.status == 'paid' or order.status == 'confirmed' %}
+        <a href="{% url 'orders:generate-invoice' pk=order.pk %}"
+           style="background: #0A2A43; color: #E2E8E9; padding: 0.6rem 1.1rem; border-radius: 6px; font-weight: 600; text-decoration: none;">
+            {% trans "Download invoice" %}
+        </a>
+        {% endif %}
+    </div>
 </section>
 {% endblock %}
