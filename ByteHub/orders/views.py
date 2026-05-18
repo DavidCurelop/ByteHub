@@ -1,6 +1,9 @@
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import PermissionDenied
+from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, render
 
+from core.invoice.pdf_provider import PDFInvoiceProvider
 from store.models import Order
 
 
@@ -37,3 +40,22 @@ def order_detail(request, pk):
         'orders/detail.html',
         {'order': order, 'items': items},
     )
+
+
+@login_required
+def generate_invoice(request, pk):
+    order = get_object_or_404(Order, pk=pk)
+
+    if order.user_id != request.user.pk:
+        raise PermissionDenied
+
+    if order.status not in (Order.STATUS_CONFIRMED, Order.STATUS_PAID):
+        raise Http404
+
+    pdf_bytes = PDFInvoiceProvider().generate(order)
+
+    response = HttpResponse(pdf_bytes, content_type='application/pdf')
+    response['Content-Disposition'] = (
+        f'attachment; filename="invoice_order_{order.pk}.pdf"'
+    )
+    return response
