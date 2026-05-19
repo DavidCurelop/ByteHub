@@ -49,7 +49,7 @@ def generate_invoice(request, pk):
     if order.user_id != request.user.pk:
         raise PermissionDenied
 
-    if order.status not in (Order.STATUS_CONFIRMED, Order.STATUS_PAID):
+    if order.status != Order.STATUS_PAID:
         raise Http404
 
     pdf_bytes = PDFInvoiceProvider().generate(order)
