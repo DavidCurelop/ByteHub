@@ -8,7 +8,7 @@
     <h1 style="margin: 0;">{% trans "Checkout" %}</h1>
 
     {% if cart_items %}
-    <form method="post" style="display: grid; gap: 1rem;">
+    <form method="post" id="checkout-form" style="display: grid; gap: 1rem;">
         {% csrf_token %}
 
         <article style="background: #fff; border: 1px solid #cfd8dc; border-radius: 8px; padding: 1rem; display: grid; gap: 0.8rem;">
@@ -20,6 +20,11 @@
                 {% for address in addresses %}
                 <label style="display: flex; gap: 0.5rem; align-items: flex-start;">
                     <input type="radio" name="shipping_address" value="{{ address.id }}"
+                           data-street="{{ address.street }}"
+                           data-city="{{ address.city }}"
+                           data-state="{{ address.state }}"
+                           data-zip="{{ address.zip_code }}"
+                           data-country="{{ address.country }}"
                            {% if address.is_default %}checked{% endif %}>
                     <span>
                         {{ address.street }}, {{ address.city }}, {{ address.state }},
@@ -41,27 +46,27 @@
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0.8rem;">
                 <label style="display: grid; gap: 0.35rem;">
                     <span style="font-weight: 600;">{% trans "Street" %}</span>
-                    <input type="text" name="street"
+                    <input type="text" name="street" id="id_street"
                            style="padding: 0.55rem; border: 1px solid #9fb4c4; border-radius: 6px;">
                 </label>
                 <label style="display: grid; gap: 0.35rem;">
                     <span style="font-weight: 600;">{% trans "City" %}</span>
-                    <input type="text" name="city"
+                    <input type="text" name="city" id="id_city"
                            style="padding: 0.55rem; border: 1px solid #9fb4c4; border-radius: 6px;">
                 </label>
                 <label style="display: grid; gap: 0.35rem;">
                     <span style="font-weight: 600;">{% trans "State" %}</span>
-                    <input type="text" name="state"
+                    <input type="text" name="state" id="id_state"
                            style="padding: 0.55rem; border: 1px solid #9fb4c4; border-radius: 6px;">
                 </label>
                 <label style="display: grid; gap: 0.35rem;">
                     <span style="font-weight: 600;">{% trans "Zip code" %}</span>
-                    <input type="text" name="zip_code"
+                    <input type="text" name="zip_code" id="id_zip_code"
                            style="padding: 0.55rem; border: 1px solid #9fb4c4; border-radius: 6px;">
                 </label>
                 <label style="display: grid; gap: 0.35rem;">
                     <span style="font-weight: 600;">{% trans "Country" %}</span>
-                    <input type="text" name="country"
+                    <input type="text" name="country" id="id_country"
                            style="padding: 0.55rem; border: 1px solid #9fb4c4; border-radius: 6px;">
                 </label>
             </div>
@@ -69,6 +74,32 @@
                 <input type="checkbox" name="set_default">
                 <span>{% trans "Save as default address" %}</span>
             </label>
+
+            <input type="hidden" name="latitude" id="id_latitude">
+            <input type="hidden" name="longitude" id="id_longitude">
+
+            <div style="display: grid; gap: 0.6rem;">
+                <button type="button" id="verify-location-btn"
+                        style="padding: 0.6rem 1rem; border: none; border-radius: 6px; background: #1d6fa5; color: #fff; font-weight: 600; cursor: pointer; width: fit-content;">
+                    {% trans "Verify location" %}
+                </button>
+                <p id="map-error" style="margin: 0; color: #b00020; display: none;"></p>
+
+                <div id="map-wrapper" style="display: none; gap: 0.6rem; grid-template-columns: 1fr;">
+                    <div id="map" style="width: 100%; height: 320px; border: 1px solid #9fb4c4; border-radius: 6px;"></div>
+                    <p style="margin: 0; color: #31424d; font-size: 0.9rem;">
+                        {% trans "Drag the pin to adjust the exact point, then confirm." %}
+                    </p>
+                    <button type="button" id="confirm-location-btn"
+                            style="padding: 0.6rem 1rem; border: none; border-radius: 6px; background: #137333; color: #fff; font-weight: 600; cursor: pointer; width: fit-content;">
+                        {% trans "Confirm location" %}
+                    </button>
+                </div>
+
+                <p id="location-confirmed-msg" style="margin: 0; color: #137333; font-weight: 600; display: none;">
+                    {% trans "Location confirmed." %}
+                </p>
+            </div>
         </article>
 
         <article style="background: #fff; border: 1px solid #cfd8dc; border-radius: 8px; padding: 1rem; display: grid; gap: 0.7rem;">
@@ -85,11 +116,165 @@
             <p style="margin: 0; color: #0A2A43; font-size: 1.1rem;"><strong>{% trans "Total" %}:</strong> ${{ total_amount|localize }}</p>
         </article>
 
-        <button type="submit"
-                style="padding: 0.7rem 1rem; border: none; border-radius: 6px; background: #0A2A43; color: #fff; font-weight: 600; cursor: pointer; width: fit-content;">
+        <button type="submit" id="confirm-pay-btn" disabled
+                style="padding: 0.7rem 1rem; border: none; border-radius: 6px; background: #0A2A43; color: #fff; font-weight: 600; cursor: not-allowed; opacity: 0.55; width: fit-content;">
             {% trans "Confirm and pay" %}
         </button>
     </form>
+
+    <script>
+        (function () {
+            var verifyBtn = document.getElementById('verify-location-btn');
+            var confirmBtn = document.getElementById('confirm-location-btn');
+            var payBtn = document.getElementById('confirm-pay-btn');
+            var mapWrapper = document.getElementById('map-wrapper');
+            var mapEl = document.getElementById('map');
+            var errorEl = document.getElementById('map-error');
+            var confirmedMsg = document.getElementById('location-confirmed-msg');
+            var latInput = document.getElementById('id_latitude');
+            var lngInput = document.getElementById('id_longitude');
+
+            var map = null;
+            var marker = null;
+            var geocoder = null;
+
+            function resetConfirmation() {
+                latInput.value = '';
+                lngInput.value = '';
+                confirmedMsg.style.display = 'none';
+                payBtn.disabled = true;
+                payBtn.style.cursor = 'not-allowed';
+                payBtn.style.opacity = '0.55';
+            }
+
+            function enablePay() {
+                payBtn.disabled = false;
+                payBtn.style.cursor = 'pointer';
+                payBtn.style.opacity = '1';
+            }
+
+            function showError(msg) {
+                errorEl.textContent = msg;
+                errorEl.style.display = 'block';
+            }
+
+            function clearError() {
+                errorEl.textContent = '';
+                errorEl.style.display = 'none';
+            }
+
+            function getSelectedRadio() {
+                var radios = document.getElementsByName('shipping_address');
+                for (var i = 0; i < radios.length; i++) {
+                    if (radios[i].checked) return radios[i];
+                }
+                return null;
+            }
+
+            function buildAddressString() {
+                var selected = getSelectedRadio();
+                if (selected && selected.value !== 'new') {
+                    var parts = [
+                        selected.dataset.street,
+                        selected.dataset.city,
+                        selected.dataset.state,
+                        selected.dataset.zip,
+                        selected.dataset.country
+                    ];
+                    return parts.filter(function (p) { return p && p.trim(); }).join(', ');
+                }
+                var fields = ['id_street', 'id_city', 'id_state', 'id_zip_code', 'id_country'];
+                var values = [];
+                for (var i = 0; i < fields.length; i++) {
+                    var el = document.getElementById(fields[i]);
+                    if (el && el.value.trim()) values.push(el.value.trim());
+                }
+                return values.join(', ');
+            }
+
+            function placeMarker(latLng) {
+                if (marker) {
+                    marker.setPosition(latLng);
+                } else {
+                    marker = new google.maps.Marker({
+                        position: latLng,
+                        map: map,
+                        draggable: true
+                    });
+                    marker.addListener('dragend', function (event) {
+                        latInput.value = event.latLng.lat();
+                        lngInput.value = event.latLng.lng();
+                    });
+                }
+                latInput.value = latLng.lat();
+                lngInput.value = latLng.lng();
+            }
+
+            function showMap(latLng) {
+                mapWrapper.style.display = 'grid';
+                if (!map) {
+                    map = new google.maps.Map(mapEl, {
+                        center: latLng,
+                        zoom: 16
+                    });
+                } else {
+                    map.setCenter(latLng);
+                    google.maps.event.trigger(map, 'resize');
+                }
+                placeMarker(latLng);
+            }
+
+            function geocodeAndShow() {
+                clearError();
+                resetConfirmation();
+                var address = buildAddressString();
+                if (!address) {
+                    showError('{% trans "Please fill in the address fields or select a saved address." %}');
+                    return;
+                }
+                if (typeof google === 'undefined' || !google.maps) {
+                    showError('{% trans "Google Maps could not be loaded. Check the API key." %}');
+                    return;
+                }
+                if (!geocoder) geocoder = new google.maps.Geocoder();
+                geocoder.geocode({ address: address }, function (results, status) {
+                    if (status === 'OK' && results[0]) {
+                        showMap(results[0].geometry.location);
+                    } else {
+                        showError('{% trans "The address could not be located on the map." %}');
+                    }
+                });
+            }
+
+            verifyBtn.addEventListener('click', geocodeAndShow);
+
+            confirmBtn.addEventListener('click', function () {
+                if (!latInput.value || !lngInput.value) {
+                    showError('{% trans "Place a pin on the map before confirming." %}');
+                    return;
+                }
+                mapWrapper.style.display = 'none';
+                confirmedMsg.style.display = 'block';
+                enablePay();
+            });
+
+            var radios = document.getElementsByName('shipping_address');
+            for (var i = 0; i < radios.length; i++) {
+                radios[i].addEventListener('change', resetConfirmation);
+            }
+            var inputIds = ['id_street', 'id_city', 'id_state', 'id_zip_code', 'id_country'];
+            for (var j = 0; j < inputIds.length; j++) {
+                var el = document.getElementById(inputIds[j]);
+                if (el) el.addEventListener('input', resetConfirmation);
+            }
+        })();
+    </script>
+
+    {% if google_maps_api_key %}
+    <script async defer
+            src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&libraries=places"></script>
+    {% endif %}
+
     {% else %}
     <p style="margin: 0; color: #31424d;">{% trans "Your cart is empty." %}</p>
     <p style="margin: 0;">

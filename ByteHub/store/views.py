@@ -1,3 +1,5 @@
+import os
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
@@ -186,5 +188,6 @@ def checkout(request):
             'subtotal': subtotal,
             'shipping_cost': shipping_cost,
             'total_amount': total_amount,
+            'google_maps_api_key': os.getenv('GOOGLE_MAPS_API_KEY', ''),
         },
     )
