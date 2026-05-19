@@ -183,3 +183,45 @@ class OrderManagerTests(TestCase):
         order = next(o for o in qs if o.pk == self.order1.pk)
         # Access prefetched items without triggering an extra query
         self.assertEqual(len(order.items.all()), 1)
+
+
+class OrderManagerUserScopeTest(TestCase):
+    """Logica de negocio: get_user_orders_with_details filtra por usuario."""
+
+    def test_orden_lista_solo_ordenes_del_usuario_autenticado(self):
+        user_a = User.objects.create_user(
+            email='a@test.com',
+            password='StrongPass123',
+            first_name='User',
+            last_name='A',
+        )
+        user_b = User.objects.create_user(
+            email='b@test.com',
+            password='StrongPass123',
+            first_name='User',
+            last_name='B',
+        )
+        Order.objects.create(
+            user=user_a,
+            subtotal=Decimal('10.00'),
+            shipping_cost=Decimal('0.00'),
+            total_amount=Decimal('10.00'),
+        )
+        Order.objects.create(
+            user=user_a,
+            subtotal=Decimal('20.00'),
+            shipping_cost=Decimal('0.00'),
+            total_amount=Decimal('20.00'),
+        )
+        Order.objects.create(
+            user=user_b,
+            subtotal=Decimal('5.00'),
+            shipping_cost=Decimal('0.00'),
+            total_amount=Decimal('5.00'),
+        )
+
+        qs = Order.objects.get_user_orders_with_details(user_a.pk)
+
+        self.assertEqual(qs.count(), 2)
+        for order in qs:
+            self.assertEqual(order.user_id, user_a.pk)

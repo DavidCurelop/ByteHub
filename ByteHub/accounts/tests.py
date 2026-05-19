@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.db import IntegrityError, transaction
 from django.test import TestCase
 from django.urls import reverse
 from django.utils.translation import gettext as _
@@ -239,3 +240,22 @@ class UserProfileTest(TestCase):
             response,
             f"{reverse('accounts:login')}?next={reverse('accounts:profile')}",
         )
+
+
+class UserEmailUniqueCaseInsensitiveTest(TestCase):
+    
+
+    def test_crear_usuario_con_email_duplicado_case_insensitive_falla(self):
+        User.objects.create_user(
+            email='user@test.com',
+            password='StrongPass123',
+            first_name='First',
+            last_name='User',
+        )
+        with self.assertRaises(IntegrityError):
+            with transaction.atomic():
+                User.objects.create(
+                    email='User@Test.COM',
+                    first_name='Second',
+                    last_name='User',
+                )
