@@ -407,3 +407,411 @@ msgstr "Producto \"%(name)s\" desactivado exitosamente."
 msgid "You do not have permission to access the admin panel."
 msgstr "No tienes permiso para acceder al panel de administración."
 
+
+msgid "1 - Poor"
+msgstr "1 - Malo"
+
+msgid "2 - Fair"
+msgstr "2 - Regular"
+
+msgid "3 - Good"
+msgstr "3 - Bueno"
+
+msgid "4 - Very good"
+msgstr "4 - Muy bueno"
+
+msgid "5 - Excellent"
+msgstr "5 - Excelente"
+
+msgid "Add to cart"
+msgstr "Agregar al carrito"
+
+msgid "Add your shipping address to continue."
+msgstr "Agrega tu dirección de envío para continuar."
+
+msgid "All"
+msgstr "Todos"
+
+msgid "Back to all products"
+msgstr "Volver a todos los productos"
+
+msgid "Cart"
+msgstr "Carrito"
+
+msgid "Cart item not found."
+msgstr "Artículo del carrito no encontrado."
+
+msgid "Cart item quantity updated."
+msgstr "Cantidad del artículo actualizada."
+
+msgid "Checkout"
+msgstr "Pago"
+
+msgid "City"
+msgstr "Ciudad"
+
+msgid "Confirm and pay"
+msgstr "Confirmar y pagar"
+
+msgid "Confirm location"
+msgstr "Confirmar ubicación"
+
+msgid "Continue shopping"
+msgstr "Seguir comprando"
+
+msgid "Country"
+msgstr "País"
+
+msgid "Download invoice"
+msgstr "Descargar factura"
+
+msgid "Drag the pin to adjust the exact point, then confirm."
+msgstr "Arrastra el marcador para ajustar el punto exacto y luego confirma."
+
+msgid "Filter by category"
+msgstr "Filtrar por categoría"
+
+msgid "Go Home"
+msgstr "Ir al inicio"
+
+msgid "Go to catalog"
+msgstr "Ir al catálogo"
+
+msgid "Google Maps could not be loaded. Check the API key."
+msgstr "No se pudo cargar Google Maps. Verifica la clave de API."
+
+msgid "Important dates"
+msgstr "Fechas importantes"
+
+msgid "Item removed from your cart."
+msgstr "Artículo eliminado de tu carrito."
+
+msgid "Location confirmed."
+msgstr "Ubicación confirmada."
+
+msgid "Log in"
+msgstr "Iniciar sesión"
+
+msgid "Log in to add this product to your cart."
+msgstr "Inicia sesión para agregar este producto a tu carrito."
+
+msgid "Log in to write a review for this product."
+msgstr "Inicia sesión para escribir una reseña de este producto."
+
+msgid "No products available in \"{{ name }}\" right now."
+msgstr "No hay productos disponibles en \"{{ name }}\" en este momento."
+
+msgid "No products found for \"{{ query }}\"."
+msgstr "No se encontraron productos para \"{{ query }}\"."
+
+msgid "Order #{{ num }}"
+msgstr "Pedido #{{ num }}"
+
+msgid "Order #{{ pk }}"
+msgstr "Pedido #{{ pk }}"
+
+msgid "Paid"
+msgstr "Pagado"
+
+msgid "Payment Cancelled"
+msgstr "Pago cancelado"
+
+msgid "Payment Successful"
+msgstr "Pago exitoso"
+
+msgid "Place a pin on the map before confirming."
+msgstr "Coloca un marcador en el mapa antes de confirmar."
+
+msgid "Please complete all shipping address fields."
+msgstr "Por favor completa todos los campos de la dirección de envío."
+
+msgid "Please correct the errors in the review form."
+msgstr "Por favor corrige los errores en el formulario de reseña."
+
+msgid "Please fill in the address fields or select a saved address."
+msgstr "Por favor completa los campos de la dirección o selecciona una dirección guardada."
+
+msgid "Please select a rating."
+msgstr "Por favor selecciona una calificación."
+
+msgid "Proceed to checkout"
+msgstr "Proceder al pago"
+
+msgid "Product"
+msgstr "Producto"
+
+msgid "Product added to your cart."
+msgstr "Producto agregado a tu carrito."
+
+msgid "Product not found."
+msgstr "Producto no encontrado."
+
+msgid "Quantity must be at least 1."
+msgstr "La cantidad debe ser al menos 1."
+
+msgid "Remove item"
+msgstr "Eliminar artículo"
+
+msgid "Return to Cart"
+msgstr "Volver al carrito"
+
+msgid "Review"
+msgstr "Reseña"
+
+msgid "Save as default address"
+msgstr "Guardar como dirección predeterminada"
+
+msgid "Select one of your saved addresses or add a new one."
+msgstr "Selecciona una de tus direcciones guardadas o agrega una nueva."
+
+msgid "Shipping"
+msgstr "Envío"
+
+msgid "Shipping address not found."
+msgstr "Dirección de envío no encontrada."
+
+msgid "State"
+msgstr "Departamento"
+
+msgid "Street"
+msgstr "Calle"
+
+msgid "Submit review"
+msgstr "Publicar reseña"
+
+msgid "Subtotal"
+msgstr "Subtotal"
+
+msgid "The address could not be located on the map."
+msgstr "No se pudo ubicar la dirección en el mapa."
+
+msgid "This product is currently out of stock."
+msgstr "Este producto está actualmente agotado."
+
+msgid "Title"
+msgstr "Título"
+
+msgid "Title is too long."
+msgstr "El título es demasiado largo."
+
+msgid "Update"
+msgstr "Actualizar"
+
+msgid "Update quantity"
+msgstr "Actualizar cantidad"
+
+msgid "Use a new address"
+msgstr "Usar una nueva dirección"
+
+msgid "Verify location"
+msgstr "Verificar ubicación"
+
+msgid "View Orders"
+msgstr "Ver pedidos"
+
+msgid "View cart"
+msgstr "Ver carrito"
+
+msgid "View order history"
+msgstr "Ver historial de pedidos"
+
+msgid "Write a review"
+msgstr "Escribir una reseña"
+
+msgid "You can only review products you have purchased."
+msgstr "Solo puedes reseñar productos que hayas comprado."
+
+msgid "You cannot add more units than available stock."
+msgstr "No puedes agregar más unidades que el stock disponible."
+
+msgid "You have already reviewed this product."
+msgstr "Ya has reseñado este producto."
+
+msgid "Your cart"
+msgstr "Tu carrito"
+
+msgid "Your cart is empty."
+msgstr "Tu carrito está vacío."
+
+msgid "Your payment process was cancelled. You can return to your cart and try again whenever you want."
+msgstr "Tu proceso de pago fue cancelado. Puedes volver a tu carrito e intentarlo de nuevo cuando quieras."
+
+msgid "Your payment was processed successfully. Thank you for shopping with ByteHub."
+msgstr "Tu pago fue procesado exitosamente. Gracias por comprar en ByteHub."
+
+msgid "Your review has been published."
+msgstr "Tu reseña ha sido publicada."
+
+msgid "Zip code"
+msgstr "Código postal"
+
+msgid "{{ rating }} / 5"
+msgstr "{{ rating }} / 5"
+
+msgid "Admin users must be active."
+msgstr "Los usuarios administradores deben estar activos."
+
+msgid "Enter a valid phone number."
+msgstr "Ingresa un número de teléfono válido."
+
+msgid "Permissions"
+msgstr "Permisos"
+
+msgid "Personal info"
+msgstr "Información personal"
+
+msgid "Superuser must have is_active=True."
+msgstr "El superusuario debe tener is_active=True."
+
+msgid "Superuser must have is_admin=True."
+msgstr "El superusuario debe tener is_admin=True."
+
+msgid "Superuser must have is_staff=True."
+msgstr "El superusuario debe tener is_staff=True."
+
+msgid "Superuser must have is_superuser=True."
+msgstr "El superusuario debe tener is_superuser=True."
+
+msgid "The Email field must be set"
+msgstr "El campo de correo electrónico es obligatorio"
+
+msgid "e.g. +1 555 123 4567"
+msgstr "ej. +1 555 123 4567"
+
+msgid "active"
+msgstr "activo"
+
+msgid "address"
+msgstr "dirección"
+
+msgid "addresses"
+msgstr "direcciones"
+
+msgid "admin status"
+msgstr "estado de administrador"
+
+msgid "available"
+msgstr "disponible"
+
+msgid "brand"
+msgstr "marca"
+
+msgid "cart"
+msgstr "carrito"
+
+msgid "cart item"
+msgstr "artículo del carrito"
+
+msgid "cart items"
+msgstr "artículos del carrito"
+
+msgid "carts"
+msgstr "carritos"
+
+msgid "category"
+msgstr "categoría"
+
+msgid "city"
+msgstr "ciudad"
+
+msgid "country"
+msgstr "país"
+
+msgid "created at"
+msgstr "creado en"
+
+msgid "created by"
+msgstr "creado por"
+
+msgid "date joined"
+msgstr "fecha de registro"
+
+msgid "default address"
+msgstr "dirección predeterminada"
+
+msgid "description"
+msgstr "descripción"
+
+msgid "email"
+msgstr "correo electrónico"
+
+msgid "first name"
+msgstr "nombre"
+
+msgid "image"
+msgstr "imagen"
+
+msgid "last name"
+msgstr "apellido"
+
+msgid "name"
+msgstr "nombre"
+
+msgid "phone"
+msgstr "teléfono"
+
+msgid "price"
+msgstr "precio"
+
+msgid "product"
+msgstr "producto"
+
+msgid "products"
+msgstr "productos"
+
+msgid "quantity"
+msgstr "cantidad"
+
+msgid "rating"
+msgstr "calificación"
+
+msgid "shipping address"
+msgstr "dirección de envío"
+
+msgid "shipping cost"
+msgstr "costo de envío"
+
+msgid "Slug"
+msgstr "Slug"
+
+msgid "slug"
+msgstr "slug"
+
+msgid "staff status"
+msgstr "estado de staff"
+
+msgid "state"
+msgstr "departamento"
+
+msgid "status"
+msgstr "estado"
+
+msgid "stock"
+msgstr "stock"
+
+msgid "street"
+msgstr "calle"
+
+msgid "subtotal"
+msgstr "subtotal"
+
+msgid "title"
+msgstr "título"
+
+msgid "total amount"
+msgstr "monto total"
+
+msgid "unit price"
+msgstr "precio unitario"
+
+msgid "updated at"
+msgstr "actualizado en"
+
+msgid "user"
+msgstr "usuario"
+
+msgid "users"
+msgstr "usuarios"
+
+msgid "zip code"
+msgstr "código postal"

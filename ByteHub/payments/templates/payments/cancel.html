@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load i18n %}
 
 {% block content %}
 
@@ -82,22 +83,22 @@
         </div>
 
         <h1 class="cancel-title">
-            Payment Cancelled
+            {% trans "Payment Cancelled" %}
         </h1>
 
         <p class="cancel-text">
-            Your payment process was cancelled.
-            You can return to your cart and try again whenever you want.
+            {% blocktrans %}Your payment process was cancelled.
+            You can return to your cart and try again whenever you want.{% endblocktrans %}
         </p>
 
         <div class="cancel-buttons">
 
             <a href="{% url 'store:cart-detail' %}" class="cancel-btn primary-btn">
-                Return to Cart
+                {% trans "Return to Cart" %}
             </a>
 
             <a href="{% url 'pages:home' %}" class="cancel-btn secondary-btn">
-                Go Home
+                {% trans "Go Home" %}
             </a>
 
         </div>
