@@ -1,0 +1,36 @@
+[33mcommit 940ee9b92e11804104d670459a2ad2443a80b537[m
+Author: Copilot <198982749+Copilot@users.noreply.github.com>
+Date:   Tue May 19 23:33:35 2026 -0500
+
+    Make homepage category cards navigate to category product listings (#110)
+    
+    * Initial plan
+    
+    * fix(pages): make homepage categories clickable
+    
+    Agent-Logs-Url: https://github.com/DavidCurelop/ByteHub/sessions/263ea98a-6c79-439f-bd76-d44d5e84cca7
+    
+    Co-authored-by: DavidCurelop <142354885+DavidCurelop@users.noreply.github.com>
+    
+    ---------
+    
+    Co-authored-by: copilot-swe-agent[bot] <198982749+Copilot@users.noreply.github.com>
+    Co-authored-by: DavidCurelop <142354885+DavidCurelop@users.noreply.github.com>
+
+[1mdiff --git a/ByteHub/pages/templates/pages/home.html b/ByteHub/pages/templates/pages/home.html[m
+[1mindex d8c6c43..de755fb 100644[m
+[1m--- a/ByteHub/pages/templates/pages/home.html[m
+[1m+++ b/ByteHub/pages/templates/pages/home.html[m
+[36m@@ -11,7 +11,11 @@[m
+     <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1rem;">[m
+         {% for category in categories %}[m
+         <article style="background: #fff; border: 1px solid #cfd8dc; border-radius: 8px; padding: 1rem;">[m
+[31m-            <h2 style="font-size: 1.1rem; margin-bottom: 0.5rem;">{{ category.name }}</h2>[m
+[32m+[m[32m            <h2 style="font-size: 1.1rem; margin-bottom: 0.5rem;">[m
+[32m+[m[32m                <a href="{% url 'store:product-list-by-category' slug=category.slug %}">[m
+[32m+[m[32m                    {{ category.name }}[m
+[32m+[m[32m                </a>[m
+[32m+[m[32m            </h2>[m
+             {% if category.description %}[m
+             <p style="color: #4a5a66;">{{ category.description }}</p>[m
+             {% else %}[m

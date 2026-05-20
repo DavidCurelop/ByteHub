@@ -5,6 +5,8 @@ ENV PYTHONUNBUFFERED=1
 
 WORKDIR /app
 
+RUN apt-get update && apt-get install -y gettext && rm -rf /var/lib/apt/lists/*
+
 RUN addgroup --system appgroup && adduser --system --ingroup appgroup appuser
 
 COPY --chown=appuser:appgroup requirements.txt /app/requirements.txt
@@ -12,7 +14,6 @@ RUN pip install --no-cache-dir -r /app/requirements.txt
 
 COPY --chown=appuser:appgroup . /app
 
-# Make entrypoint script executable
 RUN chmod +x /app/entrypoint.sh
 
 USER appuser
