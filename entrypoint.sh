@@ -42,6 +42,11 @@ python manage.py migrate --noinput
 echo "Collecting static files..."
 python manage.py collectstatic --noinput
 
+echo "Compiling translation messages..."
+python manage.py compilemessages || {
+    echo "⚠ Warning: compilemessages failed. Continuing without compiled translations."
+}
+
 # Check if we should load fixture data
 if [ "$LOAD_FIXTURE_DATA" = "true" ]; then
     echo "Loading fixture data from dev_seed.json..."
