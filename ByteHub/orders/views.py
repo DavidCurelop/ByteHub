@@ -35,10 +35,15 @@ def order_detail(request, pk):
 
     items = order.items.all()
 
+    user_order_number = Order.objects.filter(
+        user=request.user,
+        created_at__gte=order.created_at,
+    ).count()
+
     return render(
         request,
         'orders/detail.html',
-        {'order': order, 'items': items},
+        {'order': order, 'items': items, 'user_order_number': user_order_number},
     )
 
 

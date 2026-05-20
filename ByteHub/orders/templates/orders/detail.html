@@ -2,14 +2,14 @@
 {% load i18n l10n %}
 
 {% block title %}
-{% blocktrans with pk=order.pk %}Order #{{ pk }}{% endblocktrans %} | ByteHub
+{% blocktrans with num=user_order_number %}Order #{{ num }}{% endblocktrans %} | ByteHub
 {% endblock %}
 
 {% block content %}
 <section style="display: grid; gap: 1.5rem;">
     <article style="background: #fff; border: 1px solid #cfd8dc; border-radius: 8px; padding: 1.2rem; display: grid; gap: 0.6rem;">
         <h1 style="margin: 0;">
-            {% blocktrans with pk=order.pk %}Order #{{ pk }}{% endblocktrans %}
+            {% blocktrans with num=user_order_number %}Order #{{ num }}{% endblocktrans %}
         </h1>
         <p style="margin: 0; color: #31424d;">
             <strong>{% trans "Date" %}:</strong>
