@@ -11,7 +11,11 @@
     <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1rem;">
         {% for category in categories %}
         <article style="background: #fff; border: 1px solid #cfd8dc; border-radius: 8px; padding: 1rem;">
-            <h2 style="font-size: 1.1rem; margin-bottom: 0.5rem;">{{ category.name }}</h2>
+            <h2 style="font-size: 1.1rem; margin-bottom: 0.5rem;">
+                <a href="{% url 'store:product-list-by-category' slug=category.slug %}">
+                    {{ category.name }}
+                </a>
+            </h2>
             {% if category.description %}
             <p style="color: #4a5a66;">{{ category.description }}</p>
             {% else %}
