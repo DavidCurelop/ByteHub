@@ -190,4 +190,4 @@ El repositorio incluye configuración en `.github/` para workflows de GitHub Act
 
 ---
 
-*Repositorio: [github.com/DavidCurelop/ByteHub](https://github.com/DavidCurelop/ByteHub)*
+
