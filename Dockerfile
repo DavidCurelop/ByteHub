@@ -16,6 +16,7 @@ COPY --chown=appuser:appgroup . /app
 RUN chmod +x /app/entrypoint.sh
 
 RUN chown -R appuser:appgroup /app/ByteHub
+RUN mkdir -p /app/ByteHub/staticfiles && chown appuser:appgroup /app/ByteHub/staticfiles
 
 USER appuser
 
