@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load i18n %}
 
 {% block content %}
 
@@ -82,22 +83,22 @@
         </div>
 
         <h1 class="success-title">
-            Payment Successful
+            {% trans "Payment Successful" %}
         </h1>
 
         <p class="success-text">
-            Your payment was processed successfully.
-            Thank you for shopping with ByteHub.
+            {% blocktrans %}Your payment was processed successfully.
+            Thank you for shopping with ByteHub.{% endblocktrans %}
         </p>
 
         <div class="success-buttons">
 
             <a href="{% url 'pages:home' %}" class="success-btn primary-btn">
-                Go Home
+                {% trans "Go Home" %}
             </a>
 
             <a href="{% url 'orders:order-list' %}" class="success-btn secondary-btn">
-                View Orders
+                {% trans "View Orders" %}
             </a>
 
         </div>
