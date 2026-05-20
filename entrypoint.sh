@@ -39,6 +39,9 @@ EOF
 echo "Running database migrations..."
 python manage.py migrate --noinput
 
+echo "Collecting static files..."
+python manage.py collectstatic --noinput
+
 # Check if we should load fixture data
 if [ "$LOAD_FIXTURE_DATA" = "true" ]; then
     echo "Loading fixture data from dev_seed.json..."
