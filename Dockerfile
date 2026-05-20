@@ -15,7 +15,7 @@ COPY --chown=appuser:appgroup . /app
 # Make entrypoint script executable
 RUN chmod +x /app/entrypoint.sh
 
-RUN mkdir -p /app/ByteHub/staticfiles && chown -R appuser:appgroup /app/ByteHub/staticfiles
+RUN chown -R appuser:appgroup /app/ByteHub
 
 USER appuser
 
